@@ -1,0 +1,13 @@
+{
+  "start": 1794078942.8168895,
+  "end": 1794079181.738669,
+  "observer_peak_sampled_ws": 3221229568,
+  "observer_peak_commit": 16755195904,
+  "single_identity": 8192,
+  "missing": 0,
+  "ambiguous": 0,
+  "calibration_pages": 3,
+  "comparable": 8192,
+  "same": 8191,
+  "changed": 1
+}

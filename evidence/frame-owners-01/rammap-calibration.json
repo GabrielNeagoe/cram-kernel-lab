@@ -1,0 +1,15 @@
+{
+  "observer": "RAMMap 1.63 x64",
+  "first_attempt_known_reuses": 0,
+  "first_pages": 32768,
+  "second_pages": 65536,
+  "second_allocations": 1,
+  "known_reuses": 6,
+  "independent_owner_changes": 6,
+  "raw_snapshots_removed": true,
+  "live_sampler": {
+    "ordinary_account_one_page_query": "STATUS_ACCESS_DENIED (0xc0000022)",
+    "elevated_calibration": "Windows elevation request canceled before process launch",
+    "vm_trial_started": false
+  }
+}

@@ -1,0 +1,272 @@
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -28,6 +28,9 @@
+ #include <linux/seq_file.h>
+ #include <linux/rwsem.h>
+ #include <linux/slab.h>
++#include <linux/uaccess.h>
++#include <linux/gfp.h>
++#include <linux/pageblock-flags.h>
+ #include <linux/spinlock.h>
+ #include <linux/balloon.h>
+ #include <linux/vmw_vmci_defs.h>
+@@ -39,6 +42,27 @@
+ MODULE_ALIAS("dmi:*:svnVMware*:*");
+ MODULE_ALIAS("vmware_vmmemctl");
+ MODULE_LICENSE("GPL");
++/* Temporary lab offer. Expiry restores the normal host-directed decision. */
++static unsigned long cram_offer_until;
++static atomic_long_t cram_notneeded = ATOMIC_LONG_INIT(0);
++static atomic_long_t cram_refusals = ATOMIC_LONG_INIT(0);
++
++static int cram_offer_set(const char *value, const struct kernel_param *kp)
++{
++	unsigned int enable;
++	int ret = kstrtouint(value, 0, &enable);
++
++	if (ret || enable > 1)
++		return -EINVAL;
++	WRITE_ONCE(cram_offer_until, enable ? jiffies + 60 * HZ : 0);
++	return 0;
++}
++
++static const struct kernel_param_ops cram_offer_ops = {
++	.set = cram_offer_set,
++};
++module_param_cb(cram_offer_32m, &cram_offer_ops, NULL, 0200);
++
+ 
+ static bool __read_mostly vmwballoon_shrinker_enable;
+ module_param(vmwballoon_shrinker_enable, bool, 0444);
+@@ -652,6 +676,154 @@
+  *
+  * Return: zero on success or error code otherwise.
+  */
++/* Bounded lab-only acquisition of caller-supplied frames via the allocator.
++ * Binary input is a strictly increasing array of <=8192 native-endian u64 PFNs.
++ * No frame is offered until alloc_contig_range has established ownership.
++ */
++static DEFINE_MUTEX(cram_pool_lock);
++static LIST_HEAD(cram_pool);
++static unsigned long cram_pending;
++static unsigned long cram_requested, cram_acquired, cram_failed;
++static unsigned long cram_busy, cram_invalid, cram_other;
++static unsigned long cram_fail_zero_ref, cram_fail_lru, cram_fail_slab;
++static unsigned long cram_range_success, cram_single_success;
++static bool cram_blockwise;
++module_param(cram_blockwise, bool, 0444);
++static unsigned long cram_failed_with_owned_neighbor;
++
++static bool cram_owned_neighbor(unsigned long pfn)
++{
++	struct page *page;
++	list_for_each_entry(page, &cram_pool, lru)
++		if (page_to_pfn(page) / pageblock_nr_pages == pfn / pageblock_nr_pages)
++			return true;
++	return false;
++}
++
++static void cram_pool_free(void)
++{
++	struct page *page, *next;
++
++	mutex_lock(&cram_pool_lock);
++	list_for_each_entry_safe(page, next, &cram_pool, lru) {
++		list_del(&page->lru);
++		__free_page(page);
++	}
++	cram_pending = 0;
++	mutex_unlock(&cram_pool_lock);
++}
++
++static struct page *cram_pool_take(void)
++{
++	struct page *page = NULL;
++
++	mutex_lock(&cram_pool_lock);
++	if (!list_empty(&cram_pool)) {
++		page = list_first_entry(&cram_pool, struct page, lru);
++		list_del(&page->lru);
++		cram_pending--;
++	}
++	mutex_unlock(&cram_pool_lock);
++	return page;
++}
++
++static ssize_t cram_frames_write(struct file *file, const char __user *buf,
++				size_t len, loff_t *pos)
++{
++	struct vmballoon *b = file->private_data;
++	u64 *pfns;
++	size_t i, j, n = len / sizeof(u64);
++	int ret = 0;
++
++	if (!capable(CAP_SYS_ADMIN) || !len || len % sizeof(u64) || n > 8192)
++		return -EINVAL;
++	pfns = memdup_user(buf, len);
++	if (IS_ERR(pfns))
++		return PTR_ERR(pfns);
++	for (i = 0; i < n; i++) {
++		if (pfns[i] > ULONG_MAX || !pfn_valid(pfns[i]) ||
++		    PageReserved(pfn_to_page(pfns[i])) ||
++		    (i && pfns[i] <= pfns[i-1])) {
++			ret = -EINVAL;
++			goto out;
++		}
++	}
++	down_write(&b->conf_sem);
++	if (atomic64_read(&b->size) || b->target || READ_ONCE(cram_offer_until)) {
++		ret = -EBUSY;
++		goto unlock;
++	}
++	cram_pool_free();
++	cram_requested = n;
++	cram_acquired = cram_failed = 0;
++	cram_busy = cram_invalid = cram_other = 0;
++	cram_fail_zero_ref = cram_fail_lru = cram_fail_slab = 0;
++	cram_range_success = cram_single_success = 0;
++	cram_failed_with_owned_neighbor = 0;
++	mutex_lock(&cram_pool_lock);
++	for (i = 0; i < n; i = j) {
++		for (j = i + 1; j < n &&
++		     (cram_blockwise ? pfns[j] / pageblock_nr_pages == pfns[i] / pageblock_nr_pages :
++		      pfns[j] == pfns[j-1] + 1) &&
++		     page_zone(pfn_to_page(pfns[j])) == page_zone(pfn_to_page(pfns[i])); j++)
++			;
++		ret = alloc_contig_range(pfns[i], pfns[j-1] + 1, ACR_FLAGS_NONE,
++					GFP_KERNEL | __GFP_NOWARN);
++		if (ret) {
++			/* A busy frame must not exclude its available neighbours. */
++			for (; i < j; i++) {
++				ret = alloc_contig_range(pfns[i], pfns[i] + 1,
++					ACR_FLAGS_NONE, GFP_KERNEL | __GFP_NOWARN);
++				if (ret) {
++					cram_failed++;
++					cram_busy += ret == -EBUSY;
++					cram_invalid += ret == -EINVAL;
++					cram_other += ret != -EBUSY && ret != -EINVAL;
++					cram_fail_zero_ref += !page_count(pfn_to_page(pfns[i]));
++					cram_fail_lru += PageLRU(pfn_to_page(pfns[i]));
++					cram_fail_slab += PageSlab(pfn_to_page(pfns[i]));
++					cram_failed_with_owned_neighbor += cram_owned_neighbor(pfns[i]);
++					continue;
++				}
++				list_add_tail(&pfn_to_page(pfns[i])->lru, &cram_pool);
++				cram_acquired++;
++				cram_single_success++;
++				cram_pending++;
++			}
++			continue;
++		}
++		{
++			unsigned long pfn, end = pfns[j-1] + 1;
++			/* At most one pageblock of gaps is temporarily acquired.
++			 * Free every non-requested frame through the allocator. */
++			for (pfn = pfns[i]; pfn < end; pfn++) {
++				if (i < j && pfn == pfns[i]) {
++					list_add_tail(&pfn_to_page(pfn)->lru, &cram_pool);
++					cram_acquired++;
++					cram_range_success++;
++					cram_pending++;
++					i++;
++				} else {
++					__free_page(pfn_to_page(pfn));
++				}
++			}
++		}
++	}
++	mutex_unlock(&cram_pool_lock);
++	ret = 0;
++unlock:
++	up_write(&b->conf_sem);
++out:
++	kfree(pfns);
++	return ret ? ret : len;
++}
++
++static const struct file_operations cram_frames_fops = {
++	.owner = THIS_MODULE,
++	.open = simple_open,
++	.write = cram_frames_write,
++};
++
+ static int vmballoon_alloc_page_list(struct vmballoon *b,
+ 				     struct vmballoon_ctl *ctl,
+ 				     unsigned int req_n_pages)
+@@ -674,7 +846,7 @@
+ 				page = alloc_pages(__GFP_HIGHMEM|__GFP_NOWARN|
+ 					__GFP_NOMEMALLOC, VMW_BALLOON_2M_ORDER);
+ 			else
+-				page = balloon_page_alloc();
++				page = cram_pool_take();
+ 
+ 			vmballoon_stats_page_inc(b, VMW_BALLOON_PAGE_STAT_ALLOC,
+ 						 ctl->page_size);
+@@ -713,6 +885,9 @@
+ 	if (likely(status == VMW_BALLOON_SUCCESS))
+ 		return 0;
+ 
++	atomic_long_inc(&cram_refusals);
++	if (status == VMW_BALLOON_ERROR_PPN_NOTNEEDED)
++		atomic_long_inc(&cram_notneeded);
+ 	pr_debug("%s: failed comm pfn %lx status %lu page_size %s\n", __func__,
+ 		 page_to_pfn(page), status,
+ 		 vmballoon_page_size_names[page_size]);
+@@ -955,6 +1130,11 @@
+ 
+ 	size = atomic64_read(&b->size);
+ 	target = READ_ONCE(b->target);
++	if (!target) {
++		unsigned long until = READ_ONCE(cram_offer_until);
++		if (until && time_before(jiffies, until))
++			target = size + READ_ONCE(cram_pending);
++	}
+ 
+ 	/*
+ 	 * We must cast first because of int sizes
+@@ -1099,7 +1279,7 @@
+ 		.pages = LIST_HEAD_INIT(ctl.pages),
+ 		.refused_pages = LIST_HEAD_INIT(ctl.refused_pages),
+ 		.prealloc_pages = LIST_HEAD_INIT(ctl.prealloc_pages),
+-		.page_size = b->max_page_size,
++		.page_size = VMW_BALLOON_4K_PAGE,
+ 		.op = VMW_BALLOON_INFLATE
+ 	};
+ 
+@@ -1653,6 +1833,13 @@
+ 			return r;
+ 	}
+ 
++	seq_printf(f, "lab_refusals: %ld\n", atomic_long_read(&cram_refusals));
++	seq_printf(f, "lab_notneeded: %ld\n", atomic_long_read(&cram_notneeded));
++	seq_printf(f, "lab_requested: %lu\nlab_acquired: %lu\nlab_failed: %lu\nlab_pending: %lu\n",
++		READ_ONCE(cram_requested), READ_ONCE(cram_acquired), READ_ONCE(cram_failed), READ_ONCE(cram_pending));
++	seq_printf(f, "lab_busy: %lu\nlab_invalid: %lu\nlab_other: %lu\nlab_fail_zero_ref: %lu\nlab_fail_lru: %lu\nlab_fail_slab: %lu\nlab_range_success: %lu\nlab_single_success: %lu\n",
++		cram_busy, cram_invalid, cram_other, cram_fail_zero_ref, cram_fail_lru, cram_fail_slab, cram_range_success, cram_single_success);
++	seq_printf(f, "lab_failed_with_owned_neighbor: %lu\nlab_blockwise: %u\nlab_pageblock_pages: %lu\n", cram_failed_with_owned_neighbor, cram_blockwise, pageblock_nr_pages);
+ 	/* format capabilities info */
+ 	seq_printf(f, "%-22s: %#16x\n", "balloon capabilities",
+ 		   VMW_BALLOON_CAPABILITIES);
+@@ -1694,6 +1881,7 @@
+ 
+ static void __init vmballoon_debugfs_init(struct vmballoon *b)
+ {
++	debugfs_create_file("cram_target_frames", 0200, NULL, b, &cram_frames_fops);
+ 	debugfs_create_file("vmmemctl", S_IRUGO, NULL, b,
+ 			    &vmballoon_debug_fops);
+ }
+@@ -1701,6 +1889,7 @@
+ static void __exit vmballoon_debugfs_exit(struct vmballoon *b)
+ {
+ 	static_key_disable(&balloon_stat_enabled.key);
++	debugfs_lookup_and_remove("cram_target_frames", NULL);
+ 	debugfs_lookup_and_remove("vmmemctl", NULL);
+ 	kfree(b->stats);
+ 	b->stats = NULL;
+@@ -1869,5 +2058,6 @@
+ 	 */
+ 	vmballoon_send_start(&balloon, 0);
+ 	vmballoon_pop(&balloon);
++	cram_pool_free();
+ }
+ module_exit(vmballoon_exit);

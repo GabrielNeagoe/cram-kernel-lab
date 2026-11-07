@@ -1,0 +1,41 @@
+{
+  "full1": {
+    "whole_window": {
+      "seconds": 259.038,
+      "scans": 12217,
+      "minimum_original": 1024,
+      "distinct_different_backing": 0,
+      "distinct_free_or_zeroed": 0,
+      "maximum_unsampled_ms": 39.378
+    },
+    "inflation_including_boundaries": {
+      "seconds": 6.737,
+      "scans": 318,
+      "minimum_original": 1024,
+      "distinct_different_backing": 0,
+      "distinct_free_or_zeroed": 0,
+      "maximum_unsampled_ms": 32.046
+    },
+    "confirmed_full_hold": {
+      "seconds": 250.059,
+      "scans": 11791,
+      "minimum_original": 1024,
+      "distinct_different_backing": 0,
+      "distinct_free_or_zeroed": 0,
+      "maximum_unsampled_ms": 39.378
+    },
+    "target_mib": [
+      2264.0
+    ]
+  },
+  "control": {
+    "whole_window": {
+      "seconds": 247.741,
+      "scans": 11773,
+      "minimum_original": 1024,
+      "distinct_different_backing": 0,
+      "distinct_free_or_zeroed": 0,
+      "maximum_unsampled_ms": 89.027
+    }
+  }
+}

@@ -1,0 +1,8 @@
+private/
+__pycache__/
+*.py[cod]
+*.etl
+*.rmp
+*.vmem
+*.ppk
+*.pem

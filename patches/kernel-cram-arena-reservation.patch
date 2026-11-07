@@ -1,0 +1,525 @@
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -18,6 +18,14 @@
+ 	  for so called swap devices or swap files in your kernel that are
+ 	  used to provide more virtual memory than the actual RAM present
+ 	  in your computer.  If unsure say Y.
++
++config CRAM_ARENA
++	bool "Experimental fixed-arena compressed swap"
++	depends on ZSWAP && MEMCG && 64BIT
++	select LZ4_COMPRESS
++	select LZ4_DECOMPRESS
++	help
++	  Opt-in lab backend with preallocated storage and metadata.
+ 
+ config ZSWAP
+ 	bool "Compressed cache for swap pages"
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -220,6 +220,10 @@
+ 
+ /* init completed, but couldn't create the initial pool */
+ static bool zswap_has_pool;
++#ifdef CONFIG_CRAM_ARENA
++#include "cram-arena.inc"
++#endif
++
+ 
+ /*********************************
+ * helpers and fwd declarations
+@@ -531,6 +535,11 @@
+ 	char *s = strstrip((char *)val);
+ 	bool create_pool = false;
+ 	int ret = 0;
++
++
++#ifdef CONFIG_CRAM_ARENA
++	if (cram_arena_mb) return -EPERM;
++#endif
+ 
+ 	mutex_lock(&zswap_init_lock);
+ 	switch (zswap_init_state) {
+@@ -1477,6 +1486,10 @@
+ 
+ bool zswap_store(struct folio *folio)
+ {
++#ifdef CONFIG_CRAM_ARENA
++	if (cram_arena_mb) return ca_store(folio);
++#endif
++
+ 	long nr_pages = folio_nr_pages(folio);
+ 	swp_entry_t swp = folio->swap;
+ 	struct obj_cgroup *objcg = NULL;
+@@ -1583,6 +1596,10 @@
+  */
+ int zswap_load(struct folio *folio)
+ {
++#ifdef CONFIG_CRAM_ARENA
++	if (cram_arena_mb) return ca_load(folio);
++#endif
++
+ 	swp_entry_t swp = folio->swap;
+ 	pgoff_t offset = swp_offset(swp);
+ 	struct xarray *tree = swap_zswap_tree(swp);
+@@ -1636,6 +1653,10 @@
+ 
+ void zswap_invalidate(swp_entry_t swp)
+ {
++#ifdef CONFIG_CRAM_ARENA
++	if (cram_arena_mb) { ca_invalidate(swp); return; }
++#endif
++
+ 	pgoff_t offset = swp_offset(swp);
+ 	struct xarray *tree = swap_zswap_tree(swp);
+ 	struct zswap_entry *entry;
+@@ -1650,6 +1671,10 @@
+ 
+ int zswap_swapon(int type, unsigned long nr_pages)
+ {
++#ifdef CONFIG_CRAM_ARENA
++	if (cram_arena_mb) return 0;
++#endif
++
+ 	struct xarray *trees, *tree;
+ 	unsigned int nr, i;
+ 
+@@ -1670,6 +1695,10 @@
+ 
+ void zswap_swapoff(int type)
+ {
++#ifdef CONFIG_CRAM_ARENA
++	if (cram_arena_mb) { ca_swapoff(type); return; }
++#endif
++
+ 	struct xarray *trees = zswap_trees[type];
+ 	unsigned int i;
+ 
+@@ -1696,6 +1725,10 @@
+ static int debugfs_get_total_size(void *data, u64 *val)
+ {
+ 	*val = zswap_total_pages() * PAGE_SIZE;
++#ifdef CONFIG_CRAM_ARENA
++	if (cram_arena_mb) *val = ca_bytes;
++#endif
++
+ 	return 0;
+ }
+ DEFINE_DEBUGFS_ATTRIBUTE(total_size_fops, debugfs_get_total_size, NULL, "%llu\n");
+@@ -1721,6 +1754,10 @@
+ 		return -ENODEV;
+ 
+ 	zswap_debugfs_root = debugfs_create_dir("zswap", NULL);
++#ifdef CONFIG_CRAM_ARENA
++	if (cram_arena_mb) ca_debugfs(zswap_debugfs_root);
++#endif
++
+ 
+ 	debugfs_create_u64("pool_limit_hit", 0444,
+ 			   zswap_debugfs_root, &zswap_pool_limit_hit);
+@@ -1763,6 +1800,22 @@
+ 	struct zswap_pool *pool;
+ 	int ret;
+ 
++
++#ifdef CONFIG_CRAM_ARENA
++	if (cram_arena_mb) {
++		ret = ca_setup();
++		if (ret) {
++			zswap_enabled = false;
++			zswap_init_state = ZSWAP_INIT_FAILED;
++			return ret;
++		}
++		zswap_has_pool = true;
++		zswap_debugfs_init();
++		zswap_init_state = ZSWAP_INIT_SUCCEED;
++		return 0;
++	}
++#endif
++
+ 	zswap_entry_cache = KMEM_CACHE(zswap_entry, 0);
+ 	if (!zswap_entry_cache) {
+ 		pr_err("entry cache creation failed\n");
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5981,6 +5981,11 @@
+ 		READ_ONCE(mem_cgroup_from_seq(m)->zswap_max));
+ }
+ 
++
++#ifdef CONFIG_CRAM_ARENA
++#include "cram-memcg-reservation.inc"
++#endif
++
+ static ssize_t zswap_max_write(struct kernfs_open_file *of,
+ 			       char *buf, size_t nbytes, loff_t off)
+ {
+@@ -5993,7 +5998,17 @@
+ 	if (err)
+ 		return err;
+ 
++#ifdef CONFIG_CRAM_ARENA
++	spin_lock_irq(&cram_budget_lock);
++	if (max != PAGE_COUNTER_MAX && memcg->cram_reserved > (max << PAGE_SHIFT)) {
++		spin_unlock_irq(&cram_budget_lock);
++		return -EBUSY;
++	}
+ 	xchg(&memcg->zswap_max, max);
++	spin_unlock_irq(&cram_budget_lock);
++#else
++	xchg(&memcg->zswap_max, max);
++#endif
+ 
+ 	return nbytes;
+ }
+@@ -6024,6 +6039,10 @@
+ }
+ 
+ static struct cftype zswap_files[] = {
++#ifdef CONFIG_CRAM_ARENA
++	{ .name = "cram.reserved", .flags = CFTYPE_NOT_ON_ROOT, .read_u64 = cram_reserved_read },
++#endif
++
+ 	{
+ 		.name = "zswap.current",
+ 		.flags = CFTYPE_NOT_ON_ROOT,
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -223,6 +223,10 @@
+ 
+ #ifdef CONFIG_ZSWAP
+ 	unsigned long zswap_max;
++#ifdef CONFIG_CRAM_ARENA
++	unsigned long cram_reserved;
++#endif
++
+ 
+ 	/*
+ 	 * Prevent pages from this memcg from being written back from zswap to
+@@ -1871,6 +1875,11 @@
+ 
+ #if defined(CONFIG_MEMCG) && defined(CONFIG_ZSWAP)
+ bool obj_cgroup_may_zswap(struct obj_cgroup *objcg);
++#ifdef CONFIG_CRAM_ARENA
++struct mem_cgroup *cram_memcg_reserve(struct obj_cgroup *objcg, unsigned long bytes);
++void cram_memcg_release(struct mem_cgroup *owner, struct obj_cgroup *objcg, unsigned long bytes);
++#endif
++
+ void obj_cgroup_charge_zswap(struct obj_cgroup *objcg, size_t size);
+ void obj_cgroup_uncharge_zswap(struct obj_cgroup *objcg, size_t size);
+ bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg);
+--- /dev/null
++++ b/mm/cram-arena.inc
+@@ -0,0 +1,237 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Experimental fixed-arena zswap backend. Included by mm/zswap.c. */
++#include <linux/bitmap.h>
++#include <linux/hash.h>
++#include <linux/lz4.h>
++#include <linux/debugfs.h>
++
++#define CA_BLOCK 256U
++#define CA_MAX_BYTES (4U * 1024U * 1024U)
++#define CA_BUCKETS 1024U
++static unsigned int cram_arena_mb;
++module_param(cram_arena_mb, uint, 0444);
++static unsigned int cram_arena_fail_every;
++module_param(cram_arena_fail_every, uint, 0444);
++static DEFINE_SPINLOCK(ca_lock);
++struct ca_entry {
++ unsigned long key;
++ struct obj_cgroup *objcg;
++ struct mem_cgroup *owner;
++ u32 next, blocks, length;
++};
++struct ca_control {
++ unsigned long bitmap[BITS_TO_LONGS(CA_MAX_BYTES / CA_BLOCK)];
++ u32 heads[CA_BUCKETS];
++ unsigned char workspace[LZ4_MEM_COMPRESS] __aligned(8);
++ unsigned char output[PAGE_SIZE];
++};
++static struct ca_control *ca;
++static u64 ca_bytes, ca_header_bytes, ca_used, ca_peak, ca_entries;
++static u64 ca_stores, ca_loads, ca_full, ca_quota, ca_poor, ca_injected, ca_attempts;
++static unsigned int ca_blocks;
++
++static struct ca_entry *ca_at(u32 slot)
++{
++ return (void *)ca + ca_header_bytes + (slot - 1) * CA_BLOCK;
++}
++static u32 *ca_find(unsigned long key)
++{
++ u32 *p = &ca->heads[hash_long(key, 10)];
++ while (*p && ca_at(*p)->key != key)
++  p = &ca_at(*p)->next;
++ return p;
++}
++/* ca_lock serializes lookup, quota reservation, publication and reclamation. */
++static void ca_remove(u32 *link)
++{
++ u32 slot = *link;
++ struct ca_entry *e = ca_at(slot);
++ unsigned int blocks = e->blocks;
++ *link = e->next;
++ cram_memcg_release(e->owner, e->objcg, blocks * CA_BLOCK);
++ obj_cgroup_put(e->objcg);
++ bitmap_clear(ca->bitmap, slot - 1, blocks);
++ ca_used -= blocks * CA_BLOCK;
++ ca_entries--;
++ atomic_long_dec(&zswap_stored_pages);
++}
++static void ca_invalidate(swp_entry_t swp)
++{
++ u32 *link;
++ unsigned long flags;
++ if (!ca)
++  return;
++ spin_lock_irqsave(&ca_lock, flags);
++ link = ca_find(swp.val);
++ if (*link)
++  ca_remove(link);
++ spin_unlock_irqrestore(&ca_lock, flags);
++}
++static bool ca_store(struct folio *folio)
++{
++ struct obj_cgroup *objcg;
++ struct mem_cgroup *owner;
++ struct ca_entry *e;
++ unsigned int blocks, idx;
++ int length;
++ void *input;
++ u32 *link;
++ long i;
++ unsigned long flags;
++ bool ok = false;
++ /* Reject large folios and remove every stale partial entry before disk IO. */
++ if (!ca || !zswap_enabled || folio_test_large(folio)) {
++  for (i = 0; i < folio_nr_pages(folio); i++)
++   ca_invalidate(swp_entry(swp_type(folio->swap), swp_offset(folio->swap) + i));
++  return false;
++ }
++ objcg = get_obj_cgroup_from_folio(folio);
++ if (!objcg) {
++  ca_invalidate(folio->swap);
++  return false;
++ }
++ spin_lock_irqsave(&ca_lock, flags);
++ link = ca_find(folio->swap.val);
++ if (*link)
++  ca_remove(link);
++ input = kmap_local_folio(folio, 0);
++ length = LZ4_compress_default(input, ca->output, PAGE_SIZE, PAGE_SIZE - 1,
++                               ca->workspace);
++ kunmap_local(input);
++ if (length <= 0) {
++  ca_poor++;
++  goto out;
++ }
++ blocks = DIV_ROUND_UP(sizeof(*e) + length, CA_BLOCK);
++ idx = bitmap_find_next_zero_area(ca->bitmap, ca_blocks, 0, blocks, 0);
++ if (idx >= ca_blocks) {
++  ca_full++;
++  goto out;
++ }
++ /* Reserve the exact rounded slot footprint in every ancestor before use. */
++ owner = cram_memcg_reserve(objcg, blocks * CA_BLOCK);
++ if (IS_ERR(owner)) {
++  ca_quota++;
++  goto out;
++ }
++ ca_attempts++;
++ if (cram_arena_fail_every && ca_attempts % cram_arena_fail_every == 0) {
++  cram_memcg_release(owner, objcg, blocks * CA_BLOCK);
++  ca_injected++;
++  goto out;
++ }
++ bitmap_set(ca->bitmap, idx, blocks);
++ e = ca_at(idx + 1);
++ e->key = folio->swap.val;
++ e->objcg = objcg;
++ e->owner = owner;
++ e->blocks = blocks;
++ e->length = length;
++ memcpy(e + 1, ca->output, length);
++ link = ca_find(e->key);
++ e->next = *link;
++ *link = idx + 1;
++ ca_used += blocks * CA_BLOCK;
++ ca_peak = max(ca_peak, ca_used);
++ ca_entries++;
++ ca_stores++;
++ atomic_long_inc(&zswap_stored_pages);
++ count_objcg_events(objcg, ZSWPOUT, 1);
++ count_vm_event(ZSWPOUT);
++ WARN_ON_ONCE(ca_header_bytes + ca_used > ca_bytes);
++ ok = true;
++out:
++ spin_unlock_irqrestore(&ca_lock, flags);
++ if (!ok)
++  obj_cgroup_put(objcg);
++ return ok;
++}
++static int ca_load(struct folio *folio)
++{
++ u32 *link;
++ struct ca_entry *e;
++ void *output;
++ int length;
++ unsigned long flags;
++ if (!ca)
++  return -ENOENT;
++ if (folio_test_large(folio)) {
++  folio_unlock(folio);
++  return -EINVAL;
++ }
++ spin_lock_irqsave(&ca_lock, flags);
++ link = ca_find(folio->swap.val);
++ if (!*link) {
++  spin_unlock_irqrestore(&ca_lock, flags);
++  return -ENOENT;
++ }
++ e = ca_at(*link);
++ output = kmap_local_folio(folio, 0);
++ length = LZ4_decompress_safe((void *)(e + 1), output, e->length, PAGE_SIZE);
++ kunmap_local(output);
++ if (length != PAGE_SIZE) {
++  spin_unlock_irqrestore(&ca_lock, flags);
++  folio_unlock(folio);
++  return -EIO;
++ }
++ flush_dcache_folio(folio);
++ folio_mark_uptodate(folio);
++ folio_mark_dirty(folio);
++ count_objcg_events(e->objcg, ZSWPIN, 1);
++ count_vm_event(ZSWPIN);
++ ca_loads++;
++ ca_remove(link);
++ spin_unlock_irqrestore(&ca_lock, flags);
++ folio_unlock(folio);
++ return 0;
++}
++static void ca_swapoff(int type)
++{
++ unsigned int i;
++ unsigned long flags;
++ if (!ca)
++  return;
++ spin_lock_irqsave(&ca_lock, flags);
++ for (i = 0; i < CA_BUCKETS; i++) {
++  u32 *p = &ca->heads[i];
++  while (*p) {
++   if (swp_type((swp_entry_t){.val = ca_at(*p)->key}) == type)
++    ca_remove(p);
++   else
++    p = &ca_at(*p)->next;
++  }
++ }
++ spin_unlock_irqrestore(&ca_lock, flags);
++}
++static int ca_setup(void)
++{
++ unsigned long bytes = (unsigned long)cram_arena_mb << 20;
++ if (PAGE_SIZE != 4096 || !is_power_of_2(bytes) || bytes > CA_MAX_BYTES ||
++     bytes < (1U << 20) || get_order(bytes) > MAX_PAGE_ORDER)
++  return -EINVAL;
++ ca = alloc_pages_exact(bytes, GFP_KERNEL | __GFP_ZERO);
++ if (!ca)
++  return -ENOMEM;
++ ca_bytes = bytes;
++ ca_header_bytes = ALIGN(sizeof(*ca), CA_BLOCK);
++ ca_blocks = (bytes - ca_header_bytes) / CA_BLOCK;
++ pr_info("CRAM arena: backing=%llu overhead=%llu capacity=%u block=%u codec=lz4\n",
++         ca_bytes, ca_header_bytes, ca_blocks * CA_BLOCK, CA_BLOCK);
++ return 0;
++}
++static void ca_debugfs(struct dentry *root)
++{
++#define CA_STAT(name, variable) debugfs_create_u64(name, 0444, root, &variable)
++ CA_STAT("arena_backing_bytes", ca_bytes);
++ CA_STAT("arena_overhead_bytes", ca_header_bytes);
++ CA_STAT("arena_used_bytes", ca_used);
++ CA_STAT("arena_peak_bytes", ca_peak);
++ CA_STAT("arena_entries", ca_entries);
++ CA_STAT("arena_stores", ca_stores);
++ CA_STAT("arena_loads", ca_loads);
++ CA_STAT("arena_reject_full", ca_full);
++ CA_STAT("arena_reject_quota", ca_quota);
++ CA_STAT("arena_reject_poor", ca_poor);
++ CA_STAT("arena_injected_failures", ca_injected);
++#undef CA_STAT
++}
+--- /dev/null
++++ b/mm/cram-memcg-reservation.inc
+@@ -0,0 +1,72 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Reservation counters are independent of batched zswap accounting. */
++static DEFINE_SPINLOCK(cram_budget_lock);
++struct mem_cgroup *cram_memcg_reserve(struct obj_cgroup *objcg, unsigned long bytes)
++{
++ struct mem_cgroup *owner = get_mem_cgroup_from_objcg(objcg), *m;
++ unsigned long flags;
++ bool allowed = true;
++ if (mem_cgroup_is_root(owner)) {
++  mem_cgroup_put(owner);
++  return ERR_PTR(-EPERM);
++ }
++ spin_lock_irqsave(&cram_budget_lock, flags);
++ for (m = owner; m; m = parent_mem_cgroup(m)) {
++  unsigned long limit = READ_ONCE(m->zswap_max);
++  if (limit != PAGE_COUNTER_MAX &&
++      (bytes > (limit << PAGE_SHIFT) || m->cram_reserved > (limit << PAGE_SHIFT) - bytes)) {
++   allowed = false;
++   break;
++  }
++ }
++ if (allowed)
++  for (m = owner; m; m = parent_mem_cgroup(m))
++   m->cram_reserved += bytes;
++ spin_unlock_irqrestore(&cram_budget_lock, flags);
++ if (!allowed) {
++  mem_cgroup_put(owner);
++  return ERR_PTR(-ENOSPC);
++ }
++ /* NOWAIT: never enter direct reclaim while the arena spinlock is held. */
++ if (obj_cgroup_charge(objcg, GFP_NOWAIT | __GFP_NOWARN, bytes)) {
++  spin_lock_irqsave(&cram_budget_lock, flags);
++  for (m = owner; m; m = parent_mem_cgroup(m))
++   m->cram_reserved -= bytes;
++  spin_unlock_irqrestore(&cram_budget_lock, flags);
++  mem_cgroup_put(owner);
++  return ERR_PTR(-ENOMEM);
++ }
++ rcu_read_lock();
++ m = obj_cgroup_memcg(objcg);
++ mod_memcg_state(m, MEMCG_ZSWAP_B, bytes);
++ mod_memcg_state(m, MEMCG_ZSWAPPED, 1);
++ rcu_read_unlock();
++ return owner;
++}
++void cram_memcg_release(struct mem_cgroup *owner, struct obj_cgroup *objcg,
++                        unsigned long bytes)
++{
++ struct mem_cgroup *m;
++ unsigned long flags;
++ obj_cgroup_uncharge(objcg, bytes);
++ rcu_read_lock();
++ m = obj_cgroup_memcg(objcg);
++ mod_memcg_state(m, MEMCG_ZSWAP_B, -bytes);
++ mod_memcg_state(m, MEMCG_ZSWAPPED, -1);
++ rcu_read_unlock();
++ spin_lock_irqsave(&cram_budget_lock, flags);
++ for (m = owner; m; m = parent_mem_cgroup(m)) {
++  WARN_ON_ONCE(m->cram_reserved < bytes);
++  m->cram_reserved -= bytes;
++ }
++ spin_unlock_irqrestore(&cram_budget_lock, flags);
++ mem_cgroup_put(owner);
++}
++static u64 cram_reserved_read(struct cgroup_subsys_state *css, struct cftype *cft)
++{
++ unsigned long flags, value;
++ spin_lock_irqsave(&cram_budget_lock, flags);
++ value = mem_cgroup_from_css(css)->cram_reserved;
++ spin_unlock_irqrestore(&cram_budget_lock, flags);
++ return value;
++}

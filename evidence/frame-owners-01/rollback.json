@@ -1,0 +1,12 @@
+{
+  "startup_guard_removed": true,
+  "stock_recovery_retained": true,
+  "stock_driver_sha256": "b4ce84fb02061bf1c97ee0019562c6778f1165fd2ca968333d700abc0ae51ca8",
+  "offline_frames": 0,
+  "cram_enabled": "Y",
+  "arena_mib": 4,
+  "host_limit_mib": 114485,
+  "minimum_percent": 50,
+  "balloon_pages": 0,
+  "target_pages": 0
+}

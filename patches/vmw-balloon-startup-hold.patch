@@ -1,0 +1,29 @@
+--- a/targeted/vmw_balloon.c
++++ b/targeted/vmw_balloon.c
+@@ -680,6 +680,8 @@
+  * Binary input is a strictly increasing array of <=8192 native-endian u64 PFNs.
+  * No frame is offered until alloc_contig_range has established ownership.
+  */
++static bool cram_hold = true;
++module_param(cram_hold, bool, 0600);
+ static DEFINE_MUTEX(cram_pool_lock);
+ static LIST_HEAD(cram_pool);
+ static unsigned long cram_pending;
+@@ -718,7 +720,7 @@
+ 	struct page *page = NULL;
+ 
+ 	mutex_lock(&cram_pool_lock);
+-	if (!list_empty(&cram_pool)) {
++	if (!READ_ONCE(cram_hold) && !list_empty(&cram_pool)) {
+ 		page = list_first_entry(&cram_pool, struct page, lru);
+ 		list_del(&page->lru);
+ 		cram_pending--;
+@@ -749,7 +751,7 @@
+ 		}
+ 	}
+ 	down_write(&b->conf_sem);
+-	if (atomic64_read(&b->size) || b->target || READ_ONCE(cram_offer_until)) {
++	if (atomic64_read(&b->size) || !READ_ONCE(cram_hold) || READ_ONCE(cram_offer_until)) {
+ 		ret = -EBUSY;
+ 		goto unlock;
+ 	}

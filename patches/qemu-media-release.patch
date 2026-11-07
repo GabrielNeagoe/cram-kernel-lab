@@ -1,0 +1,229 @@
+--- a/hw/cxl/compressed_type3/ct3.c
++++ b/hw/cxl/compressed_type3/ct3.c
+@@ -26,6 +26,7 @@
+ #include "ct3.h"
+ #include "qemu/units.h"
+ #include "ct3-store.inc"
++#include "ct3-store-release.inc"
+ #include "ct3-allocator-diagnostics.inc"
+ 
+ #define TYPE_CXL_CT3 "cxl-ct3"
+@@ -43,91 +44,7 @@
+  *   Class 1 / Subclass 0: Sanitize  — synchronous fill with 0xF
+  *   Class 1 / Subclass 1: Zero      — synchronous fill with 0x0
+  */
+-static CXLRetCode cmd_ct3_media_operations(const struct cxl_cmd *cmd,
+-                                           uint8_t *payload_in,
+-                                           size_t len_in,
+-                                           uint8_t *payload_out,
+-                                           size_t *len_out,
+-                                           CXLCCI *cci)
+-{
+-    CXLType3Dev *ct3d = CXL_TYPE3(cci->d);
+-    MemTxAttrs mem_attrs = {};
+-
+-    struct QEMU_PACKED {
+-        uint8_t media_operation_class;
+-        uint8_t media_operation_subclass;
+-        uint8_t rsvd[2];
+-        uint32_t dpa_range_count;
+-        struct {
+-            uint64_t starting_dpa;
+-            uint64_t length;
+-        } dpa_range_list[];
+-    } *input = (void *)payload_in;
+-
+-    uint8_t op_class, op_subclass;
+-    uint32_t dpa_range_count;
+-    uint8_t fill_value;
+-    uint64_t vmr_size;
+-
+-    if (len_in < sizeof(*input)) {
+-        return CXL_MBOX_INVALID_PAYLOAD_LENGTH;
+-    }
+-
+-    op_class = input->media_operation_class;
+-    op_subclass = input->media_operation_subclass;
+-    dpa_range_count = input->dpa_range_count;
+-
+-    /* Discovery: return unsupported (optional, driver doesn't need it) */
+-    if (op_class == 0x00 && op_subclass == 0x00) {
+-        return CXL_MBOX_UNSUPPORTED;
+-    }
+-
+-    /* Only handle sanitize class */
+-    if (op_class != 0x01) {
+-        return CXL_MBOX_UNSUPPORTED;
+-    }
+-
+-    switch (op_subclass) {
+-    case 0x00: /* Sanitize */
+-        fill_value = 0xF;
+-        break;
+-    case 0x01: /* Zero */
+-        fill_value = 0x0;
+-        break;
+-    default:
+-        return CXL_MBOX_UNSUPPORTED;
+-    }
+-
+-    if (dpa_range_count == 0) {
+-        *len_out = 0;
+-        return CXL_MBOX_SUCCESS;
+-    }
+-
+-    if (len_in < sizeof(*input) + dpa_range_count * sizeof(input->dpa_range_list[0])) {
+-        return CXL_MBOX_INVALID_PAYLOAD_LENGTH;
+-    }
+-
+-    vmr_size = 0;
+-    if (ct3d->hostvmem) {
+-        MemoryRegion *mr = host_memory_backend_get_memory(ct3d->hostvmem);
+-        vmr_size = memory_region_size(mr);
+-    }
+-
+-    for (uint32_t i = 0; i < dpa_range_count; i++) {
+-        uint64_t dpa = input->dpa_range_list[i].starting_dpa;
+-        uint64_t length = input->dpa_range_list[i].length;
+-
+-        if (dpa + length > vmr_size) {
+-            return CXL_MBOX_INVALID_PA;
+-        }
+-
+-        address_space_set(&ct3d->hostvmem_as, dpa, fill_value,
+-                          length, mem_attrs);
+-    }
+-
+-    *len_out = 0;
+-    return CXL_MBOX_SUCCESS;
+-}
++#include "ct3-media-release.inc"
+ 
+ static const struct cxl_cmd cxl_cmd_set_ct3[256][256] = {
+     [SANITIZE][MEDIA_OPERATIONS] = {
+--- /dev/null
++++ b/hw/cxl/compressed_type3/ct3-store-release.inc
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later
++ * Device-side primitive only: caller must own the range and hold the BQL.
++ * Deliberately not wired to the kernel's simulated trim callback.
++ */
++static bool store_release(CXLCT3State *s, uint64_t address, uint64_t length)
++{
++    CT3Store *store = s->store;
++    uint64_t first, count, i;
++
++    /* Subtraction avoids wrapping address + length. Reject before mutation. */
++    if (!store || address > s->vmem_size ||
++        length > s->vmem_size - address ||
++        address % STORE_PAGE || length % STORE_PAGE) {
++        return false;
++    }
++    first = address / STORE_PAGE;
++    count = length / STORE_PAGE;
++    if (first > store->pages || count > store->pages - first) {
++        return false;
++    }
++    for (i = 0; i < STORE_CACHE; i++) {
++        StoreCache *cache = &store->cache[i];
++        if (cache->valid && cache->page >= first &&
++            cache->page - first < count) {
++            /* Never flush discarded dirty bytes back into the store. */
++            cache->valid = false;
++            cache->dirty = false;
++        }
++    }
++    for (i = first; i < first + count; i++) {
++        StoreBlock *block = &store->blocks[i];
++        s->store_payload_bytes -= block->length;
++        g_free(block->data);
++        block->data = NULL;
++        block->length = 0;
++    }
++    return true;
++}
+--- /dev/null
++++ b/hw/cxl/compressed_type3/ct3-media-release.inc
+@@ -0,0 +1,82 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++static bool store_fill(CXLCT3State *s, uint64_t address, uint64_t length,
++                       uint8_t value)
++{
++    if (address > s->vmem_size || length > s->vmem_size - address) {
++        return false;
++    }
++    while (length) {
++        StoreCache *cache = store_get(s, address / STORE_PAGE);
++        size_t offset = address % STORE_PAGE;
++        size_t chunk = MIN(length, STORE_PAGE - offset);
++        if (!cache) {
++            return false;
++        }
++        memset(cache->data + offset, value, chunk);
++        cache->dirty = true;
++        address += chunk;
++        length -= chunk;
++    }
++    return true;
++}
++
++static CXLRetCode cmd_ct3_media_operations(const struct cxl_cmd *cmd,
++                                         uint8_t *payload_in, size_t len_in,
++                                         uint8_t *payload_out, size_t *len_out,
++                                         CXLCCI *cci)
++{
++    CXLCT3State *s = CXL_CT3(cci->d);
++    CXLType3Dev *ct3d = &s->ct3d;
++    MemTxAttrs attrs = {};
++    uint32_t count;
++    uint64_t capacity = 0;
++    uint8_t fill;
++
++    *len_out = 0;
++    if (len_in < 8) {
++        return CXL_MBOX_INVALID_PAYLOAD_LENGTH;
++    }
++    if (payload_in[0] != 1 || payload_in[1] > 1) {
++        return CXL_MBOX_UNSUPPORTED;
++    }
++    fill = payload_in[1] == 1 ? 0 : 0x0f;
++    count = ldl_le_p(payload_in + 4);
++    if (count > (len_in - 8) / 16) {
++        return CXL_MBOX_INVALID_PAYLOAD_LENGTH;
++    }
++    if (ct3d->hostvmem) {
++        capacity = memory_region_size(
++            host_memory_backend_get_memory(ct3d->hostvmem));
++    }
++    /* Validate the complete batch before changing even its first range. */
++    for (uint32_t i = 0; i < count; i++) {
++        uint64_t dpa = ldq_le_p(payload_in + 8 + (size_t)i * 16);
++        uint64_t length = ldq_le_p(payload_in + 16 + (size_t)i * 16);
++        if (dpa > capacity || length > capacity - dpa) {
++            return CXL_MBOX_INVALID_PA;
++        }
++    }
++    for (uint32_t i = 0; i < count; i++) {
++        uint64_t dpa = ldq_le_p(payload_in + 8 + (size_t)i * 16);
++        uint64_t length = ldq_le_p(payload_in + 16 + (size_t)i * 16);
++        if (!length) {
++            continue;
++        }
++        if (s->store && !fill && !(dpa % STORE_PAGE) &&
++            !(length % STORE_PAGE)) {
++            if (!store_release(s, dpa, length)) {
++                return CXL_MBOX_INTERNAL_ERROR;
++            }
++        } else if (s->store) {
++            /* Internal mailbox writes must not reenter the device's IO MR. */
++            if (!store_fill(s, dpa, length, fill)) {
++                return CXL_MBOX_INTERNAL_ERROR;
++            }
++        } else if (address_space_set(&ct3d->hostvmem_as, dpa, fill,
++                                     length, attrs) != MEMTX_OK) {
++            /* Earlier ranges may have completed; never report false success. */
++            return CXL_MBOX_INTERNAL_ERROR;
++        }
++    }
++    return CXL_MBOX_SUCCESS;
++}

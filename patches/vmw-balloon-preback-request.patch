@@ -1,0 +1,68 @@
+--- a/guarded/vmw_balloon.c
++++ b/guarded/vmw_balloon.c
+@@ -728,6 +728,38 @@
+ 	mutex_unlock(&cram_pool_lock);
+ 	return page;
+ }
++
++static int cram_preback_set(const char *val, const struct kernel_param *kp)
++{
++    unsigned long i;
++    int err = 0;
++    if (!sysfs_streq(val, "1"))
++        return -EINVAL;
++    down_write(&balloon.conf_sem);
++    mutex_lock(&cram_pool_lock);
++    if (!READ_ONCE(cram_hold) || atomic64_read(&balloon.size) ||
++        !cram_pending || cram_pending != cram_acquired || cram_pending > 8192) {
++        err = -EBUSY;
++        goto out;
++    }
++    for (i = cram_pending; i < ((4UL << 30) >> PAGE_SHIFT); i++) {
++        struct page *page = alloc_page(GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN);
++        if (!page) {
++            err = -ENOMEM;
++            break;
++        }
++        memset64(page_address(page), 0x15a07abc00000000ULL + i, PAGE_SIZE / 8);
++        list_add_tail(&page->lru, &cram_pool);
++        cram_pending++;
++        cond_resched();
++    }
++out:
++    mutex_unlock(&cram_pool_lock);
++    up_write(&balloon.conf_sem);
++    return err;
++}
++static const struct kernel_param_ops cram_preback_ops = { .set = cram_preback_set };
++module_param_cb(cram_preback, &cram_preback_ops, NULL, 0200);
+ 
+ static ssize_t cram_frames_write(struct file *file, const char __user *buf,
+ 				size_t len, loff_t *pos)
+@@ -1131,12 +1163,8 @@
+ 	int64_t size, target;
+ 
+ 	size = atomic64_read(&b->size);
+-	target = READ_ONCE(b->target);
+-	if (!target) {
+-		unsigned long until = READ_ONCE(cram_offer_until);
+-		if (until && time_before(jiffies, until))
+-			target = size + READ_ONCE(cram_pending);
+-	}
++	target = READ_ONCE(cram_hold) ? 0 : min_t(unsigned long,
++		READ_ONCE(b->target), (4UL << 30) >> PAGE_SHIFT);
+ 
+ 	/*
+ 	 * We must cast first because of int sizes
+@@ -1144,11 +1172,6 @@
+ 	 */
+ 
+ 	if (b->reset_required)
+-		return 0;
+-
+-	/* consider a 2MB slack on deflate, unless the balloon is emptied */
+-	if (target < size && target != 0 &&
+-	    size - target < vmballoon_page_in_frames(VMW_BALLOON_2M_PAGE))
+ 		return 0;
+ 
+ 	/* If an out-of-memory recently occurred, inflation is disallowed. */

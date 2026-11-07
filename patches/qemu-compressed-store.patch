@@ -1,0 +1,320 @@
+diff --git a/hw/cxl/compressed_type3/ct3-store.inc b/hw/cxl/compressed_type3/ct3-store.inc
+new file mode 100644
+index 0000000..2c560e7
+--- /dev/null
++++ b/hw/cxl/compressed_type3/ct3-store.inc
+@@ -0,0 +1,211 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later
++ * Experimental trapped-access compressed backing store. Requires the BQL.
++ * No migration or hot-unplug support is claimed by this prototype.
++ */
++#include <zstd.h>
++#include "migration/blocker.h"
++#define STORE_PAGE 4096
++#define STORE_CACHE 64
++typedef struct StoreBlock {
++    uint8_t *data;
++    uint32_t length;
++} StoreBlock;
++typedef struct StoreCache {
++    uint8_t data[STORE_PAGE];
++    uint64_t page, age;
++    bool valid, dirty;
++} StoreCache;
++typedef struct CT3Store {
++    StoreBlock *blocks;
++    StoreCache cache[STORE_CACHE];
++    ZSTD_CCtx *context;
++    uint64_t pages, clock;
++    Error *migration_blocker;
++} CT3Store;
++
++static bool store_flush(CXLCT3State *s, StoreCache *cache)
++{
++    CT3Store *store = s->store;
++    StoreBlock *block = &store->blocks[cache->page];
++    uint8_t packed[8192];
++    uint8_t *replacement;
++    size_t length;
++    if (!cache->valid || !cache->dirty) {
++        return true;
++    }
++    length = ZSTD_compressCCtx(store->context, packed, sizeof(packed),
++                               cache->data, STORE_PAGE, 1);
++    if (ZSTD_isError(length)) {
++        return false;
++    }
++    length = MIN(length, STORE_PAGE);
++    replacement = g_try_malloc(length);
++    if (!replacement) {
++        return false;
++    }
++    memcpy(replacement, length == STORE_PAGE ? cache->data : packed, length);
++    s->store_payload_bytes -= block->length;
++    g_free(block->data);
++    block->data = replacement;
++    block->length = length;
++    s->store_payload_bytes += length;
++    cache->dirty = false;
++    return true;
++}
++
++static StoreCache *store_get(CXLCT3State *s, uint64_t page)
++{
++    CT3Store *store = s->store;
++    StoreCache *victim = &store->cache[0];
++    StoreBlock *block;
++    unsigned int i;
++    if (page >= store->pages) {
++        return NULL;
++    }
++    for (i = 0; i < STORE_CACHE; i++) {
++        StoreCache *cache = &store->cache[i];
++        if (cache->valid && cache->page == page) {
++            cache->age = ++store->clock;
++            return cache;
++        }
++        if (!cache->valid || (victim->valid && cache->age < victim->age)) {
++            victim = cache;
++        }
++    }
++    if (!store_flush(s, victim)) {
++        return NULL;
++    }
++    block = &store->blocks[page];
++    /* An invalid cache line must never expose a partial decode. */
++    victim->valid = false;
++    if (!block->data) {
++        memset(victim->data, 0, STORE_PAGE);
++    } else if (block->length == STORE_PAGE) {
++        memcpy(victim->data, block->data, STORE_PAGE);
++    } else if (ZSTD_decompress(victim->data, STORE_PAGE,
++                               block->data, block->length) != STORE_PAGE) {
++        return NULL;
++    }
++    victim->page = page;
++    victim->valid = true;
++    victim->dirty = false;
++    victim->age = ++store->clock;
++    s->store_cache_misses++;
++    return victim;
++}
++
++static MemTxResult store_read(void *opaque, hwaddr address, uint64_t *value,
++                              unsigned int size, MemTxAttrs attrs)
++{
++    CXLCT3State *s = opaque;
++    StoreCache *cache = NULL;
++    unsigned int i;
++    *value = 0;
++    if (address >= s->vmem_size || size > s->vmem_size - address) {
++        return MEMTX_ERROR;
++    }
++    for (i = 0; i < size; i++) {
++        if (!cache || (address + i) % STORE_PAGE == 0) {
++            cache = store_get(s, (address + i) / STORE_PAGE);
++        }
++        if (!cache) {
++            return MEMTX_ERROR;
++        }
++        *value |= (uint64_t)cache->data[(address + i) % STORE_PAGE] << (8 * i);
++    }
++    s->store_read_ops++;
++    return MEMTX_OK;
++}
++
++static MemTxResult store_write(void *opaque, hwaddr address, uint64_t value,
++                               unsigned int size, MemTxAttrs attrs)
++{
++    CXLCT3State *s = opaque;
++    StoreCache *cache = NULL;
++    unsigned int i;
++    if (address >= s->vmem_size || size > s->vmem_size - address) {
++        return MEMTX_ERROR;
++    }
++    for (i = 0; i < size; i++) {
++        if (!cache || (address + i) % STORE_PAGE == 0) {
++            cache = store_get(s, (address + i) / STORE_PAGE);
++        }
++        if (!cache) {
++            return MEMTX_ERROR;
++        }
++        cache->data[(address + i) % STORE_PAGE] = value >> (8 * i);
++        cache->dirty = true;
++    }
++    s->store_write_ops++;
++    return MEMTX_OK;
++}
++
++static const MemoryRegionOps store_ops = {
++    .read_with_attrs = store_read,
++    .write_with_attrs = store_write,
++    .endianness = DEVICE_LITTLE_ENDIAN,
++    .valid = { .min_access_size = 1, .max_access_size = 8, .unaligned = true },
++    .impl = { .min_access_size = 1, .max_access_size = 8, .unaligned = true },
++};
++
++static bool store_init(CXLCT3State *s, Error **errp)
++{
++    CT3Store *store;
++    if (!s->vmem_size || s->vmem_size % STORE_PAGE || s->vmem_size > 256 * MiB) {
++        error_setg(errp, "Experimental compressed store requires at most 256 MiB, page aligned");
++        return false;
++    }
++    store = g_try_new0(CT3Store, 1);
++    if (!store) {
++        error_setg(errp, "Cannot allocate compressed store cache");
++        return false;
++    }
++    store->pages = s->vmem_size / STORE_PAGE;
++    store->blocks = g_try_new0(StoreBlock, store->pages);
++    store->context = ZSTD_createCCtx();
++    if (!store->blocks || !store->context) {
++        g_free(store->blocks);
++        ZSTD_freeCCtx(store->context);
++        g_free(store);
++        error_setg(errp, "Cannot allocate compressed store metadata");
++        return false;
++    }
++    error_setg(&store->migration_blocker,
++               "Experimental compressed CXL store has no migration format");
++    if (migrate_add_blocker(&store->migration_blocker, errp) < 0) {
++        g_free(store->blocks);
++        ZSTD_freeCCtx(store->context);
++        g_free(store);
++        return false;
++    }
++    s->store = store;
++    memory_region_init_io(&s->store_mr, OBJECT(s), &store_ops, s,
++                         "ct3-compressed-store", s->vmem_size);
++    object_property_add_uint64_ptr(OBJECT(s), "store-payload-bytes",
++                                  &s->store_payload_bytes, OBJ_PROP_FLAG_READ);
++    object_property_add_uint64_ptr(OBJECT(s), "store-cache-misses",
++                                  &s->store_cache_misses, OBJ_PROP_FLAG_READ);
++    object_property_add_uint64_ptr(OBJECT(s), "store-read-ops",
++                                  &s->store_read_ops, OBJ_PROP_FLAG_READ);
++    object_property_add_uint64_ptr(OBJECT(s), "store-write-ops",
++                                  &s->store_write_ops, OBJ_PROP_FLAG_READ);
++    return true;
++}
++
++static void store_destroy(CXLCT3State *s)
++{
++    CT3Store *store = s->store;
++    uint64_t i;
++    if (!store) {
++        return;
++    }
++    object_unparent(OBJECT(&s->store_mr));
++    migrate_del_blocker(&store->migration_blocker);
++    for (i = 0; i < store->pages; i++) {
++        g_free(store->blocks[i].data);
++    }
++    g_free(store->blocks);
++    ZSTD_freeCCtx(store->context);
++    g_free(store);
++    s->store = NULL;
++}
+diff --git a/hw/cxl/compressed_type3/ct3.c b/hw/cxl/compressed_type3/ct3.c
+index d3c28b5..d25a62e 100644
+--- a/hw/cxl/compressed_type3/ct3.c
++++ b/hw/cxl/compressed_type3/ct3.c
+@@ -24,6 +24,8 @@
+ #include "hw/pci/msix.h"
+ #include "system/hostmem.h"
+ #include "ct3.h"
++#include "qemu/units.h"
++#include "ct3-store.inc"
+ 
+ #define TYPE_CXL_CT3 "cxl-ct3"
+ OBJECT_DECLARE_TYPE(CXLCT3State, CXLCT3Class, CXL_CT3)
+@@ -134,6 +136,7 @@ static const struct cxl_cmd cxl_cmd_set_ct3[256][256] = {
+ 
+ static const Property cxl_ct3_props[] = {
+     DEFINE_PROP_UINT32("ct3-ratio", CXLCT3State, ct3_ratio, ~(0)),
++    DEFINE_PROP_BOOL("ct3-compress", CXLCT3State, compress_store, false),
+ };
+ 
+ static void cxl_ct3_realize(PCIDevice *pci_dev, Error **errp)
+@@ -149,14 +152,24 @@ static void cxl_ct3_realize(PCIDevice *pci_dev, Error **errp)
+         return;
+     }
+ 
+-    /* Let the parent type3 device set up everything (incl. MSI-X) */
++    mr = host_memory_backend_get_memory(s->ct3d.hostvmem);
++    s->vmem_size = memory_region_size(mr);
++    /* Reject unsupported configurations before parent device setup. */
++    if (s->compress_store && !store_init(s, errp)) {
++        return;
++    }
++    /* Let the parent type3 device set up everything (incl. MSI-X). */
+     ct3_realize(pci_dev, errp);
+     if (*errp) {
++        store_destroy(s);
+         return;
+     }
+-
+-    mr = host_memory_backend_get_memory(s->ct3d.hostvmem);
+-    s->vmem_size = memory_region_size(mr);
++    if (s->compress_store) {
++        address_space_destroy(&s->ct3d.hostvmem_as);
++        address_space_init(&s->ct3d.hostvmem_as, &s->store_mr,
++                           "ct3-compressed-vmem");
++        s->ct3d.experimental_vmem_override = &s->store_mr;
++    }
+ }
+ 
+ static void cxl_ct3_reset(DeviceState *d)
+@@ -169,7 +182,9 @@ static void cxl_ct3_reset(DeviceState *d)
+ 
+ static void cxl_ct3_exit(PCIDevice *pci_dev)
+ {
++    CXLCT3State *s = CXL_CT3(pci_dev);
+     ct3_exit(pci_dev);
++    store_destroy(s);
+ }
+ 
+ static void cxl_ct3_class_init(ObjectClass *klass, const void *data)
+diff --git a/hw/cxl/compressed_type3/ct3.h b/hw/cxl/compressed_type3/ct3.h
+index a351464..55752cb 100644
+--- a/hw/cxl/compressed_type3/ct3.h
++++ b/hw/cxl/compressed_type3/ct3.h
+@@ -31,6 +31,11 @@ typedef struct CXLCT3State {
+ 
+     /* Properties */
+     uint32_t ct3_ratio;
++    bool compress_store;
++    void *store;
++    MemoryRegion store_mr;
++    uint64_t store_payload_bytes, store_cache_misses;
++    uint64_t store_read_ops, store_write_ops;
+ 
+     /* Cached size of volatile memory */
+     uint64_t vmem_size;
+diff --git a/hw/cxl/cxl-host.c b/hw/cxl/cxl-host.c
+index 7f43938..7a6f6a4 100644
+--- a/hw/cxl/cxl-host.c
++++ b/hw/cxl/cxl-host.c
+@@ -288,7 +288,9 @@ static void cxl_fmws_direct_passthrough_setup(CXLDirectPTState *state,
+     MemoryRegion *direct_mr;
+ 
+     if (ct3d->hostvmem) {
+-        MemoryRegion *vmr = host_memory_backend_get_memory(ct3d->hostvmem);
++        MemoryRegion *vmr = ct3d->experimental_vmem_override ?
++            ct3d->experimental_vmem_override :
++            host_memory_backend_get_memory(ct3d->hostvmem);
+ 
+         vmr_size = memory_region_size(vmr);
+         if (state->dpa_base < vmr_size) {
+diff --git a/include/hw/cxl/cxl_device.h b/include/hw/cxl/cxl_device.h
+index bb6acd2..0ad1c7b 100644
+--- a/include/hw/cxl/cxl_device.h
++++ b/include/hw/cxl/cxl_device.h
+@@ -867,6 +867,7 @@ struct CXLType3Dev {
+     /* State */
+     MemoryRegion direct_mr[CXL_HDM_DECODER_COUNT];
+     AddressSpace hostvmem_as;
++    MemoryRegion *experimental_vmem_override;
+     AddressSpace hostpmem_as;
+     CXLComponentState cxl_cstate;
+     CXLDeviceState cxl_dstate;

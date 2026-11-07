@@ -1,0 +1,24 @@
+diff --git a/hw/virtio/trace-events b/hw/virtio/trace-events
+index 658cc36..e4c8a38 100644
+--- a/hw/virtio/trace-events
++++ b/hw/virtio/trace-events
+@@ -157,3 +157,5 @@ virtio_pmem_flush_done(int type) "fsync return=%d"
+ virtio_gpio_start(void) "start"
+ virtio_gpio_stop(void) "stop"
+ virtio_gpio_set_status(uint8_t status) "0x%x"
++
++virtio_balloon_report(uint64_t gpa, uint64_t length, int status) "gpa=0x%" PRIx64 " length=0x%" PRIx64 " status=%d"
+diff --git a/hw/virtio/virtio-balloon.c b/hw/virtio/virtio-balloon.c
+index 38bf1e8..382a697 100644
+--- a/hw/virtio/virtio-balloon.c
++++ b/hw/virtio/virtio-balloon.c
+@@ -389,7 +389,8 @@ static void virtio_balloon_handle_report(VirtIODevice *vdev, VirtQueue *vq)
+                 continue;
+             }
+ 
+-            ram_block_discard_range(rb, ram_offset, size);
++            int report_status = ram_block_discard_range(rb, ram_offset, size);
++            trace_virtio_balloon_report(elem->in_addr[i], size, report_status);
+         }
+ 
+ skip_element:

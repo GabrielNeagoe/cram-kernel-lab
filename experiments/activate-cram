@@ -1,0 +1,73 @@
+#!/bin/sh
+set -eu
+
+S=/sys/bus/cxl/devices
+R=$S/region0
+E=$S/decoder2.0
+D=/sys/bus/dax/devices/dax0.0
+C=/sys/kernel/debug/cram
+
+mkdir -p /sys/kernel/debug
+[ -r "$C/nodes" ] ||
+    mount -t debugfs debugfs /sys/kernel/debug
+
+[ -e "$S/mem0" ] || {
+    echo "ERROR: CXL device missing"
+    exit 1
+}
+
+if [ ! -e "$R" ]; then
+    echo region0 > "$S/decoder0.0/create_ram_region"
+    echo ram > "$E/mode"
+    echo 0x10000000 > "$E/dpa_size"
+    echo 1 > "$R/interleave_ways"
+    echo 4096 > "$R/interleave_granularity"
+    echo 0x10000000 > "$R/size"
+    echo decoder2.0 > "$R/target0"
+    echo 1 > "$R/commit"
+fi
+
+[ "$(cat "$R/commit")" = 1 ] || exit 1
+
+[ -L "$R/driver" ] ||
+    echo region0 > /sys/bus/cxl/drivers/cxl_region/bind
+
+i=0
+while [ ! -e "$D" ] || [ ! -L "$D/driver" ]; do
+    [ "$i" -lt 30 ] || {
+        echo "ERROR: DAX timeout"
+        exit 1
+    }
+    sleep 1
+    i=$((i+1))
+done
+
+case "$(readlink "$D/driver")" in
+    */kmem) ;;
+    *) echo "ERROR: Wrong DAX driver"; exit 1 ;;
+esac
+
+case "$(cat "$D/state")" in
+    offline) echo unplugged > "$D/state" ;;
+    unplugged) ;;
+    online_movable) ;;
+    *) echo "ERROR: Unexpected DAX state"; exit 1 ;;
+esac
+
+if [ "$(cat "$D/state")" = unplugged ]; then
+    echo 1 > "$D/cram"
+    echo 3000 > "$D/cram_zratio"
+    echo online_movable > "$D/state"
+fi
+
+cat "$C/nodes"
+
+awk '
+$1==2 && $2==3000 && $3==3000 &&
+$5==0 && $6==0 && $8==1 {ok=1}
+END {exit !ok}
+' "$C/nodes"
+
+[ "$(cat "$D/state")" = online_movable ]
+
+echo "CRAM READY"

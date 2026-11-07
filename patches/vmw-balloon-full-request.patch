@@ -1,0 +1,43 @@
+--- a/guarded/vmw_balloon.c
++++ b/guarded/vmw_balloon.c
+@@ -848,7 +848,13 @@
+ 				page = alloc_pages(__GFP_HIGHMEM|__GFP_NOWARN|
+ 					__GFP_NOMEMALLOC, VMW_BALLOON_2M_ORDER);
+ 			else
++				{
+ 				page = cram_pool_take();
++				if (!page && !READ_ONCE(cram_hold) &&
++				    atomic64_read(&b->size) + ctl->n_refused_pages + i +
++				    READ_ONCE(cram_pending) < ((4UL << 30) >> PAGE_SHIFT))
++					page = balloon_page_alloc();
++			}
+ 
+ 			vmballoon_stats_page_inc(b, VMW_BALLOON_PAGE_STAT_ALLOC,
+ 						 ctl->page_size);
+@@ -1131,12 +1137,8 @@
+ 	int64_t size, target;
+ 
+ 	size = atomic64_read(&b->size);
+-	target = READ_ONCE(b->target);
+-	if (!target) {
+-		unsigned long until = READ_ONCE(cram_offer_until);
+-		if (until && time_before(jiffies, until))
+-			target = size + READ_ONCE(cram_pending);
+-	}
++	target = READ_ONCE(cram_hold) ? 0 : min_t(unsigned long,
++		READ_ONCE(b->target), (4UL << 30) >> PAGE_SHIFT);
+ 
+ 	/*
+ 	 * We must cast first because of int sizes
+@@ -1144,11 +1146,6 @@
+ 	 */
+ 
+ 	if (b->reset_required)
+-		return 0;
+-
+-	/* consider a 2MB slack on deflate, unless the balloon is emptied */
+-	if (target < size && target != 0 &&
+-	    size - target < vmballoon_page_in_frames(VMW_BALLOON_2M_PAGE))
+ 		return 0;
+ 
+ 	/* If an out-of-memory recently occurred, inflation is disallowed. */

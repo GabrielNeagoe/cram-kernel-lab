@@ -1,0 +1,22 @@
+{
+  "windows_build": 26300,
+  "provider": "Microsoft-Windows-Kernel-Memory",
+  "keyword": "0x200",
+  "first_pages_released": 4096,
+  "second_pages_allocated": 16384,
+  "second_owner_attempts": 1,
+  "distinct_owner_processes": true,
+  "shared_frame_numbers": 925,
+  "elapsed_ms_between_release_confirmation_and_second_allocation_observation": 7.542,
+  "reported_events_lost": 0,
+  "kernel_memory_event_ids": [
+    11,
+    14,
+    11,
+    14
+  ],
+  "kernel_memory_records_in_test_process_context": 0,
+  "independently_identified_frame_transfers": 0,
+  "observer_passed": false,
+  "vm_trial_started": false
+}
