@@ -28,9 +28,11 @@
 
 - [x] Measure guest headroom and arena use at the first failed capacity point and test reversible byte shuffle before LZ4. [Byte-shuffle trial](byte-shuffle.md)
 
+- [x] Measure usable capacity, process CPU and p99 database-page fault latency for four concurrent SQLite searches on full Ubuntu boots. [SQLite application trial](sqlite-capacity.md)
+
 ## Next tests
 
 1. Alternate the presence of the RAMMap hold export over repeated fresh-boot pairs while keeping other watchers fixed. Record actual host requests and mark any ownership differences already present before the hold.
 2. Repeat the paired run on fresh boots and report the distribution of observation gaps and owner changes. Use the same 4 GiB ceiling, matched control, workload readback and verified rollback.
 3. Quantify net Windows RAM savings independently of individual frame reuse. Compare host-wide accounting across repeated trials and report variability.
-4. Confirm any 2× capacity gain with a representative application on the full Ubuntu boot before changing the deployed 4 MiB configuration.
+4. Test a writable application under organic memory pressure before changing the deployed 4 MiB configuration.

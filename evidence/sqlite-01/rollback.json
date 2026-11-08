@@ -1,0 +1,9 @@
+{
+  "deployed_arena_mib": 4,
+  "online_vcpus": 8,
+  "zswap_enabled": true,
+  "normal_swap_active": true,
+  "stock_kernel_present": true,
+  "temporary_files_removed": true,
+  "one_shot_pending": false
+}
