@@ -89,8 +89,9 @@ def compare_profile(boots, profile, mode):
     }
 
 
-def summarize(directory, demand=False):
-    modes = ("off", "lz4", "demand") if demand else MODES
+def summarize(directory, demand=False, modes=None):
+    if modes is None:
+        modes = ("off", "lz4", "demand") if demand else MODES
     result, totals = {}, []
     for mode in modes:
         boots = [json.loads((directory / f"{mode}{i}.json").read_text()) for i in (1, 2)]
@@ -100,12 +101,12 @@ def summarize(directory, demand=False):
                 backing = boot["backing"]
                 cap = boot["config"]["arena_bytes"]
                 idle = backing["idle_bytes"]
-                assert idle == (boot["config"]["arena_overhead_bytes"] if mode == "demand" else cap)
+                assert idle == (boot["config"]["arena_overhead_bytes"] if mode in {"demand", "indexed"} else cap)
                 assert idle <= backing["peak_bytes"] <= cap
                 for r in boot.values():
                     if r.get("status") == "pass":
                         assert idle <= r["arena_after_fill_bytes"] <= backing["peak_bytes"]
-                        if mode == "demand":
+                        if mode in {"demand", "indexed"}:
                             assert r["arena_after_fill_bytes"] > idle
             totals.append(boot["config"]["memtotal_kib"])
         result[mode] = {p: compare_profile(boots, p, mode) for p in PROFILES}

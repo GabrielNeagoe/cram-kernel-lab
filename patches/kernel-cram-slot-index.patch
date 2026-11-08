@@ -1,0 +1,207 @@
+--- a/mm/cram-arena.inc
++++ b/mm/cram-arena.inc
+@@ -21,6 +21,10 @@
+ #define CA_SLOTS (CA_CHUNK_BYTES / CA_BLOCK)
+ static bool cram_demand;
+ module_param(cram_demand, bool, 0444);
++static bool cram_index;
++module_param(cram_index, bool, 0444);
++static bool ca_profiling;
++static u64 ca_search_ns, ca_codec_ns, ca_hash_ns, ca_index_ns;
+ static void **ca_chunks;
+ static u64 ca_resident, ca_resident_peak, ca_grow_fail;
+ static zstd_cctx *ca_cctx;
+@@ -46,6 +50,61 @@
+ static u64 ca_stores, ca_loads, ca_full, ca_quota, ca_poor, ca_injected, ca_attempts;
+ static unsigned int ca_blocks;
+ 
++/* Rows name chunks that can fit an entry of exactly 1..CA_MAX_RUN slots. */
++#define CA_MAX_RUN DIV_ROUND_UP(sizeof(struct ca_entry) + PAGE_SIZE - 1, CA_BLOCK)
++static unsigned long *ca_fit;
++static unsigned int ca_row_words;
++
++static inline u64 ca_tick(void)
++{
++ return READ_ONCE(ca_profiling) ? ktime_get_ns() : 0;
++}
++
++/* All timed paths and index updates execute under ca_lock. */
++static inline void ca_elapsed(u64 start, u64 *counter)
++{
++ if (start)
++  *counter += ktime_get_ns() - start;
++}
++
++static void ca_update_fit(unsigned int chunk)
++{
++ unsigned long available = ~ca->bitmap[chunk];
++ unsigned int run;
++ u64 start = ca_tick();
++
++ for (run = 0; run < CA_MAX_RUN; run++) {
++  unsigned long *row = ca_fit + run * ca_row_words;
++  if (available)
++   __set_bit(chunk, row);
++  else
++   __clear_bit(chunk, row);
++  available &= available << 1;
++ }
++ ca_elapsed(start, &ca_index_ns);
++}
++
++static unsigned int ca_slot(unsigned int blocks)
++{
++ unsigned int idx = 0;
++ if (cram_index) {
++  unsigned int chunks = ca_blocks / CA_SLOTS;
++  unsigned long *row = ca_fit + (blocks - 1) * ca_row_words;
++  unsigned int chunk = find_first_bit(row, chunks);
++  if (chunk >= chunks)
++   return ca_blocks;
++  /* Index rows guarantee a suitable run within this chunk. */
++  idx = chunk * CA_SLOTS;
++  return bitmap_find_next_zero_area(ca->bitmap, idx + CA_SLOTS, idx, blocks, 0);
++ }
++ for (;;) {
++  idx = bitmap_find_next_zero_area(ca->bitmap, ca_blocks, idx, blocks, 0);
++  if (idx >= ca_blocks || !cram_demand || idx % CA_SLOTS + blocks <= CA_SLOTS)
++   return idx;
++  idx = round_up(idx + 1, CA_SLOTS);
++ }
++}
++
+ static struct ca_entry *ca_at(u32 slot)
+ {
+  if (cram_demand)
+@@ -54,9 +113,11 @@
+ }
+ static u32 *ca_find(unsigned long key)
+ {
++ u64 start = ca_tick();
+  u32 *p = &ca->heads[hash_long(key, 10)];
+  while (*p && ca_at(*p)->key != key)
+   p = &ca_at(*p)->next;
++ ca_elapsed(start, &ca_hash_ns);
+  return p;
+ }
+ /* ca_lock serializes lookup, quota reservation, publication and reclamation. */
+@@ -69,6 +130,8 @@
+  cram_memcg_release(e->owner, e->objcg, blocks * CA_BLOCK);
+  obj_cgroup_put(e->objcg);
+  bitmap_clear(ca->bitmap, slot - 1, blocks);
++ if (cram_index)
++  ca_update_fit((slot - 1) / CA_SLOTS);
+  if (cram_demand) {
+   unsigned int chunk = (slot - 1) / CA_SLOTS;
+   unsigned int first = chunk * CA_SLOTS;
+@@ -105,6 +168,7 @@
+  u32 *link;
+  long i;
+  unsigned long flags;
++ u64 start;
+  bool ok = false;
+  /* Reject large folios and remove every stale partial entry before disk IO. */
+  if (!ca || !zswap_enabled || folio_test_large(folio)) {
+@@ -121,6 +185,7 @@
+  link = ca_find(folio->swap.val);
+  if (*link)
+   ca_remove(link);
++ start = ca_tick();
+  input = kmap_local_folio(folio, 0);
+  if (cram_zstd1) {
+   size_t n = zstd_compress_cctx(ca_cctx, ca->output, PAGE_SIZE - 1,
+@@ -131,19 +196,15 @@
+                                 ca->workspace);
+  }
+  kunmap_local(input);
++ ca_elapsed(start, &ca_codec_ns);
+  if (length <= 0) {
+   ca_poor++;
+   goto out;
+  }
+  blocks = DIV_ROUND_UP(sizeof(*e) + length, CA_BLOCK);
+- idx = 0;
+- for (;;) {
+-  idx = bitmap_find_next_zero_area(ca->bitmap, ca_blocks, idx, blocks, 0);
+-  if (idx >= ca_blocks || !cram_demand ||
+-      idx % CA_SLOTS + blocks <= CA_SLOTS)
+-   break;
+-  idx = round_up(idx + 1, CA_SLOTS);
+- }
++ start = ca_tick();
++ idx = ca_slot(blocks);
++ ca_elapsed(start, &ca_search_ns);
+  if (idx >= ca_blocks) {
+   ca_full++;
+   goto out;
+@@ -173,6 +234,8 @@
+   WARN_ON_ONCE(ca_resident > ca_bytes);
+  }
+  bitmap_set(ca->bitmap, idx, blocks);
++ if (cram_index)
++  ca_update_fit(idx / CA_SLOTS);
+  e = ca_at(idx + 1);
+  e->key = folio->swap.val;
+  e->objcg = objcg;
+@@ -203,6 +266,7 @@
+  u32 *link;
+  struct ca_entry *e;
+  void *output;
++ u64 start;
+  int length;
+  unsigned long flags;
+  if (!ca)
+@@ -218,6 +282,7 @@
+   return -ENOENT;
+  }
+  e = ca_at(*link);
++ start = ca_tick();
+  output = kmap_local_folio(folio, 0);
+  if (cram_zstd1) {
+   size_t n = zstd_decompress_dctx(ca_dctx, output, PAGE_SIZE, e + 1, e->length);
+@@ -226,6 +291,7 @@
+   length = LZ4_decompress_safe((void *)(e + 1), output, e->length, PAGE_SIZE);
+  }
+  kunmap_local(output);
++ ca_elapsed(start, &ca_codec_ns);
+  if (length != PAGE_SIZE) {
+   spin_unlock_irqrestore(&ca_lock, flags);
+   folio_unlock(folio);
+@@ -275,6 +341,12 @@
+  ca_header_bytes = ALIGN(start + enc + dec, CA_BLOCK);
+  if (cram_demand)
+   ca_header_bytes = PAGE_ALIGN(ca_header_bytes + (bytes / CA_CHUNK_BYTES) * sizeof(void *));
++ if (cram_index) {
++  if (!cram_demand || BITS_PER_LONG != CA_SLOTS)
++   return -EINVAL;
++  ca_row_words = BITS_TO_LONGS(bytes / CA_CHUNK_BYTES);
++  ca_header_bytes = PAGE_ALIGN(ca_header_bytes + CA_MAX_RUN * ca_row_words * sizeof(long));
++ }
+  if (ca_header_bytes >= bytes)
+   return -EINVAL;
+  ca = vzalloc(cram_demand ? ca_header_bytes : bytes);
+@@ -295,6 +367,12 @@
+   ca_chunks = (void **)((char *)ca + ALIGN(start + enc + dec, CA_BLOCK));
+   ca_blocks = round_down(ca_blocks, CA_SLOTS);
+  }
++ if (cram_index) {
++  unsigned int run;
++  ca_fit = (void *)PAGE_ALIGN((unsigned long)(ca_chunks + bytes / CA_CHUNK_BYTES));
++  for (run = 0; run < CA_MAX_RUN; run++)
++   bitmap_fill(ca_fit + run * ca_row_words, ca_blocks / CA_SLOTS);
++ }
+  ca_resident = cram_demand ? ca_header_bytes : bytes;
+  ca_resident_peak = ca_resident;
+  pr_info("CRAM arena: backing=%llu overhead=%llu capacity=%u block=%u codec=%s\n",
+@@ -305,6 +383,11 @@
+ static void ca_debugfs(struct dentry *root)
+ {
+ #define CA_STAT(name, variable) debugfs_create_u64(name, 0444, root, &variable)
++ debugfs_create_bool("arena_profiling", 0600, root, &ca_profiling);
++ CA_STAT("arena_search_ns", ca_search_ns);
++ CA_STAT("arena_codec_ns", ca_codec_ns);
++ CA_STAT("arena_hash_ns", ca_hash_ns);
++ CA_STAT("arena_index_ns", ca_index_ns);
+  CA_STAT("arena_backing_bytes", ca_bytes);
+  CA_STAT("arena_resident_bytes", ca_resident);
+  CA_STAT("arena_resident_peak_bytes", ca_resident_peak);

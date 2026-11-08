@@ -57,10 +57,12 @@ static unsigned long stat_value(const char *file, const char *field)
     exit(1);
 }
 
-static unsigned long arena_resident_bytes(void)
+static unsigned long arena_stat(const char *name)
 {
     unsigned long bytes;
-    FILE *f = fopen("/sys/kernel/debug/zswap/arena_resident_bytes", "r");
+    char path[128];
+    snprintf(path, sizeof(path), "/sys/kernel/debug/zswap/%s", name);
+    FILE *f = fopen(path, "r");
     if (!f || fscanf(f, "%lu", &bytes) != 1) exit(2);
     fclose(f);
     return bytes;
@@ -115,7 +117,8 @@ static void evict_cold(char *base)
 
 int main(int argc, char **argv)
 {
-    int sample_arena = argc == 4 && !strcmp(argv[3], "--arena-stats");
+    int profiling = argc == 4 && !strcmp(argv[3], "--profile");
+    int sample_arena = profiling || (argc == 4 && !strcmp(argv[3], "--arena-stats"));
     unsigned mib = (argc == 3 || sample_arena) ? (unsigned)strtoul(argv[1], NULL, 10) : 0;
     if (!mib || mib > LIMIT_MIB || mib % 4 || sysconf(_SC_PAGESIZE) != PAGE) return 2;
     int mixed=!strcmp(argv[2],"mixed");
@@ -147,7 +150,16 @@ int main(int argc, char **argv)
         order[block]=block;
     }
     check_headroom(mib);
-    unsigned long after_fill = sample_arena ? arena_resident_bytes() : 0;
+    unsigned long after_fill = sample_arena ? arena_stat("arena_resident_bytes") : 0;
+    static const char *const timers[] = {
+        "arena_search_ns", "arena_codec_ns", "arena_hash_ns", "arena_index_ns"
+    };
+    unsigned long before[4], used = 0, entries = 0;
+    if (profiling) {
+        used = arena_stat("arena_used_bytes");
+        entries = arena_stat("arena_entries");
+        for (unsigned i = 0; i < 4; i++) before[i] = arena_stat(timers[i]);
+    }
     unsigned long stores = stat_value("/sys/fs/cgroup/bench/memory.stat","zswpout");
     unsigned long loads = stat_value("/sys/fs/cgroup/bench/memory.stat","zswpin");
     size_t nf=0, nh=0;
@@ -200,6 +212,11 @@ int main(int argc, char **argv)
     printf(",\"guest_busy_ns\":%" PRIu64, busy*UINT64_C(1000000000)/(uint64_t)sysconf(_SC_CLK_TCK));
     if (sample_arena)
         printf(",\"arena_after_fill_bytes\":%lu", after_fill);
+    if (profiling) {
+        printf(",\"used_after_fill_bytes\":%lu,\"entries_after_fill\":%lu", used, entries);
+        for (unsigned i = 0; i < 4; i++)
+            printf(",\"%s\":%lu", timers[i], arena_stat(timers[i]) - before[i]);
+    }
     print_latencies("fault",fault,nf); print_latencies("hit",hit,nh);
     puts("}");
     return 0;

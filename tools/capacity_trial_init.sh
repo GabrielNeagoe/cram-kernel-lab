@@ -17,7 +17,7 @@ for v in $(cat /proc/cmdline); do
         cram.trial=*) mode=${v#*=};;
         cram.volume=*) dataset=${v#*=};;
         cram.run=*) case_id=${v#*=};;
-        cram.series=demand-01) series=demand-01;;
+        cram.series=demand-01|cram.series=profile-01) series=${v#*=};;
         cram.smoke=1) smoke=1;;
     esac
 done
@@ -35,7 +35,7 @@ finish() {
 }
 trap finish EXIT
 set -eu
-case "$mode" in off|lz4|zstd1|demand) ;; *) exit 2;; esac
+case "$mode" in off|lz4|zstd1|demand|indexed) ;; *) exit 2;; esac
 case "$case_id" in ''|*[!a-z0-9]*) exit 2;; esac
 out=
 if [ "$smoke" = 1 ]; then
@@ -86,9 +86,13 @@ else
     test "$(cat "$params/cram_arena_mb")" = 256
     if [ "$mode" = zstd1 ]; then test "$(cat "$params/cram_zstd1")" = Y
     else test "$(cat "$params/cram_zstd1")" = N; fi
-    if [ "$series" = demand-01 ]; then
-        if [ "$mode" = demand ]; then test "$(cat "$params/cram_demand")" = Y
+    if [ "$series" != capacity-trial-01 ]; then
+        if [ "$mode" = demand ] || [ "$mode" = indexed ]; then test "$(cat "$params/cram_demand")" = Y
         else test "$(cat "$params/cram_demand")" = N; fi
+    fi
+    if [ "$series" = profile-01 ]; then
+        if [ "$mode" = indexed ]; then test "$(cat "$params/cram_index")" = Y
+        else test "$(cat "$params/cram_index")" = N; fi
     fi
     swapon "$swap"
     arena=$(cat "$debug/arena_backing_bytes")
@@ -98,10 +102,10 @@ fi
 printf '{"mode":"%s","memtotal_kib":%s,"arena_bytes":%s,"arena_overhead_bytes":%s,"memory_floor_kib":65536,"grid_mib":32,"cpus":2,"swap_writeback":false}\n' "$mode" "$available_total" "$arena" "$overhead" >"$out/config.json"
 extra_arg=
 idle=0
-if [ "$series" = demand-01 ] && [ "$mode" != off ]; then
+if [ "$series" != capacity-trial-01 ] && [ "$mode" != off ]; then
     extra_arg=--arena-stats
     idle=$(cat "$debug/arena_resident_bytes")
-    if [ "$mode" = demand ]; then test "$idle" -eq "$overhead"
+    if [ "$mode" = demand ] || [ "$mode" = indexed ]; then test "$idle" -eq "$overhead"
     else test "$idle" -eq "$arena"; fi
 fi
 # Each point has a fresh process; all previous entries must have unwound.
@@ -133,6 +137,18 @@ if [ "$smoke" = 1 ]; then
 fi
 for profile in structured mixed; do
     for n in 1 2 3; do point common$n 128; done
+    if [ "$series" = profile-01 ] && [ "$mode" != off ]; then
+        if [ "$profile" = structured ]; then sizes=576; else sizes=192; fi
+        if [ "$profile" = structured ] && [ "$mode" != lz4 ]; then sizes="576 704"; fi
+        for size in $sizes; do
+            point matched "$size" || test "$?" -eq 42
+            echo 1 >"$debug/arena_profiling"
+            extra_arg=--profile
+            point timed "$size" || test "$?" -eq 42
+            echo 0 >"$debug/arena_profiling"
+            extra_arg=--arena-stats
+        done
+    fi
     lo=128
     hi=256
     while point search "$hi"; do
@@ -153,7 +169,7 @@ for profile in structured mixed; do
     printf '{"verified_mib":%s,"upper_mib":%s}\n' "$lo" "$hi" >"$out/$profile-bound.json"
 done
 
-if [ "$series" = demand-01 ] && [ -n "$extra_arg" ]; then
+if [ "$series" != capacity-trial-01 ] && [ -n "$extra_arg" ]; then
     printf '{"idle_bytes":%s,"peak_bytes":%s,"allocation_failures":%s}\n' "$idle" \
         "$(cat "$debug/arena_resident_peak_bytes")" "$(cat "$debug/arena_chunk_alloc_failures")" >"$out/backing.json"
 fi
