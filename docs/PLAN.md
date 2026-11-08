@@ -14,10 +14,12 @@
 
 - [x] Compare compression off, default LZ4 and opt-in Zstd-1 at fixed guest RAM, with disk swap excluded, verified live capacity, CPU cost and fault latency. [Capacity trial](capacity-trial.md)
 
+- [x] Compare demand-sized and fixed LZ4 backing with compression off on fresh VMware boots. Measure capacity, CPU, first-read faults and release of empty chunks. [Demand-sized arena](demand-arena.md)
+
 ## Next tests
 
 1. Alternate the presence of the RAMMap hold export over repeated fresh-boot pairs while keeping other watchers fixed. Record actual host requests and mark any ownership differences already present before the hold.
 2. Repeat the paired run on fresh boots and report the distribution of observation gaps and owner changes. Use the same 4 GiB ceiling, matched control, workload readback and verified rollback.
 3. Quantify net Windows RAM savings independently of individual frame reuse. Compare host-wide accounting across repeated trials and report variability.
-4. Test a demand-sized arena against the fixed 256 MiB reservation, including incompressible input. Measure the net memory retained by the allocator and repeat the common-size latency comparison.
-5. Confirm any 2× capacity gain with a representative application on the full Ubuntu boot before changing the deployed 4 MiB configuration.
+4. Profile the demand allocator at matched high occupancy, including time spent finding free slots, before changing its allocation policy.
+5. Confirm any 2Ã— capacity gain with a representative application on the full Ubuntu boot before changing the deployed 4 MiB configuration.

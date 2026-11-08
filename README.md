@@ -3,6 +3,7 @@
 Experimental compressed memory on Ubuntu 26 in VMware Workstation. This repository contains kernel and emulator patches, C workloads, Python test tools, and measurements. The deployed software experiment uses a 4 MiB compressed arena behind Linux zswap. A separate nested QEMU experiment uses an emulated CXL device.
 
 - [Development plan](docs/PLAN.md)
+- [Demand-sized versus fixed LZ4 capacity and backing](docs/demand-arena.md)
 - [VM capacity, CPU cost and fault latency for LZ4 and Zstd-1](docs/capacity-trial.md)
 - [Windows physical-frame experiment](docs/windows-frame-ownership.md)
 - [Indexed follow-up on all 8,192 frames](docs/changed-frame-investigation.md)

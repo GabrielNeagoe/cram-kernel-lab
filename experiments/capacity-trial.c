@@ -57,6 +57,15 @@ static unsigned long stat_value(const char *file, const char *field)
     exit(1);
 }
 
+static unsigned long arena_resident_bytes(void)
+{
+    unsigned long bytes;
+    FILE *f = fopen("/sys/kernel/debug/zswap/arena_resident_bytes", "r");
+    if (!f || fscanf(f, "%lu", &bytes) != 1) exit(2);
+    fclose(f);
+    return bytes;
+}
+
 static int compare(const void *a, const void *b)
 {
     uint64_t x = *(const uint64_t *)a, y = *(const uint64_t *)b;
@@ -106,7 +115,8 @@ static void evict_cold(char *base)
 
 int main(int argc, char **argv)
 {
-    unsigned mib = argc == 3 ? (unsigned)strtoul(argv[1], NULL, 10) : 0;
+    int sample_arena = argc == 4 && !strcmp(argv[3], "--arena-stats");
+    unsigned mib = (argc == 3 || sample_arena) ? (unsigned)strtoul(argv[1], NULL, 10) : 0;
     if (!mib || mib > LIMIT_MIB || mib % 4 || sysconf(_SC_PAGESIZE) != PAGE) return 2;
     int mixed=!strcmp(argv[2],"mixed");
     if (!mixed && strcmp(argv[2],"structured")) return 2;
@@ -137,6 +147,7 @@ int main(int argc, char **argv)
         order[block]=block;
     }
     check_headroom(mib);
+    unsigned long after_fill = sample_arena ? arena_resident_bytes() : 0;
     unsigned long stores = stat_value("/sys/fs/cgroup/bench/memory.stat","zswpout");
     unsigned long loads = stat_value("/sys/fs/cgroup/bench/memory.stat","zswpin");
     size_t nf=0, nh=0;
@@ -187,6 +198,8 @@ int main(int argc, char **argv)
            stat_value("/sys/fs/cgroup/bench/memory.stat","zswpout")-stores,
            stat_value("/sys/fs/cgroup/bench/memory.stat","zswpin")-loads);
     printf(",\"guest_busy_ns\":%" PRIu64, busy*UINT64_C(1000000000)/(uint64_t)sysconf(_SC_CLK_TCK));
+    if (sample_arena)
+        printf(",\"arena_after_fill_bytes\":%lu", after_fill);
     print_latencies("fault",fault,nf); print_latencies("hit",hit,nh);
     puts("}");
     return 0;

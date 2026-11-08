@@ -1,0 +1,113 @@
+--- a/mm/cram-arena.inc
++++ b/mm/cram-arena.inc
+@@ -15,6 +15,14 @@
+ /* Opt-in capacity trial. LZ4 remains the default. */
+ static bool cram_zstd1;
+ module_param(cram_zstd1, bool, 0444);
++/* Demand mode backs each group of slots with an order-2 page allocation. */
++#define CA_CHUNK_ORDER 2
++#define CA_CHUNK_BYTES (PAGE_SIZE << CA_CHUNK_ORDER)
++#define CA_SLOTS (CA_CHUNK_BYTES / CA_BLOCK)
++static bool cram_demand;
++module_param(cram_demand, bool, 0444);
++static void **ca_chunks;
++static u64 ca_resident, ca_resident_peak, ca_grow_fail;
+ static zstd_cctx *ca_cctx;
+ static zstd_dctx *ca_dctx;
+ static zstd_parameters ca_zparams;
+@@ -40,6 +48,8 @@
+ 
+ static struct ca_entry *ca_at(u32 slot)
+ {
++ if (cram_demand)
++  return ca_chunks[(slot - 1) / CA_SLOTS] + ((slot - 1) % CA_SLOTS) * CA_BLOCK;
+  return (void *)ca + ca_header_bytes + (slot - 1) * CA_BLOCK;
+ }
+ static u32 *ca_find(unsigned long key)
+@@ -59,6 +69,15 @@
+  cram_memcg_release(e->owner, e->objcg, blocks * CA_BLOCK);
+  obj_cgroup_put(e->objcg);
+  bitmap_clear(ca->bitmap, slot - 1, blocks);
++ if (cram_demand) {
++  unsigned int chunk = (slot - 1) / CA_SLOTS;
++  unsigned int first = chunk * CA_SLOTS;
++  if (find_next_bit(ca->bitmap, first + CA_SLOTS, first) == first + CA_SLOTS) {
++   free_pages((unsigned long)ca_chunks[chunk], CA_CHUNK_ORDER);
++   ca_chunks[chunk] = NULL;
++   ca_resident -= CA_CHUNK_BYTES;
++  }
++ }
+  ca_used -= blocks * CA_BLOCK;
+  ca_entries--;
+  atomic_long_dec(&zswap_stored_pages);
+@@ -117,7 +136,14 @@
+   goto out;
+  }
+  blocks = DIV_ROUND_UP(sizeof(*e) + length, CA_BLOCK);
+- idx = bitmap_find_next_zero_area(ca->bitmap, ca_blocks, 0, blocks, 0);
++ idx = 0;
++ for (;;) {
++  idx = bitmap_find_next_zero_area(ca->bitmap, ca_blocks, idx, blocks, 0);
++  if (idx >= ca_blocks || !cram_demand ||
++      idx % CA_SLOTS + blocks <= CA_SLOTS)
++   break;
++  idx = round_up(idx + 1, CA_SLOTS);
++ }
+  if (idx >= ca_blocks) {
+   ca_full++;
+   goto out;
+@@ -133,6 +159,18 @@
+   cram_memcg_release(owner, objcg, blocks * CA_BLOCK);
+   ca_injected++;
+   goto out;
++ }
++ if (cram_demand && !ca_chunks[idx / CA_SLOTS]) {
++  void *chunk = (void *)__get_free_pages(GFP_NOWAIT | __GFP_NOWARN, CA_CHUNK_ORDER);
++  if (!chunk) {
++   cram_memcg_release(owner, objcg, blocks * CA_BLOCK);
++   ca_grow_fail++;
++   goto out;
++  }
++  ca_chunks[idx / CA_SLOTS] = chunk;
++  ca_resident += CA_CHUNK_BYTES;
++  ca_resident_peak = max(ca_resident_peak, ca_resident);
++  WARN_ON_ONCE(ca_resident > ca_bytes);
+  }
+  bitmap_set(ca->bitmap, idx, blocks);
+  e = ca_at(idx + 1);
+@@ -235,9 +273,11 @@
+   dec = zstd_dctx_workspace_bound();
+  }
+  ca_header_bytes = ALIGN(start + enc + dec, CA_BLOCK);
++ if (cram_demand)
++  ca_header_bytes = PAGE_ALIGN(ca_header_bytes + (bytes / CA_CHUNK_BYTES) * sizeof(void *));
+  if (ca_header_bytes >= bytes)
+   return -EINVAL;
+- ca = vzalloc(bytes);
++ ca = vzalloc(cram_demand ? ca_header_bytes : bytes);
+  if (!ca)
+   return -ENOMEM;
+  ca_bytes = bytes;
+@@ -251,6 +291,12 @@
+   }
+  }
+  ca_blocks = (bytes - ca_header_bytes) / CA_BLOCK;
++ if (cram_demand) {
++  ca_chunks = (void **)((char *)ca + ALIGN(start + enc + dec, CA_BLOCK));
++  ca_blocks = round_down(ca_blocks, CA_SLOTS);
++ }
++ ca_resident = cram_demand ? ca_header_bytes : bytes;
++ ca_resident_peak = ca_resident;
+  pr_info("CRAM arena: backing=%llu overhead=%llu capacity=%u block=%u codec=%s\n",
+          ca_bytes, ca_header_bytes, ca_blocks * CA_BLOCK, CA_BLOCK,
+          cram_zstd1 ? "zstd1" : "lz4");
+@@ -260,6 +306,9 @@
+ {
+ #define CA_STAT(name, variable) debugfs_create_u64(name, 0444, root, &variable)
+  CA_STAT("arena_backing_bytes", ca_bytes);
++ CA_STAT("arena_resident_bytes", ca_resident);
++ CA_STAT("arena_resident_peak_bytes", ca_resident_peak);
++ CA_STAT("arena_chunk_alloc_failures", ca_grow_fail);
+  CA_STAT("arena_overhead_bytes", ca_header_bytes);
+  CA_STAT("arena_used_bytes", ca_used);
+  CA_STAT("arena_peak_bytes", ca_peak);
