@@ -1,0 +1,25 @@
+{
+  "decisions": 69632,
+  "disagreements": 0,
+  "chunk_count": 67,
+  "entry_lengths_tested": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "implementation": "extracted ca_slot and ca_update_fit with userspace bitmap shims"
+}

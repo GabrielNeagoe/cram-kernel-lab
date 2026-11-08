@@ -18,13 +18,19 @@ for v in $(cat /proc/cmdline); do
         cram.trial=*) mode=${v#*=};;
         cram.volume=*) dataset=${v#*=};;
         cram.run=*) case_id=${v#*=};;
-        cram.series=demand-01|cram.series=profile-01|cram.series=hash-01|cram.series=shard-01|cram.series=skew-01) series=${v#*=};;
+        cram.series=demand-01|cram.series=profile-01|cram.series=hash-01|cram.series=shard-01|cram.series=skew-01|cram.series=spill-01) series=${v#*=};;
         cram.hotprobe=1) hotprobe=1;;
         cram.smoke=1) smoke=1;;
     esac
 done
+is_skew_series() {
+    [ "$series" = skew-01 ] || [ "$series" = spill-01 ]
+}
+uses_skew() {
+    [ "$mode" = skew ] || [ "$mode" = spill ]
+}
 is_hash_trial() {
-    [ "$series" = hash-01 ] || { [ "$series" = shard-01 ] || [ "$series" = skew-01 ]; }
+    [ "$series" = hash-01 ] || { [ "$series" = shard-01 ] || is_skew_series; }
 }
 finish() {
     rc=$?
@@ -40,7 +46,7 @@ finish() {
 }
 trap finish EXIT
 set -eu
-case "$mode" in off|lz4|zstd1|demand|indexed|wide|sharded|skew) ;; *) exit 2;; esac
+case "$mode" in off|lz4|zstd1|demand|indexed|wide|sharded|skew|spill) ;; *) exit 2;; esac
 case "$case_id" in ''|*[!a-z0-9]*) exit 2;; esac
 out=
 if [ "$smoke" = 1 ]; then
@@ -80,7 +86,7 @@ available_total=$(awk '/^MemTotal:/{print $2}' /proc/meminfo)
 test "$available_total" -lt 1048576
 test "$available_total" -gt 393216
 cpus=2
-if [ "$series" = skew-01 ]; then cpus=4; fi
+if is_skew_series; then cpus=4; fi
 test "$(cat /sys/devices/system/cpu/online)" = "0-$((cpus-1))"
 if [ "$mode" = off ]; then
     test "$(cat "$params/enabled")" = N
@@ -94,26 +100,30 @@ else
     if [ "$mode" = zstd1 ]; then test "$(cat "$params/cram_zstd1")" = Y
     else test "$(cat "$params/cram_zstd1")" = N; fi
     if [ "$series" != capacity-trial-01 ]; then
-        if [ "$mode" = demand ] || [ "$mode" = indexed ] || [ "$mode" = wide ] || [ "$mode" = sharded ] || [ "$mode" = skew ]; then test "$(cat "$params/cram_demand")" = Y
+        if [ "$mode" = demand ] || [ "$mode" = indexed ] || [ "$mode" = wide ] || [ "$mode" = sharded ] || uses_skew; then test "$(cat "$params/cram_demand")" = Y
         else test "$(cat "$params/cram_demand")" = N; fi
     fi
     if [ "$series" = profile-01 ] || is_hash_trial; then
-        if [ "$mode" = indexed ] || [ "$mode" = wide ] || [ "$mode" = sharded ] || [ "$mode" = skew ]; then test "$(cat "$params/cram_index")" = Y
+        if [ "$mode" = indexed ] || [ "$mode" = wide ] || [ "$mode" = sharded ] || uses_skew; then test "$(cat "$params/cram_index")" = Y
         else test "$(cat "$params/cram_index")" = N; fi
     fi
     if is_hash_trial; then
-        if [ "$mode" = wide ] || [ "$mode" = sharded ] || [ "$mode" = skew ]; then test "$(cat "$params/cram_wide_hash")" = Y
+        if [ "$mode" = wide ] || [ "$mode" = sharded ] || uses_skew; then test "$(cat "$params/cram_wide_hash")" = Y
         else test "$(cat "$params/cram_wide_hash")" = N; fi
     fi
-    if { [ "$series" = shard-01 ] || [ "$series" = skew-01 ]; }; then
-        if [ "$mode" = sharded ] || [ "$mode" = skew ]; then
+    if { [ "$series" = shard-01 ] || is_skew_series; }; then
+        if [ "$mode" = sharded ] || uses_skew; then
             test "$(cat "$params/cram_two_shards")" = Y
             export CRAM_TWO_SHARDS=1
         else test "$(cat "$params/cram_two_shards")" = N; fi
     fi
-    if [ "$series" = skew-01 ]; then
-        if [ "$mode" = skew ]; then test "$(cat "$params/cram_skew_test")" = Y
+    if is_skew_series; then
+        if uses_skew; then test "$(cat "$params/cram_skew_test")" = Y
         else test "$(cat "$params/cram_skew_test")" = N; fi
+    fi
+    if [ "$series" = spill-01 ]; then
+        if [ "$mode" = spill ]; then test "$(cat "$params/cram_spill")" = Y
+        else test "$(cat "$params/cram_spill")" = N; fi
     fi
     swapon "$swap"
     arena=$(cat "$debug/arena_backing_bytes")
@@ -126,7 +136,7 @@ idle=0
 if [ "$series" != capacity-trial-01 ] && [ "$mode" != off ]; then
     extra_arg=--arena-stats
     idle=$(cat "$debug/arena_resident_bytes")
-    if [ "$mode" = demand ] || [ "$mode" = indexed ] || [ "$mode" = wide ] || [ "$mode" = sharded ] || [ "$mode" = skew ]; then test "$idle" -eq "$overhead"
+    if [ "$mode" = demand ] || [ "$mode" = indexed ] || [ "$mode" = wide ] || [ "$mode" = sharded ] || uses_skew; then test "$idle" -eq "$overhead"
     else test "$idle" -eq "$arena"; fi
 fi
 # Each point has a fresh process; all previous entries must have unwound.
@@ -136,8 +146,11 @@ point() {
     file="$out/$profile-$phase-$size.json"
     before=$(awk '$1=="pswpout"{print $2}' /proc/vmstat)
     counters=
-    if [ "$series" = skew-01 ] && [ -n "${CRAM_TWO_SHARDS:-}" ]; then
+    if is_skew_series && [ -n "${CRAM_TWO_SHARDS:-}" ]; then
         counters="reject_full peer_checks peer_busy peer_fit peer_backed shard0_stores shard1_stores"
+        if [ "$series" = spill-01 ]; then
+            counters="$counters spill_tries spill_stores spill_loads spill_removes spill_invalidates"
+        fi
         for name in $counters; do cat "$debug/arena_$name" >"$out/before-$name"; done
     fi
     rc=0
@@ -148,6 +161,10 @@ point() {
     if [ -n "$extra_arg" ]; then
         test "$(cat "$debug/arena_resident_bytes")" -eq "$idle" || exit 5
         test "$(cat "$debug/arena_resident_peak_bytes")" -le "$arena" || exit 5
+    fi
+    if [ "$series" = spill-01 ] && [ "$mode" != off ]; then
+        test "$(cat "$debug/arena_spill_live")" -eq 0 || exit 5
+        test "$(cat "$debug/arena_spill_stores")" -eq "$(cat "$debug/arena_spill_removes")" || exit 5
     fi
     if [ -n "$counters" ]; then
         # Attach per-attempt deltas even when the headroom guard rejected the point.
@@ -178,7 +195,11 @@ if [ "$smoke" = 1 ]; then
         extra_arg=--profile
     fi
     profile=structured
-    point common 128
+    if [ "$series" = spill-01 ] && [ "$mode" = spill ]; then
+        point common 480
+        test "$(cat "$debug/arena_spill_loads")" -gt 0
+        test "$(cat "$debug/arena_spill_invalidates")" -gt 0
+    else point common 128; fi
     exit 0
 fi
 if [ "$hotprobe" = 1 ]; then
@@ -211,10 +232,23 @@ for profile in structured mixed; do
             extra_arg=--arena-stats
         done
     fi
-    if is_hash_trial && [ "$mode" != off ]; then
+    if [ "$series" = spill-01 ] && [ "$mode" != off ]; then
+        sizes=384
+        if [ "$profile" = structured ]; then sizes="384 512"; fi
+        for size in $sizes; do
+            for n in 1 2 3; do
+                point "load$n" "$size" || test "$?" -eq 42
+            done
+            echo 1 >"$debug/arena_profiling"
+            extra_arg=--profile
+            point measured "$size" || test "$?" -eq 42
+            echo 0 >"$debug/arena_profiling"
+            extra_arg=--arena-stats
+        done
+    elif is_hash_trial && [ "$mode" != off ]; then
         if [ "$profile" = structured ]; then size=704; else size=480; fi
         counts="1 2"
-        if [ "$series" = skew-01 ]; then size=384; counts="2 4"; fi
+        if is_skew_series; then size=384; counts="2 4"; fi
         for workers in $counts; do
             export CRAM_WORKERS=$workers
             point "plain$workers" "$size" || test "$?" -eq 42
@@ -223,13 +257,13 @@ for profile in structured mixed; do
             point "probe$workers" "$size" || test "$?" -eq 42
             echo 0 >"$debug/arena_profiling"
             extra_arg=--arena-stats
-            if { [ "$series" = shard-01 ] || [ "$series" = skew-01 ]; }; then
+            if { [ "$series" = shard-01 ] || is_skew_series; }; then
                 point "repeatA$workers" "$size" || test "$?" -eq 42
                 point "repeatB$workers" "$size" || test "$?" -eq 42
             fi
         done
     fi
-    if [ "$series" = skew-01 ] && [ "$mode" != off ] && [ "$profile" = structured ]; then
+    if is_skew_series && [ "$mode" != off ] && [ "$profile" = structured ]; then
         point stress 512 || test "$?" -eq 42
     fi
     lo=128

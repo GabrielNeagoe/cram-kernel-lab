@@ -1,0 +1,258 @@
+--- a/mm/cram-arena.inc
++++ b/mm/cram-arena.inc
+@@ -32,6 +32,9 @@
+ static bool cram_two_shards;
+ module_param(cram_two_shards, bool, 0444);
+ /* Trial-only routing bias. The local bucket still uses the upper 15 hash bits. */
++static bool cram_spill;
++module_param(cram_spill, bool, 0444);
++static struct lock_class_key ca_peer_lock_class;
+ static bool cram_skew_test;
+ module_param(cram_skew_test, bool, 0444);
+ static unsigned int ca_shard_count = 1;
+@@ -55,7 +58,8 @@
+ 
+ struct ca_shard {
+  spinlock_t lock;
+- u32 *heads;
++ u32 *heads, *spill_buckets;
++ u64 spill_tries, spill_stores, spill_loads, spill_removes, spill_live, spill_invalidates;
+  u64 lookups, visits, acquires, contended;
+  u64 wait_ns, hold_ns, acquired_at;
+  u64 search_ns, codec_ns, hash_ns, index_ns;
+@@ -189,6 +193,31 @@
+  ca_elapsed(start, &sh->hash_ns);
+  return p;
+ }
++/* The caller holds the home lock. Only shard 0 may nest shard 1.
++ * All publications for a hot key hold its home lock; swapoff may remove
++ * an existing peer entry using the storage lock alone. A nonzero bucket
++ * count is a hint and the peer hash always verifies the complete key. */
++static u32 *ca_existing(struct ca_shard *home, unsigned long key,
++                        struct ca_shard **storage, unsigned long *peer_flags)
++{
++ struct ca_shard *peer = &ca_shards[1];
++ u32 *link = ca_find(home, key);
++ *storage = home;
++ if (!*link && cram_spill && home == &ca_shards[0] &&
++     READ_ONCE(peer->spill_buckets[hash_long(key, ca_hash_bits)])) {
++  *peer_flags = ca_enter(peer);
++  *storage = peer;
++  return ca_find(peer, key);
++ }
++ return link;
++}
++
++static void ca_drop_peer(struct ca_shard *home, struct ca_shard *storage, unsigned long flags)
++{
++ if (storage != home)
++  ca_leave(storage, flags);
++}
++
+ /* ca_lock serializes lookup, quota reservation, publication and reclamation. */
+ static void ca_remove(struct ca_shard *sh, u32 *link)
+ {
+@@ -196,6 +225,12 @@
+  struct ca_entry *e = ca_at(sh, slot);
+  unsigned int blocks = e->blocks;
+  *link = e->next;
++ if (cram_spill && sh != ca_owner(e->key)) {
++  u32 *n = &sh->spill_buckets[hash_long(e->key, ca_hash_bits)];
++  WRITE_ONCE(*n, *n - 1);
++  sh->spill_removes++;
++  sh->spill_live--;
++ }
+  cram_memcg_release(e->owner, e->objcg, blocks * CA_BLOCK);
+  obj_cgroup_put(e->objcg);
+  bitmap_clear(sh->control->bitmap, slot - 1, blocks);
+@@ -217,14 +252,20 @@
+ static void ca_invalidate(swp_entry_t swp)
+ {
+  struct ca_shard *sh = ca_owner(swp.val);
++ struct ca_shard *storage;
++ unsigned long peer_flags = 0;
+  u32 *link;
+  unsigned long flags;
+  if (!sh->control)
+   return;
+  flags = ca_enter(sh);
+- link = ca_find(sh, swp.val);
+- if (*link)
+-  ca_remove(sh, link);
++ link = ca_existing(sh, swp.val, &storage, &peer_flags);
++ if (*link) {
++  if (sh != storage)
++   storage->spill_invalidates++;
++  ca_remove(storage, link);
++ }
++ ca_drop_peer(sh, storage, peer_flags);
+  ca_leave(sh, flags);
+ }
+ /* Sample shard-zero full rejections. Acquire the peer only by trylock,
+@@ -258,6 +299,8 @@
+ static bool ca_store(struct folio *folio)
+ {
+  struct ca_shard *sh = ca_owner(folio->swap.val);
++ struct ca_shard *home = sh, *storage;
++ unsigned long peer_flags = 0;
+  struct obj_cgroup *objcg;
+  struct mem_cgroup *owner;
+  struct ca_entry *e;
+@@ -281,9 +324,10 @@
+   return false;
+  }
+  flags = ca_enter(sh);
+- link = ca_find(sh, folio->swap.val);
++ link = ca_existing(home, folio->swap.val, &storage, &peer_flags);
+  if (*link)
+-  ca_remove(sh, link);
++  ca_remove(storage, link);
++ ca_drop_peer(home, storage, peer_flags);
+  start = ca_tick();
+  input = kmap_local_folio(folio, 0);
+  if (cram_zstd1) {
+@@ -307,7 +351,18 @@
+  if (idx >= sh->blocks) {
+   sh->full++;
+   ca_check_peer(sh, blocks);
+-  goto out;
++  if (!cram_spill || sh != &ca_shards[0])
++   goto out;
++  home->spill_tries++;
++  sh = &ca_shards[1];
++  peer_flags = ca_enter(sh);
++  start = ca_tick();
++  idx = ca_slot(sh, blocks);
++  ca_elapsed(start, &sh->search_ns);
++  if (idx >= sh->blocks) {
++   sh->full++;
++   goto out;
++  }
+  }
+  /* Reserve the exact rounded slot footprint in every ancestor before use. */
+  owner = cram_memcg_reserve(objcg, blocks * CA_BLOCK);
+@@ -342,7 +397,7 @@
+  e->owner = owner;
+  e->blocks = blocks;
+  e->length = length;
+- memcpy(e + 1, sh->control->output, length);
++ memcpy(e + 1, home->control->output, length);
+  link = ca_find(sh, e->key);
+  e->next = *link;
+  *link = idx + 1;
+@@ -350,13 +405,20 @@
+  sh->peak = max(sh->peak, sh->used);
+  sh->entries++;
+  sh->stores++;
++ if (sh != home) {
++  u32 *n = &sh->spill_buckets[hash_long(e->key, ca_hash_bits)];
++  WRITE_ONCE(*n, *n + 1);
++  sh->spill_stores++;
++  sh->spill_live++;
++ }
+  atomic_long_inc(&zswap_stored_pages);
+  count_objcg_events(objcg, ZSWPOUT, 1);
+  count_vm_event(ZSWPOUT);
+  WARN_ON_ONCE(sh->header_bytes + sh->used > sh->bytes);
+  ok = true;
+ out:
+- ca_leave(sh, flags);
++ ca_drop_peer(home, sh, peer_flags);
++ ca_leave(home, flags);
+  if (!ok)
+   obj_cgroup_put(objcg);
+  return ok;
+@@ -364,6 +426,8 @@
+ static int ca_load(struct folio *folio)
+ {
+  struct ca_shard *sh = ca_owner(folio->swap.val);
++ struct ca_shard *home = sh;
++ unsigned long peer_flags = 0;
+  u32 *link;
+  struct ca_entry *e;
+  void *output;
+@@ -377,9 +441,10 @@
+   return -EINVAL;
+  }
+  flags = ca_enter(sh);
+- link = ca_find(sh, folio->swap.val);
++ link = ca_existing(home, folio->swap.val, &sh, &peer_flags);
+  if (!*link) {
+-  ca_leave(sh, flags);
++  ca_drop_peer(home, sh, peer_flags);
++  ca_leave(home, flags);
+   return -ENOENT;
+  }
+  e = ca_at(sh, *link);
+@@ -394,7 +459,8 @@
+  kunmap_local(output);
+  ca_elapsed(start, &sh->codec_ns);
+  if (length != PAGE_SIZE) {
+-  ca_leave(sh, flags);
++  ca_drop_peer(home, sh, peer_flags);
++  ca_leave(home, flags);
+   folio_unlock(folio);
+   return -EIO;
+  }
+@@ -404,8 +470,11 @@
+  count_objcg_events(e->objcg, ZSWPIN, 1);
+  count_vm_event(ZSWPIN);
+  sh->loads++;
++ if (sh != home)
++  sh->spill_loads++;
+  ca_remove(sh, link);
+- ca_leave(sh, flags);
++ ca_drop_peer(home, sh, peer_flags);
++ ca_leave(home, flags);
+  folio_unlock(folio);
+  return 0;
+ }
+@@ -438,6 +507,8 @@
+ {
+  size_t enc = 0, dec = 0, start = ALIGN(sizeof(*sh->control), 8);
+  spin_lock_init(&sh->lock);
++ if (sh == &ca_shards[1])
++  lockdep_set_class(&sh->lock, &ca_peer_lock_class);
+  if (PAGE_SIZE != 4096 || !is_power_of_2(bytes) || bytes > CA_MAX_BYTES ||
+      bytes < (1U << 20))
+   return -EINVAL;
+@@ -446,6 +517,8 @@
+    return -EINVAL;
+   ca_hash_bits = cram_two_shards ? 15 : 16;
+   start += (1U << ca_hash_bits) * sizeof(u32);
++  if (cram_spill && sh == &ca_shards[1])
++   start += (1U << ca_hash_bits) * sizeof(u32);
+  }
+  if (cram_zstd1) {
+   sh->zparams = zstd_get_params(1, PAGE_SIZE);
+@@ -467,6 +540,8 @@
+  if (!sh->control)
+   return -ENOMEM;
+  sh->heads = cram_wide_hash ? (u32 *)((char *)sh->control + ALIGN(sizeof(*sh->control), 8)) : sh->control->heads;
++ if (cram_spill && sh == &ca_shards[1])
++  sh->spill_buckets = sh->heads + (1U << ca_hash_bits);
+  sh->bytes = bytes;
+  if (cram_zstd1) {
+   sh->cctx = zstd_init_cctx((char *)sh->control + start, enc);
+@@ -502,6 +577,8 @@
+  int ret;
+ 
+  if (!budget || budget > CA_MAX_BYTES || !is_power_of_2(budget))
++  return -EINVAL;
++ if (cram_spill && (!cram_two_shards || !cram_skew_test))
+   return -EINVAL;
+  if (cram_skew_test && !cram_two_shards)
+   return -EINVAL;
+@@ -569,6 +646,12 @@
+  CA_STAT("arena_reject_poor", poor);
+  CA_STAT("arena_injected_failures", injected);
+  if (cram_two_shards) {
++  CA_STAT("arena_spill_tries", spill_tries);
++  CA_STAT("arena_spill_stores", spill_stores);
++  CA_STAT("arena_spill_loads", spill_loads);
++  CA_STAT("arena_spill_removes", spill_removes);
++  CA_STAT("arena_spill_live", spill_live);
++  CA_STAT("arena_spill_invalidates", spill_invalidates);
+   CA_STAT("arena_peer_checks", peer_checks);
+   CA_STAT("arena_peer_busy", peer_busy);
+   CA_STAT("arena_peer_fit", peer_fit);

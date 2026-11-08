@@ -24,6 +24,8 @@
 
 - [x] Compare balanced and deliberately skewed routing with two and four pinned workers, sample peer fit on a full rejection, and recheck four-worker capacity. [Uneven shard trial](uneven-shards.md)
 
+- [x] Test peer placement under hot-shard saturation and recheck four-worker capacity, CPU, lock contention, and fault latency. [Spillover](spillover.md)
+
 ## Next tests
 
 1. Alternate the presence of the RAMMap hold export over repeated fresh-boot pairs while keeping other watchers fixed. Record actual host requests and mark any ownership differences already present before the hold.
