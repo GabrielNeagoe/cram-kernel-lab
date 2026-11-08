@@ -18,10 +18,11 @@
 
 - [x] Profile matched compressed occupancy, test a chunk fit index, and recheck CPU, fault latency and capacity on fresh boots. [Slot-search profile](slot-search-profile.md)
 
+- [x] Measure lookup chain lengths and contended acquisitions with parallel faults. Test a larger hash table and recheck parallel capacity, CPU, and fault latency. [Parallel hash profile](parallel-hash-profile.md)
+
 ## Next tests
 
 1. Alternate the presence of the RAMMap hold export over repeated fresh-boot pairs while keeping other watchers fixed. Record actual host requests and mark any ownership differences already present before the hold.
 2. Repeat the paired run on fresh boots and report the distribution of observation gaps and owner changes. Use the same 4 GiB ceiling, matched control, workload readback and verified rollback.
 3. Quantify net Windows RAM savings independently of individual frame reuse. Compare host-wide accounting across repeated trials and report variability.
-4. Measure hash-chain lookup and parallel lock contention at matched occupancy before changing the entry index.
-5. Confirm any 2× capacity gain with a representative application on the full Ubuntu boot before changing the deployed 4 MiB configuration.
+4. Confirm any 2× capacity gain with a representative application on the full Ubuntu boot before changing the deployed 4 MiB configuration.

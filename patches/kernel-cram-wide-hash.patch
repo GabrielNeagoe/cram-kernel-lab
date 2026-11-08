@@ -1,0 +1,190 @@
+--- a/mm/cram-arena.inc
++++ b/mm/cram-arena.inc
+@@ -23,6 +23,12 @@
+ module_param(cram_demand, bool, 0444);
+ static bool cram_index;
+ module_param(cram_index, bool, 0444);
++static bool cram_wide_hash;
++module_param(cram_wide_hash, bool, 0444);
++static unsigned int ca_hash_bits = 10;
++static u32 *ca_heads;
++static u64 ca_lookups, ca_visits, ca_acquires, ca_contended;
++static u64 ca_wait_ns, ca_hold_ns, ca_acquired_at;
+ static bool ca_profiling;
+ static u64 ca_search_ns, ca_codec_ns, ca_hash_ns, ca_index_ns;
+ static void **ca_chunks;
+@@ -111,12 +117,52 @@
+   return ca_chunks[(slot - 1) / CA_SLOTS] + ((slot - 1) % CA_SLOTS) * CA_BLOCK;
+  return (void *)ca + ca_header_bytes + (slot - 1) * CA_BLOCK;
+ }
++/* The optional probe uses a failed trylock to count actual contended acquisitions. */
++static inline unsigned long ca_enter(void)
++{
++ unsigned long flags;
++ u64 start = ca_tick();
++ if (!start) {
++  spin_lock_irqsave(&ca_lock, flags);
++  return flags;
++ }
++ if (!spin_trylock_irqsave(&ca_lock, flags)) {
++  spin_lock_irqsave(&ca_lock, flags);
++  ca_acquired_at = ktime_get_ns();
++  ca_wait_ns += ca_acquired_at - start;
++  ca_contended++;
++ } else {
++  ca_acquired_at = ktime_get_ns();
++ }
++ ca_acquires++;
++ return flags;
++}
++
++static inline void ca_leave(unsigned long flags)
++{
++ if (ca_acquired_at) {
++  ca_hold_ns += ktime_get_ns() - ca_acquired_at;
++  ca_acquired_at = 0;
++ }
++ spin_unlock_irqrestore(&ca_lock, flags);
++}
++
+ static u32 *ca_find(unsigned long key)
+ {
+  u64 start = ca_tick();
+- u32 *p = &ca->heads[hash_long(key, 10)];
+- while (*p && ca_at(*p)->key != key)
+-  p = &ca_at(*p)->next;
++ u32 *p = &ca_heads[hash_long(key, ca_hash_bits)];
++ unsigned int visits = 0;
++ while (*p) {
++  struct ca_entry *entry = ca_at(*p);
++  visits++;
++  if (entry->key == key)
++   break;
++  p = &entry->next;
++ }
++ if (start) {
++  ca_lookups++;
++  ca_visits += visits;
++ }
+  ca_elapsed(start, &ca_hash_ns);
+  return p;
+ }
+@@ -151,11 +197,11 @@
+  unsigned long flags;
+  if (!ca)
+   return;
+- spin_lock_irqsave(&ca_lock, flags);
++ flags = ca_enter();
+  link = ca_find(swp.val);
+  if (*link)
+   ca_remove(link);
+- spin_unlock_irqrestore(&ca_lock, flags);
++ ca_leave(flags);
+ }
+ static bool ca_store(struct folio *folio)
+ {
+@@ -181,7 +227,7 @@
+   ca_invalidate(folio->swap);
+   return false;
+  }
+- spin_lock_irqsave(&ca_lock, flags);
++ flags = ca_enter();
+  link = ca_find(folio->swap.val);
+  if (*link)
+   ca_remove(link);
+@@ -256,7 +302,7 @@
+  WARN_ON_ONCE(ca_header_bytes + ca_used > ca_bytes);
+  ok = true;
+ out:
+- spin_unlock_irqrestore(&ca_lock, flags);
++ ca_leave(flags);
+  if (!ok)
+   obj_cgroup_put(objcg);
+  return ok;
+@@ -275,10 +321,10 @@
+   folio_unlock(folio);
+   return -EINVAL;
+  }
+- spin_lock_irqsave(&ca_lock, flags);
++ flags = ca_enter();
+  link = ca_find(folio->swap.val);
+  if (!*link) {
+-  spin_unlock_irqrestore(&ca_lock, flags);
++  ca_leave(flags);
+   return -ENOENT;
+  }
+  e = ca_at(*link);
+@@ -293,7 +339,7 @@
+  kunmap_local(output);
+  ca_elapsed(start, &ca_codec_ns);
+  if (length != PAGE_SIZE) {
+-  spin_unlock_irqrestore(&ca_lock, flags);
++  ca_leave(flags);
+   folio_unlock(folio);
+   return -EIO;
+  }
+@@ -304,7 +350,7 @@
+  count_vm_event(ZSWPIN);
+  ca_loads++;
+  ca_remove(link);
+- spin_unlock_irqrestore(&ca_lock, flags);
++ ca_leave(flags);
+  folio_unlock(folio);
+  return 0;
+ }
+@@ -314,9 +360,9 @@
+  unsigned long flags;
+  if (!ca)
+   return;
+- spin_lock_irqsave(&ca_lock, flags);
+- for (i = 0; i < CA_BUCKETS; i++) {
+-  u32 *p = &ca->heads[i];
++ flags = ca_enter();
++ for (i = 0; i < (1U << ca_hash_bits); i++) {
++  u32 *p = &ca_heads[i];
+   while (*p) {
+    if (swp_type((swp_entry_t){.val = ca_at(*p)->key}) == type)
+     ca_remove(p);
+@@ -324,7 +370,7 @@
+     p = &ca_at(*p)->next;
+   }
+  }
+- spin_unlock_irqrestore(&ca_lock, flags);
++ ca_leave(flags);
+ }
+ static int ca_setup(void)
+ {
+@@ -333,6 +379,12 @@
+  if (PAGE_SIZE != 4096 || !is_power_of_2(bytes) || bytes > CA_MAX_BYTES ||
+      bytes < (1U << 20))
+   return -EINVAL;
++ if (cram_wide_hash) {
++  if (!cram_index || !cram_demand)
++   return -EINVAL;
++  ca_hash_bits = 16;
++  start += (1U << ca_hash_bits) * sizeof(u32);
++ }
+  if (cram_zstd1) {
+   ca_zparams = zstd_get_params(1, PAGE_SIZE);
+   enc = ALIGN(zstd_cctx_workspace_bound(&ca_zparams.cParams), 8);
+@@ -352,6 +404,7 @@
+  ca = vzalloc(cram_demand ? ca_header_bytes : bytes);
+  if (!ca)
+   return -ENOMEM;
++ ca_heads = cram_wide_hash ? (u32 *)((char *)ca + ALIGN(sizeof(*ca), 8)) : ca->heads;
+  ca_bytes = bytes;
+  if (cram_zstd1) {
+   ca_cctx = zstd_init_cctx((char *)ca + start, enc);
+@@ -386,6 +439,12 @@
+  debugfs_create_bool("arena_profiling", 0600, root, &ca_profiling);
+  CA_STAT("arena_search_ns", ca_search_ns);
+  CA_STAT("arena_codec_ns", ca_codec_ns);
++ CA_STAT("arena_lookups", ca_lookups);
++ CA_STAT("arena_visits", ca_visits);
++ CA_STAT("arena_acquires", ca_acquires);
++ CA_STAT("arena_contended", ca_contended);
++ CA_STAT("arena_wait_ns", ca_wait_ns);
++ CA_STAT("arena_hold_ns", ca_hold_ns);
+  CA_STAT("arena_hash_ns", ca_hash_ns);
+  CA_STAT("arena_index_ns", ca_index_ns);
+  CA_STAT("arena_backing_bytes", ca_bytes);

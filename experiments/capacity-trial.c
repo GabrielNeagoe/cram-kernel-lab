@@ -4,6 +4,9 @@
 #include <errno.h>
 #include <inttypes.h>
 #include <stdint.h>
+#include <pthread.h>
+#include <sched.h>
+#include <stdatomic.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -83,7 +86,7 @@ static void print_latencies(const char *name, uint64_t *v, size_t n)
                name, v[(n-1)/2], name, v[(99*n+99)/100-1]);
 }
 
-static unsigned long low_available = ~0UL;
+static _Atomic unsigned long low_available = ~0UL;
 static uint64_t guest_busy_ticks(void)
 {
     unsigned long long user, nice, sys, idle, wait, irq, soft;
@@ -103,7 +106,9 @@ static int dense_block(unsigned block, int mixed)
 static void check_headroom(unsigned mib)
 {
     unsigned long v = stat_value("/proc/meminfo", "MemAvailable:");
-    if (v < low_available) low_available = v;
+    unsigned long previous = atomic_load(&low_available);
+    while (v < previous && !atomic_compare_exchange_weak(&low_available, &previous, v)) {}
+
     if (v < FLOOR_KIB) {
         printf("{\"mib\":%u,\"status\":\"headroom\",\"available_kib\":%lu}\n", mib, v);
         exit(42);
@@ -113,6 +118,55 @@ static void check_headroom(unsigned mib)
 static void evict_cold(char *base)
 {
     if (madvise(base, MIB, MADV_PAGEOUT)) { perror("MADV_PAGEOUT"); exit(1); }
+}
+
+struct sweep_task {
+    char *mem;
+    unsigned *order, mib, id, workers, round;
+    int mixed, pin;
+    pthread_barrier_t *start;
+    uint64_t *fault, *hit;
+    size_t nf, nh;
+};
+
+static void *sweep_blocks(void *arg)
+{
+    struct sweep_task *t = arg;
+    uint32_t expected[PAGE/4];
+    if (t->pin) {
+        cpu_set_t set;
+        CPU_ZERO(&set);
+        CPU_SET(t->id, &set);
+        if (sched_setaffinity(0, sizeof(set), &set)) exit(2);
+    }
+    if (t->workers > 1) {
+        int rc = pthread_barrier_wait(t->start);
+        if (rc && rc != PTHREAD_BARRIER_SERIAL_THREAD) exit(2);
+    }
+    for (unsigned j=t->id; j<t->mib; j+=t->workers) {
+        unsigned block=t->order[j];
+        char *base=t->mem+(size_t)block*MIB;
+        int hot=block%4==0;
+        for (unsigned q=0; q<256; q++) {
+            unsigned page=(q*73+block*11+t->round*19)&255;
+            char *address=base+page*PAGE;
+            if (!hot && q%32==0) {
+                struct rusage a,b;
+                if (getrusage(RUSAGE_THREAD,&a)) exit(2);
+                uint64_t begin=clock_ns(CLOCK_MONOTONIC_RAW);
+                (void)*(volatile const unsigned char *)address;
+                uint64_t delta=clock_ns(CLOCK_MONOTONIC_RAW)-begin;
+                if (getrusage(RUSAGE_THREAD,&b)) exit(2);
+                if (b.ru_minflt+b.ru_majflt > a.ru_minflt+a.ru_majflt) t->fault[t->nf++]=delta;
+                else t->hit[t->nh++]=delta;
+            }
+            page_contents(expected,block*256+page,dense_block(block,t->mixed));
+            if (memcmp(address,expected,PAGE)) { fprintf(stderr,"data mismatch\n"); exit(3); }
+        }
+        if (!hot) evict_cold(base);
+        if ((j&7)==0) check_headroom(t->mib);
+    }
+    return NULL;
 }
 
 int main(int argc, char **argv)
@@ -154,16 +208,38 @@ int main(int argc, char **argv)
     static const char *const timers[] = {
         "arena_search_ns", "arena_codec_ns", "arena_hash_ns", "arena_index_ns"
     };
+    static const char *const lock_stats[] = {
+        "arena_lookups", "arena_visits", "arena_acquires", "arena_contended", "arena_wait_ns", "arena_hold_ns"
+    };
+    unsigned long lock_before[6];
+    int hash_trial = getenv("CRAM_HASH_TRIAL") != NULL;
+    unsigned workers = getenv("CRAM_WORKERS") && !strcmp(getenv("CRAM_WORKERS"), "2") ? 2 : 1;
     unsigned long before[4], used = 0, entries = 0;
     if (profiling) {
+        if (hash_trial)
+            for (unsigned i = 0; i < 6; i++) lock_before[i] = arena_stat(lock_stats[i]);
         used = arena_stat("arena_used_bytes");
         entries = arena_stat("arena_entries");
         for (unsigned i = 0; i < 4; i++) before[i] = arena_stat(timers[i]);
     }
     unsigned long stores = stat_value("/sys/fs/cgroup/bench/memory.stat","zswpout");
     unsigned long loads = stat_value("/sys/fs/cgroup/bench/memory.stat","zswpin");
-    size_t nf=0, nh=0;
-    uint32_t expected[PAGE/4], seed=62791;
+    pthread_barrier_t gate;
+    pthread_attr_t attr;
+    struct sweep_task tasks[2];
+    if (pthread_barrier_init(&gate, NULL, workers) || pthread_attr_init(&attr) ||
+        pthread_attr_setstacksize(&attr, 256*1024)) return 2;
+    for (unsigned w = 0; w < workers; w++) {
+        tasks[w] = (struct sweep_task){.mem=mem, .order=order, .mib=mib, .id=w, .workers=workers,
+            .mixed=mixed, .pin=hash_trial, .start=&gate, .fault=w ? calloc(slots,sizeof(*fault)) : fault,
+            .hit=w ? calloc(slots,sizeof(*hit)) : hit};
+        if (!tasks[w].fault || !tasks[w].hit) return 2;
+        if (w) {
+            memset(tasks[w].fault, 0x55, slots*sizeof(*fault));
+            memset(tasks[w].hit, 0x55, slots*sizeof(*hit));
+        }
+    }
+    uint32_t seed=62791;
     uint64_t busy=guest_busy_ticks();
     uint64_t cpu=clock_ns(CLOCK_PROCESS_CPUTIME_ID), wall=clock_ns(CLOCK_MONOTONIC_RAW);
     for (unsigned round=0; round<ROUNDS; round++) {
@@ -171,29 +247,11 @@ int main(int argc, char **argv)
             unsigned k=random_word(&seed)%j, tmp=order[j-1];
             order[j-1]=order[k]; order[k]=tmp;
         }
-        for (unsigned j=0; j<mib; j++) {
-            unsigned block=order[j];
-            char *base=mem+(size_t)block*MIB;
-            int hot=block%4==0;
-            for (unsigned q=0; q<256; q++) {
-                unsigned page=(q*73+block*11+round*19)&255;
-                char *address=base+page*PAGE;
-                if (!hot && q%32==0) {
-                    struct rusage a,b;
-                    if (getrusage(RUSAGE_THREAD,&a)) return 2;
-                    uint64_t t=clock_ns(CLOCK_MONOTONIC_RAW);
-                    (void)*(volatile const unsigned char *)address;
-                    uint64_t delta=clock_ns(CLOCK_MONOTONIC_RAW)-t;
-                    if (getrusage(RUSAGE_THREAD,&b)) return 2;
-                    if (b.ru_minflt+b.ru_majflt > a.ru_minflt+a.ru_majflt) fault[nf++]=delta;
-                    else hit[nh++]=delta;
-                }
-                page_contents(expected,block*256+page,dense_block(block,mixed));
-                if (memcmp(address,expected,PAGE)) { fprintf(stderr,"data mismatch\n"); return 3; }
-            }
-            if (!hot) evict_cold(base);
-            if ((j&7)==0) check_headroom(mib);
-        }
+        pthread_t peer;
+        for (unsigned w = 0; w < workers; w++) tasks[w].round = round;
+        if (workers == 2 && pthread_create(&peer, &attr, sweep_blocks, &tasks[1])) return 2;
+        sweep_blocks(&tasks[0]);
+        if (workers == 2 && pthread_join(peer, NULL)) return 2;
         check_headroom(mib);
     }
     cpu=clock_ns(CLOCK_PROCESS_CPUTIME_ID)-cpu;
@@ -216,6 +274,19 @@ int main(int argc, char **argv)
         printf(",\"used_after_fill_bytes\":%lu,\"entries_after_fill\":%lu", used, entries);
         for (unsigned i = 0; i < 4; i++)
             printf(",\"%s\":%lu", timers[i], arena_stat(timers[i]) - before[i]);
+    }
+    if (hash_trial) {
+        printf(",\"workers\":%u", workers);
+        if (profiling)
+            for (unsigned i=0; i<6; i++)
+                printf(",\"%s\":%lu", lock_stats[i], arena_stat(lock_stats[i]) - lock_before[i]);
+    }
+    size_t nf=tasks[0].nf, nh=tasks[0].nh;
+    if (workers == 2) {
+        memcpy(fault + nf, tasks[1].fault, tasks[1].nf * sizeof(*fault));
+        memcpy(hit + nh, tasks[1].hit, tasks[1].nh * sizeof(*hit));
+        nf += tasks[1].nf;
+        nh += tasks[1].nh;
     }
     print_latencies("fault",fault,nf); print_latencies("hit",hit,nh);
     puts("}");

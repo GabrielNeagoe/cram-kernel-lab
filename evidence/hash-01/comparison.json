@@ -1,0 +1,784 @@
+{
+  "matched": {
+    "structured": {
+      "indexed-1": {
+        "mib": 704,
+        "workers": 1,
+        "uninstrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 5.1499,
+          "guest_busy_s_per_gib": 3.6582,
+          "verified_mib_per_wall_s": 199.3,
+          "fault_samples": 25344,
+          "fault_p50_us": 5.077,
+          "fault_p99_us": 22.797,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 135168.0,
+          "median_arena_after_fill_bytes": 246398976.0
+        },
+        "instrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 5.0952,
+          "guest_busy_s_per_gib": 3.6121,
+          "verified_mib_per_wall_s": 201.0,
+          "fault_samples": 25344,
+          "fault_p50_us": 5.061,
+          "fault_p99_us": 19.947,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 135168.0,
+          "median_arena_after_fill_bytes": 246398976.0
+        },
+        "lock_profile": {
+          "nodes_per_lookup": 98.86795,
+          "hash_ns_per_lookup": 5614.3683,
+          "contended_percent": 0.0,
+          "hold_us_per_acquire": 11.39118,
+          "wait_us_per_contended_acquire": null,
+          "wait_s_per_gib": 0.0,
+          "hold_s_per_gib": 4.47919,
+          "hash_s_per_gib": 3.31149,
+          "codec_s_per_gib": 1.03263,
+          "acquires": [
+            811008,
+            811008
+          ],
+          "contended": [
+            0,
+            0
+          ]
+        },
+        "live_entries": [
+          135168,
+          135168
+        ],
+        "occupied_bytes": [
+          242220800,
+          242220800
+        ],
+        "sweep_stores": [
+          405504,
+          405504,
+          405504,
+          405504
+        ]
+      },
+      "indexed-2": {
+        "mib": 704,
+        "workers": 2,
+        "uninstrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 9.3603,
+          "guest_busy_s_per_gib": 9.3091,
+          "verified_mib_per_wall_s": 218.27,
+          "fault_samples": 25344,
+          "fault_p50_us": 19.663,
+          "fault_p99_us": 44.773,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 135168.0,
+          "median_arena_after_fill_bytes": 246398976.0
+        },
+        "instrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 9.3658,
+          "guest_busy_s_per_gib": 9.2945,
+          "verified_mib_per_wall_s": 218.11,
+          "fault_samples": 25344,
+          "fault_p50_us": 19.89,
+          "fault_p99_us": 43.249,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 135168.0,
+          "median_arena_after_fill_bytes": 246398976.0
+        },
+        "lock_profile": {
+          "nodes_per_lookup": 98.78311,
+          "hash_ns_per_lookup": 5603.12754,
+          "contended_percent": 92.86111,
+          "hold_us_per_acquire": 11.66899,
+          "wait_us_per_contended_acquire": 10.992,
+          "wait_s_per_gib": 4.01411,
+          "hold_s_per_gib": 4.58843,
+          "hash_s_per_gib": 3.30486,
+          "codec_s_per_gib": 1.09769,
+          "acquires": [
+            811008,
+            811008
+          ],
+          "contended": [
+            750689,
+            755533
+          ]
+        },
+        "live_entries": [
+          135168,
+          135168
+        ],
+        "occupied_bytes": [
+          242220800,
+          242220800
+        ],
+        "sweep_stores": [
+          405504,
+          405504,
+          405504,
+          405504
+        ]
+      },
+      "wide-1": {
+        "mib": 704,
+        "workers": 1,
+        "uninstrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 1.7533,
+          "guest_busy_s_per_gib": 1.2752,
+          "verified_mib_per_wall_s": 583.99,
+          "fault_samples": 25344,
+          "fault_p50_us": 2.371,
+          "fault_p99_us": 10.056,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 135168.0,
+          "median_arena_after_fill_bytes": 246661120.0
+        },
+        "instrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 1.8261,
+          "guest_busy_s_per_gib": 1.28,
+          "verified_mib_per_wall_s": 560.76,
+          "fault_samples": 25344,
+          "fault_p50_us": 2.53,
+          "fault_p99_us": 9.041,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 135168.0,
+          "median_arena_after_fill_bytes": 246661120.0
+        },
+        "lock_profile": {
+          "nodes_per_lookup": 1.22207,
+          "hash_ns_per_lookup": 141.98025,
+          "contended_percent": 0.0,
+          "hold_us_per_acquire": 3.16882,
+          "wait_us_per_contended_acquire": null,
+          "wait_s_per_gib": 0.0,
+          "hold_s_per_gib": 1.24603,
+          "hash_s_per_gib": 0.08374,
+          "codec_s_per_gib": 1.03544,
+          "acquires": [
+            811008,
+            811008
+          ],
+          "contended": [
+            0,
+            0
+          ]
+        },
+        "live_entries": [
+          135168,
+          135168
+        ],
+        "occupied_bytes": [
+          242220800,
+          242220800
+        ],
+        "sweep_stores": [
+          405504,
+          405504,
+          405504,
+          405504
+        ]
+      },
+      "wide-2": {
+        "mib": 704,
+        "workers": 2,
+        "uninstrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 2.885,
+          "guest_busy_s_per_gib": 2.8848,
+          "verified_mib_per_wall_s": 708.29,
+          "fault_samples": 25344,
+          "fault_p50_us": 5.181,
+          "fault_p99_us": 13.713,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 135168.0,
+          "median_arena_after_fill_bytes": 246661120.0
+        },
+        "instrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 3.0862,
+          "guest_busy_s_per_gib": 3.0861,
+          "verified_mib_per_wall_s": 661.55,
+          "fault_samples": 25344,
+          "fault_p50_us": 5.853,
+          "fault_p99_us": 14.463,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 135168.0,
+          "median_arena_after_fill_bytes": 246661120.0
+        },
+        "lock_profile": {
+          "nodes_per_lookup": 1.22148,
+          "hash_ns_per_lookup": 150.42979,
+          "contended_percent": 86.978,
+          "hold_us_per_acquire": 3.6296,
+          "wait_us_per_contended_acquire": 2.941,
+          "wait_s_per_gib": 1.00585,
+          "hold_s_per_gib": 1.42722,
+          "hash_s_per_gib": 0.08873,
+          "codec_s_per_gib": 1.14307,
+          "acquires": [
+            811008,
+            811008
+          ],
+          "contended": [
+            707025,
+            703772
+          ]
+        },
+        "live_entries": [
+          135168,
+          135168
+        ],
+        "occupied_bytes": [
+          242220800,
+          242220800
+        ],
+        "sweep_stores": [
+          405504,
+          405504,
+          405504,
+          405504
+        ]
+      }
+    },
+    "mixed": {
+      "indexed-1": {
+        "mib": 480,
+        "workers": 1,
+        "uninstrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 1.7272,
+          "guest_busy_s_per_gib": 1.1058,
+          "verified_mib_per_wall_s": 592.82,
+          "fault_samples": 17280,
+          "fault_p50_us": 2.207,
+          "fault_p99_us": 7.964,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 46080.0,
+          "median_arena_after_fill_bytes": 84213760.0
+        },
+        "instrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 1.7809,
+          "guest_busy_s_per_gib": 1.1627,
+          "verified_mib_per_wall_s": 574.98,
+          "fault_samples": 17280,
+          "fault_p50_us": 2.344,
+          "fault_p99_us": 8.515,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 46080.0,
+          "median_arena_after_fill_bytes": 84213760.0
+        },
+        "lock_profile": {
+          "nodes_per_lookup": 36.25541,
+          "hash_ns_per_lookup": 1320.38586,
+          "contended_percent": 0.0,
+          "hold_us_per_acquire": 3.8999,
+          "wait_us_per_contended_acquire": null,
+          "wait_s_per_gib": 0.0,
+          "hold_s_per_gib": 1.15013,
+          "hash_s_per_gib": 0.5192,
+          "codec_s_per_gib": 0.56621,
+          "acquires": [
+            414720,
+            414720
+          ],
+          "contended": [
+            0,
+            0
+          ]
+        },
+        "live_entries": [
+          46080,
+          46080
+        ],
+        "occupied_bytes": [
+          82575360,
+          82575360
+        ],
+        "sweep_stores": [
+          138240,
+          138240,
+          138240,
+          138240
+        ]
+      },
+      "indexed-2": {
+        "mib": 480,
+        "workers": 2,
+        "uninstrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 2.8542,
+          "guest_busy_s_per_gib": 2.816,
+          "verified_mib_per_wall_s": 709.01,
+          "fault_samples": 17280,
+          "fault_p50_us": 2.416,
+          "fault_p99_us": 12.729,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 46080.0,
+          "median_arena_after_fill_bytes": 84213760.0
+        },
+        "instrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 2.9951,
+          "guest_busy_s_per_gib": 2.944,
+          "verified_mib_per_wall_s": 676.49,
+          "fault_samples": 17280,
+          "fault_p50_us": 2.534,
+          "fault_p99_us": 13.88,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 46080.0,
+          "median_arena_after_fill_bytes": 84213760.0
+        },
+        "lock_profile": {
+          "nodes_per_lookup": 36.20411,
+          "hash_ns_per_lookup": 1478.00579,
+          "contended_percent": 75.66949,
+          "hold_us_per_acquire": 4.63151,
+          "wait_us_per_contended_acquire": 4.337,
+          "wait_s_per_gib": 0.96774,
+          "hold_s_per_gib": 1.36589,
+          "hash_s_per_gib": 0.58118,
+          "codec_s_per_gib": 0.6952,
+          "acquires": [
+            414720,
+            414720
+          ],
+          "contended": [
+            313880,
+            313753
+          ]
+        },
+        "live_entries": [
+          46080,
+          46080
+        ],
+        "occupied_bytes": [
+          82575360,
+          82575360
+        ],
+        "sweep_stores": [
+          138240,
+          138240,
+          138240,
+          138240
+        ]
+      },
+      "wide-1": {
+        "mib": 480,
+        "workers": 1,
+        "uninstrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 1.232,
+          "guest_busy_s_per_gib": 0.8391,
+          "verified_mib_per_wall_s": 831.1,
+          "fault_samples": 17280,
+          "fault_p50_us": 2.154,
+          "fault_p99_us": 6.925,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 46080.0,
+          "median_arena_after_fill_bytes": 84475904.0
+        },
+        "instrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 1.2915,
+          "guest_busy_s_per_gib": 0.8782,
+          "verified_mib_per_wall_s": 793.06,
+          "fault_samples": 17280,
+          "fault_p50_us": 2.285,
+          "fault_p99_us": 8.191,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 46080.0,
+          "median_arena_after_fill_bytes": 84475904.0
+        },
+        "lock_profile": {
+          "nodes_per_lookup": 0.42088,
+          "hash_ns_per_lookup": 95.16052,
+          "contended_percent": 0.0,
+          "hold_us_per_acquire": 2.26121,
+          "wait_us_per_contended_acquire": null,
+          "wait_s_per_gib": 0.0,
+          "hold_s_per_gib": 0.66686,
+          "hash_s_per_gib": 0.03742,
+          "codec_s_per_gib": 0.56488,
+          "acquires": [
+            414720,
+            414720
+          ],
+          "contended": [
+            0,
+            0
+          ]
+        },
+        "live_entries": [
+          46080,
+          46080
+        ],
+        "occupied_bytes": [
+          82575360,
+          82575360
+        ],
+        "sweep_stores": [
+          138240,
+          138240,
+          138240,
+          138240
+        ]
+      },
+      "wide-2": {
+        "mib": 480,
+        "workers": 2,
+        "uninstrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 1.8049,
+          "guest_busy_s_per_gib": 1.7956,
+          "verified_mib_per_wall_s": 1122.18,
+          "fault_samples": 17280,
+          "fault_p50_us": 2.252,
+          "fault_p99_us": 11.009,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 46080.0,
+          "median_arena_after_fill_bytes": 84475904.0
+        },
+        "instrumented": {
+          "measurements": 2,
+          "worker_cpu_s_per_gib": 1.9163,
+          "guest_busy_s_per_gib": 1.9093,
+          "verified_mib_per_wall_s": 1057.21,
+          "fault_samples": 17280,
+          "fault_p50_us": 2.373,
+          "fault_p99_us": 11.346,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 46080.0,
+          "median_arena_after_fill_bytes": 84475904.0
+        },
+        "lock_profile": {
+          "nodes_per_lookup": 0.41998,
+          "hash_ns_per_lookup": 89.14991,
+          "contended_percent": 62.15,
+          "hold_us_per_acquire": 2.69192,
+          "wait_us_per_contended_acquire": 2.687,
+          "wait_s_per_gib": 0.49241,
+          "hold_s_per_gib": 0.79388,
+          "hash_s_per_gib": 0.03506,
+          "codec_s_per_gib": 0.6692,
+          "acquires": [
+            414720,
+            414720
+          ],
+          "contended": [
+            256797,
+            258700
+          ]
+        },
+        "live_entries": [
+          46080,
+          46080
+        ],
+        "occupied_bytes": [
+          82575360,
+          82575360
+        ],
+        "sweep_stores": [
+          138240,
+          138240,
+          138240,
+          138240
+        ]
+      }
+    }
+  },
+  "capacity": {
+    "off": {
+      "structured": {
+        "confirmed_capacity_mib": [
+          384,
+          384
+        ],
+        "next_failed_mib": [
+          416,
+          416
+        ],
+        "common_128mib": {
+          "measurements": 6,
+          "worker_cpu_s_per_gib": 0.3006,
+          "guest_busy_s_per_gib": 0.2667,
+          "verified_mib_per_wall_s": 6601.98,
+          "fault_samples": 0,
+          "fault_p50_us": null,
+          "fault_p99_us": null,
+          "hit_samples": 13824,
+          "hit_p50_us": 0.099,
+          "hit_p99_us": 0.716,
+          "median_restores_per_sweep": 0.0
+        },
+        "at_each_boot_capacity": {
+          "measurements": 4,
+          "worker_cpu_s_per_gib": 0.2957,
+          "guest_busy_s_per_gib": 0.2444,
+          "verified_mib_per_wall_s": 6782.08,
+          "fault_samples": 0,
+          "fault_p50_us": null,
+          "fault_p99_us": null,
+          "hit_samples": 27648,
+          "hit_p50_us": 0.098,
+          "hit_p99_us": 0.731,
+          "median_restores_per_sweep": 0.0
+        },
+        "paired_multiple_vs_off": [
+          1.0,
+          1.0
+        ]
+      },
+      "mixed": {
+        "confirmed_capacity_mib": [
+          384,
+          384
+        ],
+        "next_failed_mib": [
+          416,
+          416
+        ],
+        "common_128mib": {
+          "measurements": 6,
+          "worker_cpu_s_per_gib": 0.3677,
+          "guest_busy_s_per_gib": 0.2933,
+          "verified_mib_per_wall_s": 5483.32,
+          "fault_samples": 0,
+          "fault_p50_us": null,
+          "fault_p99_us": null,
+          "hit_samples": 13824,
+          "hit_p50_us": 0.097,
+          "hit_p99_us": 0.719,
+          "median_restores_per_sweep": 0.0
+        },
+        "at_each_boot_capacity": {
+          "measurements": 4,
+          "worker_cpu_s_per_gib": 0.3694,
+          "guest_busy_s_per_gib": 0.2933,
+          "verified_mib_per_wall_s": 5450.37,
+          "fault_samples": 0,
+          "fault_p50_us": null,
+          "fault_p99_us": null,
+          "hit_samples": 27648,
+          "hit_p50_us": 0.1,
+          "hit_p99_us": 0.739,
+          "median_restores_per_sweep": 0.0
+        },
+        "paired_multiple_vs_off": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "indexed": {
+      "structured": {
+        "confirmed_capacity_mib": [
+          704,
+          704
+        ],
+        "next_failed_mib": [
+          736,
+          736
+        ],
+        "common_128mib": {
+          "measurements": 6,
+          "worker_cpu_s_per_gib": 3.4723,
+          "guest_busy_s_per_gib": 3.4933,
+          "verified_mib_per_wall_s": 581.11,
+          "fault_samples": 13823,
+          "fault_p50_us": 6.176,
+          "fault_p99_us": 17.224,
+          "hit_samples": 1,
+          "hit_p50_us": 0.096,
+          "hit_p99_us": 0.096,
+          "median_restores_per_sweep": 24576.0,
+          "median_arena_after_fill_bytes": 45072384.0
+        },
+        "at_each_boot_capacity": {
+          "measurements": 4,
+          "worker_cpu_s_per_gib": 8.8831,
+          "guest_busy_s_per_gib": 8.8194,
+          "verified_mib_per_wall_s": 229.82,
+          "fault_samples": 50688,
+          "fault_p50_us": 18.949,
+          "fault_p99_us": 39.684,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 135168.0,
+          "median_arena_after_fill_bytes": 246398976.0
+        },
+        "paired_multiple_vs_off": [
+          1.833,
+          1.833
+        ]
+      },
+      "mixed": {
+        "confirmed_capacity_mib": [
+          544,
+          544
+        ],
+        "next_failed_mib": [
+          576,
+          576
+        ],
+        "common_128mib": {
+          "measurements": 6,
+          "worker_cpu_s_per_gib": 1.9663,
+          "guest_busy_s_per_gib": 1.96,
+          "verified_mib_per_wall_s": 1030.24,
+          "fault_samples": 13824,
+          "fault_p50_us": 2.219,
+          "fault_p99_us": 10.787,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 12288.0,
+          "median_arena_after_fill_bytes": 22708224.0
+        },
+        "at_each_boot_capacity": {
+          "measurements": 4,
+          "worker_cpu_s_per_gib": 3.2251,
+          "guest_busy_s_per_gib": 3.1749,
+          "verified_mib_per_wall_s": 632.65,
+          "fault_samples": 39168,
+          "fault_p50_us": 2.547,
+          "fault_p99_us": 15.105,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 52224.0,
+          "median_arena_after_fill_bytes": 95404032.0
+        },
+        "paired_multiple_vs_off": [
+          1.417,
+          1.417
+        ]
+      }
+    },
+    "wide": {
+      "structured": {
+        "confirmed_capacity_mib": [
+          704,
+          704
+        ],
+        "next_failed_mib": [
+          736,
+          736
+        ],
+        "common_128mib": {
+          "measurements": 6,
+          "worker_cpu_s_per_gib": 2.8702,
+          "guest_busy_s_per_gib": 2.88,
+          "verified_mib_per_wall_s": 704.99,
+          "fault_samples": 13824,
+          "fault_p50_us": 4.806,
+          "fault_p99_us": 14.748,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 24576.0,
+          "median_arena_after_fill_bytes": 45334528.0
+        },
+        "at_each_boot_capacity": {
+          "measurements": 4,
+          "worker_cpu_s_per_gib": 2.8619,
+          "guest_busy_s_per_gib": 2.863,
+          "verified_mib_per_wall_s": 713.3,
+          "fault_samples": 50688,
+          "fault_p50_us": 5.208,
+          "fault_p99_us": 13.941,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 135168.0,
+          "median_arena_after_fill_bytes": 246661120.0
+        },
+        "paired_multiple_vs_off": [
+          1.833,
+          1.833
+        ]
+      },
+      "mixed": {
+        "confirmed_capacity_mib": [
+          544,
+          544
+        ],
+        "next_failed_mib": [
+          576,
+          576
+        ],
+        "common_128mib": {
+          "measurements": 6,
+          "worker_cpu_s_per_gib": 1.8153,
+          "guest_busy_s_per_gib": 1.8133,
+          "verified_mib_per_wall_s": 1112.76,
+          "fault_samples": 13824,
+          "fault_p50_us": 2.229,
+          "fault_p99_us": 11.492,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 12288.0,
+          "median_arena_after_fill_bytes": 22970368.0
+        },
+        "at_each_boot_capacity": {
+          "measurements": 4,
+          "worker_cpu_s_per_gib": 1.8676,
+          "guest_busy_s_per_gib": 1.8604,
+          "verified_mib_per_wall_s": 1086.3,
+          "fault_samples": 39168,
+          "fault_p50_us": 2.241,
+          "fault_p99_us": 11.035,
+          "hit_samples": 0,
+          "hit_p50_us": null,
+          "hit_p99_us": null,
+          "median_restores_per_sweep": 52224.0,
+          "median_arena_after_fill_bytes": 95666176.0
+        },
+        "paired_multiple_vs_off": [
+          1.417,
+          1.417
+        ]
+      }
+    }
+  }
+}

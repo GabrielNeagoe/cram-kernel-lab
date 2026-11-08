@@ -1,0 +1,18 @@
+{
+  "sha256": {
+    "bzImage": "04f07b01f1c5c4e117d19226993c3214d8c265fdfa80ec967a2c28c489138628",
+    "trial.cpio.gz": "2624cc0212dfb6b75cb79405ca5091ec948c48a6518a80cc74e70639b4e99067",
+    "arena.inc": "b9ebfd46a4573d3d52fd8dc28d556509a0cc13396f082b16c9861d7c56679e8c",
+    "bench": "937689cc7fbc989814ee560a3f580b9c0296d51e6aac1d6bb08c9ec009da1591"
+  },
+  "mem_boot_limit_mib": 768,
+  "max_vcpus": 2,
+  "boot_sequence": [
+    "off1",
+    "indexed1",
+    "wide1",
+    "wide2",
+    "indexed2",
+    "off2"
+  ]
+}
