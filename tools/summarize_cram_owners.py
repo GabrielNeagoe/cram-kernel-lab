@@ -69,22 +69,57 @@ def analyze(base, arm):
     opening = events["control" if control else "release"]
     start = max(row["time"] for row in host if row["guest_time"] < opening and row["hold"] == "Y" and row["current"] == 0)
     end = min(row["time"] for row in host if row["guest_time"] > events["close"])
-    snapshot=json.loads((folder/'physical-hold.json').read_text())
-    detailed='changed_pages' in snapshot
+    fast_hold=folder/'fast-only-hold.json'
+    if fast_hold.exists():
+        interval=json.loads(fast_hold.read_text())
+        baseline=json.loads((folder/'physical-baseline.json').read_text())
+        assert baseline['single_identity']==8192 and baseline['end'] < scans[0][0] < start
+        assert interval['cohort_pages']==8192 and interval['hold_snapshot'] is False
+        assert start <= interval['start'] < interval['end'] <= end
+        assert not any((folder/name).exists() for name in ('physical-hold.json','rapid.jsonl','reentry.jsonl'))
+        assert guest['verified']['zswpin']-guest['filled']['zswpin']==8192
+        snapshot=None
+    else:
+        snapshot=json.loads((folder/'physical-hold.json').read_text())
+    detailed=snapshot is None or 'changed_pages' in snapshot
     pinned=set(groups['pinned_indices']) if detailed else None
     if detailed:
-        assert snapshot['comparable']==8192 and len(pinned)==4096
-        assert len(snapshot['changed_pages'])==snapshot['changed']
-        assert all(row['locked']==(row['index'] in pinned) for row in snapshot['changed_pages'])
+        assert len(pinned)==4096
+        if snapshot is not None:
+            assert snapshot['comparable']==8192
+            assert len(snapshot['changed_pages'])==snapshot['changed']
+            assert all(row['locked']==(row['index'] in pinned) for row in snapshot['changed_pages'])
         tracked=set(range(8192))
     def summarize(left,right):
         return window(scans,left,right,len(tracked),pinned)
     result = dict(whole_window=summarize(start,end))
     if detailed:
-        result['snapshot_changes']=snapshot['changed_pages']
+        if snapshot is None:
+            result['hold_observer']='fast-only'
+            result['preopening_first_scan'] = dict(original=scans[0][2],
+                other=[dict(index=row[0], locked=row[0] in pinned, state=row[3])
+                       for row in scans[0][3]])
+            # Keep pre-opening observations separate from events within the timed hold.
+            preopening = {}
+            for left,right,_,others,_ in scans:
+                if right >= start:
+                    break
+                for index,kind,page_list,state in others:
+                    key=(index,kind,page_list,state)
+                    visits=preopening.setdefault(key,dict(index=index,use=kind,page_list=page_list,
+                        state=state,first=left,last=right,observations=0))
+                    visits['last']=right
+                    visits['observations']+=1
+            result['preopening_observations'] = list(preopening.values())
+        else:
+            result['snapshot_changes']=snapshot['changed_pages']
         result['cohort_pages']=len(tracked)
     if control:
         assert not guest["offline_indices_final"] and all(row["current"] == 0 for row in guest["samples"])
+        if snapshot is None:
+            closed=[row for row in host if opening <= row['guest_time'] < events['close']]
+            assert closed and all(row['hold']=='Y' and row['current']==0 for row in closed)
+            result['confirmed_closed_hold']=summarize(closed[0]['time'],closed[-1]['time'])
     else:
         assert tracked <= set(guest["offline_indices_first"]) & set(guest["offline_indices_final"])
         assert max(row["current"] for row in guest["samples"]) <= 2**20

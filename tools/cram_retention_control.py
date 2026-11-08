@@ -126,6 +126,15 @@ def record(a,name,folder,stop,deadline):
     watch=None
     try:
         assert filename==target['file'] and Path(filename).name==filename
+        if a.fast_only_hold:
+            historic,pinned=groups(folder.parent)
+            with lock_offsets(Path(a.vm_dir)/filename,[offsets[j] for j in sorted(pinned)]):
+                (folder/'pinned.json').write_text(json.dumps(dict(
+                    historic_indices=sorted(historic),pinned_indices=sorted(pinned))))
+                while not stop.exists() and not (folder/'stop').exists() and time.monotonic()<deadline:
+                    time.sleep(.25)
+            (folder/'locks-released.json').write_text(json.dumps(dict(locked_at_start_and_end=len(pinned))))
+            return
         win.k.GetProcessId.argtypes=[C.c_void_p]
         pid=win.k.GetProcessId(main)
         watch=win.k.OpenProcess(0x600,False,pid)

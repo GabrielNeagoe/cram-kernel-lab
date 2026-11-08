@@ -10,9 +10,11 @@
 
 - [x] Instrument the full 8,192-page cohort by logical index. Observe release and reassignment of seven unlocked frames under a full balloon and an unlocked frame changing backing under the closed control. [Indexed repeat](changed-frame-investigation.md)
 
+- [x] Repeat both holds with only the fast frame sampler. The tested pair had zero newly observed frame assignments during either timed hold. [Fast-only repeat](fast-only-hold.md)
+
 ## Next tests
 
-1. Repeat with the fast sampler alone during the hold. Both arms showed changes late in the RAMMap hold export. Keep the baseline mapping, matched closed control and rollback so the effect of the hold export can be isolated.
+1. Alternate the presence of the RAMMap hold export over repeated fresh-boot pairs while keeping other watchers fixed. Record actual host requests and mark any ownership differences already present before the hold.
 2. Repeat the paired run on fresh boots and report the distribution of observation gaps and owner changes. Use the same 4 GiB ceiling, matched control, workload readback and verified rollback.
 3. Quantify net Windows RAM savings independently of individual frame reuse. Compare host-wide accounting across repeated trials and report variability.
 4. Measure CPU cost, fault latency and storage efficiency across compressible, mixed and incompressible workloads before proposing broader deployment.

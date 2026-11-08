@@ -58,6 +58,22 @@ def physical(a,name,folder,deadline,stop):
                     if not win.k.VirtualLock(ctypes.c_void_p(address),ctypes.c_size_t(4096)):raise ctypes.WinError(ctypes.get_last_error())
                 for phase in ['baseline','hold']:
                     wait((folder/('begin-'+phase)).exists,deadline,stop)
+                    if phase == 'hold' and a.fast_only_hold:
+                        started = time.time()
+                        # Match the preceding pair's guest-observed hold durations.
+                        duration = 229 if name == 'full1' else 235
+                        finish = time.monotonic() + duration
+                        while time.monotonic() < finish:
+                            if stop.exists() or time.monotonic() > deadline:
+                                raise TimeoutError('Fast-only hold interrupted')
+                            if owner_job.done():
+                                owner_job.result()
+                                raise RuntimeError('Ownership sampler exited early')
+                            time.sleep(.1)
+                        (folder/'fast-only-hold.json').write_text(json.dumps(dict(
+                            start=started,end=time.time(),cohort_pages=8192,hold_snapshot=False)))
+                        (folder/'hold-done').touch()
+                        continue
                     if a.retention_control: wait((folder/'pinned.json').exists,time.monotonic()+20,stop)
                     time.sleep(6)  # Let the independent observer bracket the capture.
                     target=json.loads((private/(name+'.json')).read_text())
@@ -136,12 +152,15 @@ if __name__=='__main__':
     p.add_argument('--retention-control',action='store_true')
     p.add_argument('--frame-owners',action='store_true')
     p.add_argument('--all-owners',action='store_true')
+    p.add_argument('--fast-only-hold',action='store_true')
     p.add_argument('--watch-reentry',action='store_true')
     p.add_argument('mode',choices=['capture','verify'])
     for k in ['private','out','rammap','vm-dir','plink','key','destination','prefix']:p.add_argument('--'+k)
     a=p.parse_args();a.count=8192;out=Path(a.out);stop=out/'stop';deadline=time.monotonic()+2400
     if a.frame_owners and not a.retention_control:p.error('--frame-owners requires --retention-control')
     if a.all_owners and not a.frame_owners:p.error('--all-owners requires --frame-owners')
+    if a.fast_only_hold and (not a.all_owners or a.watch_reentry):
+        p.error('--fast-only-hold requires --all-owners and disables the reentry watcher')
     if a.mode=='capture':
         check_response()
         if a.watch_reentry:
@@ -159,13 +178,21 @@ if __name__=='__main__':
         if a.mode=='verify':coordinate(a,name,folder,deadline,stop)
         else:
             with concurrent.futures.ThreadPoolExecutor(max_workers=4) as threads:
-                jobs=[threads.submit(record,Path(a.private),folder,name,stop,deadline),threads.submit(physical,a,name,folder,deadline,stop)]
+                jobs=[threads.submit(physical,a,name,folder,deadline,stop)]
+                if not a.fast_only_hold:
+                    jobs.append(threads.submit(record,Path(a.private),folder,name,stop,deadline))
                 if a.retention_control:
                     import cram_retention_control as retention
                     jobs.append(threads.submit(retention.record,a,name,folder,stop,deadline))
                 elif a.watch_reentry:
                     jobs.append(threads.submit(reentry.record,Path(a.private),folder,name,stop,deadline))
-                capture(a,name,folder,deadline,stop)
+                if a.fast_only_hold:
+                    (folder/'windows-page-metadata.jsonl').write_text(json.dumps(win.snapshot())+'\n')
+                    while not stop.exists() and not (folder/'stop').exists() and time.monotonic()<deadline:
+                        time.sleep(.25)
+                    (folder/'stopped').touch()
+                else:
+                    capture(a,name,folder,deadline,stop)
                 for j in jobs:j.result()
 
 

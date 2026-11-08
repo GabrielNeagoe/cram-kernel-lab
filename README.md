@@ -5,6 +5,7 @@ Experimental compressed memory on Ubuntu 26 in VMware Workstation. This reposito
 - [Development plan](docs/PLAN.md)
 - [Windows physical-frame experiment](docs/windows-frame-ownership.md)
 - [Indexed follow-up on all 8,192 frames](docs/changed-frame-investigation.md)
+- [Fast-only hold repeat](docs/fast-only-hold.md)
 - [Kernel reservation measurements](evidence/kernel-reservation.json)
 - [VM churn measurements](evidence/vm-churn.json)
 

@@ -1,0 +1,169 @@
+{
+  "full1": {
+    "whole_window": {
+      "seconds": 235.697,
+      "scans": 11017,
+      "minimum_original": 8192,
+      "distinct_different_backing": 0,
+      "distinct_free_or_zeroed": 0,
+      "maximum_unsampled_ms": 49.081,
+      "maximum_per_frame_revisit_bound_ms": 50.075,
+      "pages": [],
+      "ordered_reuse": []
+    },
+    "hold_observer": "fast-only",
+    "preopening_first_scan": {
+      "original": 8192,
+      "other": []
+    },
+    "preopening_observations": [],
+    "cohort_pages": 8192,
+    "inflation_including_boundaries": {
+      "seconds": 4.555,
+      "scans": 208,
+      "minimum_original": 8192,
+      "distinct_different_backing": 0,
+      "distinct_free_or_zeroed": 0,
+      "maximum_unsampled_ms": 24.123,
+      "maximum_per_frame_revisit_bound_ms": 26.124,
+      "pages": [],
+      "ordered_reuse": []
+    },
+    "confirmed_full_hold": {
+      "seconds": 228.898,
+      "scans": 10704,
+      "minimum_original": 8192,
+      "distinct_different_backing": 0,
+      "distinct_free_or_zeroed": 0,
+      "maximum_unsampled_ms": 49.081,
+      "maximum_per_frame_revisit_bound_ms": 50.075,
+      "pages": [],
+      "ordered_reuse": []
+    },
+    "target_mib": [
+      2300.0
+    ]
+  },
+  "control": {
+    "whole_window": {
+      "seconds": 238.101,
+      "scans": 10973,
+      "minimum_original": 8190,
+      "distinct_different_backing": 2,
+      "distinct_free_or_zeroed": 2,
+      "maximum_unsampled_ms": 39.408,
+      "maximum_per_frame_revisit_bound_ms": 39.908,
+      "pages": [
+        {
+          "index": 728,
+          "locked": false,
+          "observed_states": [
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 1704,
+          "locked": false,
+          "observed_states": [
+            "free"
+          ],
+          "observed_free_or_zeroed": true
+        }
+      ],
+      "ordered_reuse": []
+    },
+    "hold_observer": "fast-only",
+    "preopening_first_scan": {
+      "original": 8190,
+      "other": [
+        {
+          "index": 728,
+          "locked": false,
+          "state": "zeroed"
+        },
+        {
+          "index": 1704,
+          "locked": false,
+          "state": "free"
+        }
+      ]
+    },
+    "preopening_observations": [
+      {
+        "index": 728,
+        "use": 0,
+        "page_list": 0,
+        "state": "zeroed",
+        "first": 1794107001.5419648,
+        "last": 1794107008.5638254,
+        "observations": 328
+      },
+      {
+        "index": 1704,
+        "use": 0,
+        "page_list": 1,
+        "state": "free",
+        "first": 1794107001.5419648,
+        "last": 1794107008.5638254,
+        "observations": 43
+      },
+      {
+        "index": 1704,
+        "use": 0,
+        "page_list": 0,
+        "state": "zeroed",
+        "first": 1794107001.8664703,
+        "last": 1794107007.0184646,
+        "observations": 241
+      },
+      {
+        "index": 1704,
+        "use": 0,
+        "page_list": 5,
+        "state": "other-or-unresolved",
+        "first": 1794107007.0392168,
+        "last": 1794107007.3394232,
+        "observations": 15
+      },
+      {
+        "index": 1704,
+        "use": 4,
+        "page_list": 6,
+        "state": "other-or-unresolved",
+        "first": 1794107007.3604627,
+        "last": 1794107007.9613671,
+        "observations": 29
+      }
+    ],
+    "cohort_pages": 8192,
+    "confirmed_closed_hold": {
+      "seconds": 233.617,
+      "scans": 10763,
+      "minimum_original": 8190,
+      "distinct_different_backing": 2,
+      "distinct_free_or_zeroed": 2,
+      "maximum_unsampled_ms": 39.408,
+      "maximum_per_frame_revisit_bound_ms": 39.908,
+      "pages": [
+        {
+          "index": 728,
+          "locked": false,
+          "observed_states": [
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 1704,
+          "locked": false,
+          "observed_states": [
+            "free"
+          ],
+          "observed_free_or_zeroed": true
+        }
+      ],
+      "ordered_reuse": []
+    }
+  }
+}

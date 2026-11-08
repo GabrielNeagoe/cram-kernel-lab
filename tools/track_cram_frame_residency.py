@@ -26,7 +26,11 @@ def verify(a, name, folder, deadline, stop):
     def fetch():
         result = subprocess.run(ssh + ['sudo -n cat ' + run + '/cohort'], capture_output=True, timeout=8)
         if result.returncode == 0:
-            return json.loads(result.stdout)
+            try:
+                return json.loads(result.stdout)
+            except json.JSONDecodeError:
+                # The guest may still be writing the marker list. The outer wait is bounded.
+                return None
     cohort = wait(fetch, deadline, stop)
     files = list(Path(a.vm_dir).glob('*.vmem'))
     assert len(files) == 1 and files[0].stat().st_size == 32*2**30
