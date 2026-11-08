@@ -12,9 +12,12 @@
 
 - [x] Repeat both holds with only the fast frame sampler. The tested pair had zero newly observed frame assignments during either timed hold. [Fast-only repeat](fast-only-hold.md)
 
+- [x] Compare compression off, default LZ4 and opt-in Zstd-1 at fixed guest RAM, with disk swap excluded, verified live capacity, CPU cost and fault latency. [Capacity trial](capacity-trial.md)
+
 ## Next tests
 
 1. Alternate the presence of the RAMMap hold export over repeated fresh-boot pairs while keeping other watchers fixed. Record actual host requests and mark any ownership differences already present before the hold.
 2. Repeat the paired run on fresh boots and report the distribution of observation gaps and owner changes. Use the same 4 GiB ceiling, matched control, workload readback and verified rollback.
 3. Quantify net Windows RAM savings independently of individual frame reuse. Compare host-wide accounting across repeated trials and report variability.
-4. Measure CPU cost, fault latency and storage efficiency across compressible, mixed and incompressible workloads before proposing broader deployment.
+4. Test a demand-sized arena against the fixed 256 MiB reservation, including incompressible input. Measure the net memory retained by the allocator and repeat the common-size latency comparison.
+5. Confirm any 2× capacity gain with a representative application on the full Ubuntu boot before changing the deployed 4 MiB configuration.

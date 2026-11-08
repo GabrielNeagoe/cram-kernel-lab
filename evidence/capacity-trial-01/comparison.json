@@ -1,0 +1,254 @@
+{
+  "off": {
+    "structured": {
+      "confirmed_capacity_mib": [
+        384,
+        384
+      ],
+      "next_failed_mib": [
+        416,
+        416
+      ],
+      "common_128mib": {
+        "measurements": 6,
+        "worker_cpu_s_per_gib": 0.288,
+        "guest_busy_s_per_gib": 0.1867,
+        "verified_mib_per_wall_s": 3531.18,
+        "fault_samples": 0,
+        "fault_p50_us": null,
+        "fault_p99_us": null,
+        "hit_samples": 13824,
+        "hit_p50_us": 0.097,
+        "hit_p99_us": 0.709,
+        "median_restores_per_sweep": 0.0
+      },
+      "at_each_boot_capacity": {
+        "measurements": 4,
+        "worker_cpu_s_per_gib": 0.2869,
+        "guest_busy_s_per_gib": 0.2133,
+        "verified_mib_per_wall_s": 3567.82,
+        "fault_samples": 0,
+        "fault_p50_us": null,
+        "fault_p99_us": null,
+        "hit_samples": 27648,
+        "hit_p50_us": 0.096,
+        "hit_p99_us": 0.711,
+        "median_restores_per_sweep": 0.0
+      },
+      "paired_capacity_multiple": [
+        1.0,
+        1.0
+      ],
+      "common_worker_cpu_multiple": 1.0
+    },
+    "mixed": {
+      "confirmed_capacity_mib": [
+        384,
+        384
+      ],
+      "next_failed_mib": [
+        416,
+        416
+      ],
+      "common_128mib": {
+        "measurements": 6,
+        "worker_cpu_s_per_gib": 0.3641,
+        "guest_busy_s_per_gib": 0.2667,
+        "verified_mib_per_wall_s": 2811.61,
+        "fault_samples": 0,
+        "fault_p50_us": null,
+        "fault_p99_us": null,
+        "hit_samples": 13824,
+        "hit_p50_us": 0.096,
+        "hit_p99_us": 0.717,
+        "median_restores_per_sweep": 0.0
+      },
+      "at_each_boot_capacity": {
+        "measurements": 4,
+        "worker_cpu_s_per_gib": 0.3613,
+        "guest_busy_s_per_gib": 0.2489,
+        "verified_mib_per_wall_s": 2833.76,
+        "fault_samples": 0,
+        "fault_p50_us": null,
+        "fault_p99_us": null,
+        "hit_samples": 27648,
+        "hit_p50_us": 0.097,
+        "hit_p99_us": 0.723,
+        "median_restores_per_sweep": 0.0
+      },
+      "paired_capacity_multiple": [
+        1.0,
+        1.0
+      ],
+      "common_worker_cpu_multiple": 1.0
+    }
+  },
+  "lz4": {
+    "structured": {
+      "confirmed_capacity_mib": [
+        608,
+        608
+      ],
+      "next_failed_mib": [
+        640,
+        640
+      ],
+      "common_128mib": {
+        "measurements": 6,
+        "worker_cpu_s_per_gib": 1.916,
+        "guest_busy_s_per_gib": 1.36,
+        "verified_mib_per_wall_s": 534.44,
+        "fault_samples": 13823,
+        "fault_p50_us": 2.401,
+        "fault_p99_us": 7.252,
+        "hit_samples": 1,
+        "hit_p50_us": 0.046,
+        "hit_p99_us": 0.046,
+        "median_restores_per_sweep": 24576.0
+      },
+      "at_each_boot_capacity": {
+        "measurements": 4,
+        "worker_cpu_s_per_gib": 4.2993,
+        "guest_busy_s_per_gib": 3.3011,
+        "verified_mib_per_wall_s": 238.17,
+        "fault_samples": 43776,
+        "fault_p50_us": 3.871,
+        "fault_p99_us": 16.825,
+        "hit_samples": 0,
+        "hit_p50_us": null,
+        "hit_p99_us": null,
+        "median_restores_per_sweep": 116736.0
+      },
+      "paired_capacity_multiple": [
+        1.583,
+        1.583
+      ],
+      "common_worker_cpu_multiple": 6.653
+    },
+    "mixed": {
+      "confirmed_capacity_mib": [
+        224,
+        224
+      ],
+      "next_failed_mib": [
+        256,
+        256
+      ],
+      "common_128mib": {
+        "measurements": 6,
+        "worker_cpu_s_per_gib": 1.2924,
+        "guest_busy_s_per_gib": 0.96,
+        "verified_mib_per_wall_s": 792.29,
+        "fault_samples": 13824,
+        "fault_p50_us": 2.034,
+        "fault_p99_us": 5.347,
+        "hit_samples": 0,
+        "hit_p50_us": null,
+        "hit_p99_us": null,
+        "median_restores_per_sweep": 12288.0
+      },
+      "at_each_boot_capacity": {
+        "measurements": 4,
+        "worker_cpu_s_per_gib": 1.381,
+        "guest_busy_s_per_gib": 1.2267,
+        "verified_mib_per_wall_s": 741.48,
+        "fault_samples": 16128,
+        "fault_p50_us": 2.062,
+        "fault_p99_us": 6.264,
+        "hit_samples": 0,
+        "hit_p50_us": null,
+        "hit_p99_us": null,
+        "median_restores_per_sweep": 21504.0
+      },
+      "paired_capacity_multiple": [
+        0.583,
+        0.583
+      ],
+      "common_worker_cpu_multiple": 3.55
+    }
+  },
+  "zstd1": {
+    "structured": {
+      "confirmed_capacity_mib": [
+        608,
+        672
+      ],
+      "next_failed_mib": [
+        640,
+        704
+      ],
+      "common_128mib": {
+        "measurements": 6,
+        "worker_cpu_s_per_gib": 3.8636,
+        "guest_busy_s_per_gib": 2.7067,
+        "verified_mib_per_wall_s": 265.02,
+        "fault_samples": 13824,
+        "fault_p50_us": 5.322,
+        "fault_p99_us": 14.758,
+        "hit_samples": 0,
+        "hit_p50_us": null,
+        "hit_p99_us": null,
+        "median_restores_per_sweep": 24576.0
+      },
+      "at_each_boot_capacity": {
+        "measurements": 4,
+        "worker_cpu_s_per_gib": 6.6256,
+        "guest_busy_s_per_gib": 4.7358,
+        "verified_mib_per_wall_s": 154.59,
+        "fault_samples": 46080,
+        "fault_p50_us": 7.652,
+        "fault_p99_us": 25.952,
+        "hit_samples": 0,
+        "hit_p50_us": null,
+        "hit_p99_us": null,
+        "median_restores_per_sweep": 122880.0
+      },
+      "paired_capacity_multiple": [
+        1.583,
+        1.75
+      ],
+      "common_worker_cpu_multiple": 13.415
+    },
+    "mixed": {
+      "confirmed_capacity_mib": [
+        224,
+        224
+      ],
+      "next_failed_mib": [
+        256,
+        256
+      ],
+      "common_128mib": {
+        "measurements": 6,
+        "worker_cpu_s_per_gib": 2.4618,
+        "guest_busy_s_per_gib": 1.68,
+        "verified_mib_per_wall_s": 415.97,
+        "fault_samples": 13824,
+        "fault_p50_us": 4.697,
+        "fault_p99_us": 13.153,
+        "hit_samples": 0,
+        "hit_p50_us": null,
+        "hit_p99_us": null,
+        "median_restores_per_sweep": 12288.0
+      },
+      "at_each_boot_capacity": {
+        "measurements": 4,
+        "worker_cpu_s_per_gib": 2.5647,
+        "guest_busy_s_per_gib": 1.8362,
+        "verified_mib_per_wall_s": 399.24,
+        "fault_samples": 16128,
+        "fault_p50_us": 4.689,
+        "fault_p99_us": 13.243,
+        "hit_samples": 0,
+        "hit_p50_us": null,
+        "hit_p99_us": null,
+        "median_restores_per_sweep": 21504.0
+      },
+      "paired_capacity_multiple": [
+        0.583,
+        0.583
+      ],
+      "common_worker_cpu_multiple": 6.761
+    }
+  }
+}

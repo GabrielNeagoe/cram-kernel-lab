@@ -1,0 +1,97 @@
+--- a/mm/cram-arena.inc
++++ b/mm/cram-arena.inc
+@@ -3,13 +3,21 @@
+ #include <linux/bitmap.h>
+ #include <linux/hash.h>
+ #include <linux/lz4.h>
++#include <linux/zstd.h>
++#include <linux/vmalloc.h>
+ #include <linux/debugfs.h>
+ 
+ #define CA_BLOCK 256U
+-#define CA_MAX_BYTES (4U * 1024U * 1024U)
++#define CA_MAX_BYTES (256U * 1024U * 1024U)
+ #define CA_BUCKETS 1024U
+ static unsigned int cram_arena_mb;
+ module_param(cram_arena_mb, uint, 0444);
++/* Opt-in capacity trial. LZ4 remains the default. */
++static bool cram_zstd1;
++module_param(cram_zstd1, bool, 0444);
++static zstd_cctx *ca_cctx;
++static zstd_dctx *ca_dctx;
++static zstd_parameters ca_zparams;
+ static unsigned int cram_arena_fail_every;
+ module_param(cram_arena_fail_every, uint, 0444);
+ static DEFINE_SPINLOCK(ca_lock);
+@@ -95,8 +103,14 @@
+  if (*link)
+   ca_remove(link);
+  input = kmap_local_folio(folio, 0);
+- length = LZ4_compress_default(input, ca->output, PAGE_SIZE, PAGE_SIZE - 1,
+-                               ca->workspace);
++ if (cram_zstd1) {
++  size_t n = zstd_compress_cctx(ca_cctx, ca->output, PAGE_SIZE - 1,
++                                input, PAGE_SIZE, &ca_zparams);
++  length = zstd_is_error(n) ? 0 : (int)n;
++ } else {
++  length = LZ4_compress_default(input, ca->output, PAGE_SIZE, PAGE_SIZE - 1,
++                                ca->workspace);
++ }
+  kunmap_local(input);
+  if (length <= 0) {
+   ca_poor++;
+@@ -167,7 +181,12 @@
+  }
+  e = ca_at(*link);
+  output = kmap_local_folio(folio, 0);
+- length = LZ4_decompress_safe((void *)(e + 1), output, e->length, PAGE_SIZE);
++ if (cram_zstd1) {
++  size_t n = zstd_decompress_dctx(ca_dctx, output, PAGE_SIZE, e + 1, e->length);
++  length = zstd_is_error(n) ? -EIO : (int)n;
++ } else {
++  length = LZ4_decompress_safe((void *)(e + 1), output, e->length, PAGE_SIZE);
++ }
+  kunmap_local(output);
+  if (length != PAGE_SIZE) {
+   spin_unlock_irqrestore(&ca_lock, flags);
+@@ -206,17 +225,35 @@
+ static int ca_setup(void)
+ {
+  unsigned long bytes = (unsigned long)cram_arena_mb << 20;
++ size_t enc = 0, dec = 0, start = ALIGN(sizeof(*ca), 8);
+  if (PAGE_SIZE != 4096 || !is_power_of_2(bytes) || bytes > CA_MAX_BYTES ||
+-     bytes < (1U << 20) || get_order(bytes) > MAX_PAGE_ORDER)
++     bytes < (1U << 20))
+   return -EINVAL;
+- ca = alloc_pages_exact(bytes, GFP_KERNEL | __GFP_ZERO);
++ if (cram_zstd1) {
++  ca_zparams = zstd_get_params(1, PAGE_SIZE);
++  enc = ALIGN(zstd_cctx_workspace_bound(&ca_zparams.cParams), 8);
++  dec = zstd_dctx_workspace_bound();
++ }
++ ca_header_bytes = ALIGN(start + enc + dec, CA_BLOCK);
++ if (ca_header_bytes >= bytes)
++  return -EINVAL;
++ ca = vzalloc(bytes);
+  if (!ca)
+   return -ENOMEM;
+  ca_bytes = bytes;
+- ca_header_bytes = ALIGN(sizeof(*ca), CA_BLOCK);
++ if (cram_zstd1) {
++  ca_cctx = zstd_init_cctx((char *)ca + start, enc);
++  ca_dctx = zstd_init_dctx((char *)ca + start + enc, dec);
++  if (!ca_cctx || !ca_dctx) {
++   vfree(ca);
++   ca = NULL;
++   return -ENOMEM;
++  }
++ }
+  ca_blocks = (bytes - ca_header_bytes) / CA_BLOCK;
+- pr_info("CRAM arena: backing=%llu overhead=%llu capacity=%u block=%u codec=lz4\n",
+-         ca_bytes, ca_header_bytes, ca_blocks * CA_BLOCK, CA_BLOCK);
++ pr_info("CRAM arena: backing=%llu overhead=%llu capacity=%u block=%u codec=%s\n",
++         ca_bytes, ca_header_bytes, ca_blocks * CA_BLOCK, CA_BLOCK,
++         cram_zstd1 ? "zstd1" : "lz4");
+  return 0;
+ }
+ static void ca_debugfs(struct dentry *root)

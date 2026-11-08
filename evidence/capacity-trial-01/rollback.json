@@ -1,0 +1,12 @@
+{
+  "deployed_kernel": "7.2.0-rc2-cram-vm-arena-r2+",
+  "zswap_enabled": true,
+  "deployed_lz4_arena_mib": 4,
+  "online_vcpus": 8,
+  "memtotal_kib": 31771768,
+  "normal_swap_restored": true,
+  "stock_recovery_files_present": true,
+  "one_shot_boot_pending": false,
+  "temporary_boot_files_removed": true,
+  "temporary_swap_files_removed": true
+}
