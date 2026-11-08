@@ -215,7 +215,10 @@ int main(int argc, char **argv)
     static const char *const shard_stores[] = {"arena_shard0_stores", "arena_shard1_stores"};
     int sharded = getenv("CRAM_TWO_SHARDS") != NULL;
     int hash_trial = getenv("CRAM_HASH_TRIAL") != NULL;
-    unsigned workers = getenv("CRAM_WORKERS") && !strcmp(getenv("CRAM_WORKERS"), "2") ? 2 : 1;
+    const char *count = getenv("CRAM_WORKERS");
+    unsigned workers = !count || !strcmp(count, "1") ? 1 :
+                       !strcmp(count, "2") ? 2 : !strcmp(count, "4") ? 4 : 0;
+    if (!workers) return 2;
     unsigned long before[4], used = 0, entries = 0;
     if (profiling) {
         if (hash_trial)
@@ -230,7 +233,7 @@ int main(int argc, char **argv)
     unsigned long loads = stat_value("/sys/fs/cgroup/bench/memory.stat","zswpin");
     pthread_barrier_t gate;
     pthread_attr_t attr;
-    struct sweep_task tasks[2];
+    struct sweep_task tasks[4];
     if (pthread_barrier_init(&gate, NULL, workers) || pthread_attr_init(&attr) ||
         pthread_attr_setstacksize(&attr, 256*1024)) return 2;
     for (unsigned w = 0; w < workers; w++) {
@@ -251,11 +254,13 @@ int main(int argc, char **argv)
             unsigned k=random_word(&seed)%j, tmp=order[j-1];
             order[j-1]=order[k]; order[k]=tmp;
         }
-        pthread_t peer;
+        pthread_t peers[3];
         for (unsigned w = 0; w < workers; w++) tasks[w].round = round;
-        if (workers == 2 && pthread_create(&peer, &attr, sweep_blocks, &tasks[1])) return 2;
+        for (unsigned w = 1; w < workers; w++)
+            if (pthread_create(&peers[w-1], &attr, sweep_blocks, &tasks[w])) return 2;
         sweep_blocks(&tasks[0]);
-        if (workers == 2 && pthread_join(peer, NULL)) return 2;
+        for (unsigned w = 1; w < workers; w++)
+            if (pthread_join(peers[w-1], NULL)) return 2;
         check_headroom(mib);
     }
     cpu=clock_ns(CLOCK_PROCESS_CPUTIME_ID)-cpu;
@@ -289,11 +294,11 @@ int main(int argc, char **argv)
                 printf(",\"%s\":%lu", lock_stats[i], arena_stat(lock_stats[i]) - lock_before[i]);
     }
     size_t nf=tasks[0].nf, nh=tasks[0].nh;
-    if (workers == 2) {
-        memcpy(fault + nf, tasks[1].fault, tasks[1].nf * sizeof(*fault));
-        memcpy(hit + nh, tasks[1].hit, tasks[1].nh * sizeof(*hit));
-        nf += tasks[1].nf;
-        nh += tasks[1].nh;
+    for (unsigned w = 1; w < workers; w++) {
+        memcpy(fault + nf, tasks[w].fault, tasks[w].nf * sizeof(*fault));
+        memcpy(hit + nh, tasks[w].hit, tasks[w].nh * sizeof(*hit));
+        nf += tasks[w].nf;
+        nh += tasks[w].nh;
     }
     print_latencies("fault",fault,nf); print_latencies("hit",hit,nh);
     puts("}");

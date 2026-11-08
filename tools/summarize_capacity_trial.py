@@ -38,9 +38,9 @@ def performance(rows):
     return out
 
 
-def validate_boot(boot, mode):
+def validate_boot(boot, mode, cpus=2):
     cfg = boot["config"]
-    assert cfg["mode"] == mode and cfg["cpus"] == 2 and cfg["grid_mib"] == 32
+    assert cfg["mode"] == mode and cfg["cpus"] == cpus and cfg["grid_mib"] == 32
     assert cfg["memory_floor_kib"] == 65536 and cfg["swap_writeback"] is False
     assert cfg["arena_bytes"] == (0 if mode == "off" else 256 * 2**20)
     assert 0 <= cfg["arena_overhead_bytes"] <= cfg["arena_bytes"]

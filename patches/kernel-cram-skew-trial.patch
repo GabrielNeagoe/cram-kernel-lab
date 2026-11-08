@@ -1,0 +1,98 @@
+--- a/mm/cram-arena.inc
++++ b/mm/cram-arena.inc
+@@ -31,6 +31,9 @@
+ module_param(cram_arena_fail_every, uint, 0444);
+ static bool cram_two_shards;
+ module_param(cram_two_shards, bool, 0444);
++/* Trial-only routing bias. The local bucket still uses the upper 15 hash bits. */
++static bool cram_skew_test;
++module_param(cram_skew_test, bool, 0444);
+ static unsigned int ca_shard_count = 1;
+ static u64 ca_bytes;
+ static atomic64_t ca_fail_sequence = ATOMIC64_INIT(0);
+@@ -64,6 +67,8 @@
+  struct ca_control *control;
+  u64 bytes, header_bytes, used, peak, entries;
+  u64 stores, loads, full, quota, poor, injected, attempts;
++ u64 peer_checks, peer_busy, peer_fit, peer_backed;
++ u64 last_local_used, last_peer_used, last_local_backing, last_peer_backing, last_request;
+  unsigned int blocks;
+  unsigned long *fit;
+  unsigned int row_words;
+@@ -74,6 +79,8 @@
+ static struct ca_shard *ca_owner(unsigned long key)
+ {
+  /* Low bit of the original 16-bit bucket selects the shard; high bits select its bucket. */
++ if (cram_skew_test)
++  return &ca_shards[(hash_long(key, 18) & 7) == 7];
+  return &ca_shards[cram_two_shards ? (hash_long(key, 16) & 1) : 0];
+ }
+ 
+@@ -220,6 +227,34 @@
+   ca_remove(sh, link);
+  ca_leave(sh, flags);
+ }
++/* Sample shard-zero full rejections. Acquire the peer only by trylock,
++ * always 0 -> 1, so this diagnostic never waits while holding the owner.
++ * With both locks held the two fit indexes describe the same instant. */
++static void ca_check_peer(struct ca_shard *sh, unsigned int blocks)
++{
++ struct ca_shard *peer = &ca_shards[1];
++ unsigned int chunks, chunk;
++ if (!cram_two_shards || sh != &ca_shards[0] || ((sh->full - 1) & 255))
++  return;
++ if (!spin_trylock(&peer->lock)) {
++  sh->peer_busy++;
++  return;
++ }
++ sh->peer_checks++;
++ chunks = peer->blocks / CA_SLOTS;
++ chunk = find_first_bit(peer->fit + (blocks - 1) * peer->row_words, chunks);
++ if (chunk < chunks) {
++  sh->peer_fit++;
++  if (peer->chunks[chunk])
++   sh->peer_backed++;
++  sh->last_local_used = sh->used;
++  sh->last_peer_used = peer->used;
++  sh->last_local_backing = sh->resident;
++  sh->last_peer_backing = peer->resident;
++  sh->last_request = blocks * CA_BLOCK;
++ }
++ spin_unlock(&peer->lock);
++}
+ static bool ca_store(struct folio *folio)
+ {
+  struct ca_shard *sh = ca_owner(folio->swap.val);
+@@ -271,6 +306,7 @@
+  ca_elapsed(start, &sh->search_ns);
+  if (idx >= sh->blocks) {
+   sh->full++;
++  ca_check_peer(sh, blocks);
+   goto out;
+  }
+  /* Reserve the exact rounded slot footprint in every ancestor before use. */
+@@ -466,6 +502,8 @@
+  int ret;
+ 
+  if (!budget || budget > CA_MAX_BYTES || !is_power_of_2(budget))
++  return -EINVAL;
++ if (cram_skew_test && !cram_two_shards)
+   return -EINVAL;
+  if (cram_two_shards && (!cram_wide_hash || !cram_index || !cram_demand || cram_zstd1))
+   return -EINVAL;
+@@ -531,6 +569,15 @@
+  CA_STAT("arena_reject_poor", poor);
+  CA_STAT("arena_injected_failures", injected);
+  if (cram_two_shards) {
++  CA_STAT("arena_peer_checks", peer_checks);
++  CA_STAT("arena_peer_busy", peer_busy);
++  CA_STAT("arena_peer_fit", peer_fit);
++  CA_STAT("arena_peer_backed", peer_backed);
++  CA_STAT("arena_last_local_used", last_local_used);
++  CA_STAT("arena_last_peer_used", last_peer_used);
++  CA_STAT("arena_last_local_backing", last_local_backing);
++  CA_STAT("arena_last_peer_backing", last_peer_backing);
++  CA_STAT("arena_last_request", last_request);
+   debugfs_create_u64("arena_shard0_stores", 0444, root, &ca_shards[0].stores);
+   debugfs_create_u64("arena_shard1_stores", 0444, root, &ca_shards[1].stores);
+  }

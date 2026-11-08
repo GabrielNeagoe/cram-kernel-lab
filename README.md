@@ -3,6 +3,7 @@
 Experimental compressed memory on Ubuntu 26 in VMware Workstation. This repository contains kernel and emulator patches, C workloads, Python test tools, and measurements. The deployed software experiment uses a 4 MiB compressed arena behind Linux zswap. A separate nested QEMU experiment uses an emulated CXL device.
 
 - [Development plan](docs/PLAN.md)
+- [Uneven shard load and four-worker capacity](docs/uneven-shards.md)
 - [One versus two arena locks at matched occupancy](docs/sharded-arena.md)
 - [Parallel fault, hash lookup and lock contention measurements](docs/parallel-hash-profile.md)
 - [Matched-occupancy CPU profile and indexed slot allocation](docs/slot-search-profile.md)

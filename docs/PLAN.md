@@ -22,6 +22,8 @@
 
 - [x] Test two independently locked wide-hash shards against one arena lock under parallel faults. Recheck capacity, CPU, lock wait, and p99 latency. [Sharded arena](sharded-arena.md)
 
+- [x] Compare balanced and deliberately skewed routing with two and four pinned workers, sample peer fit on a full rejection, and recheck four-worker capacity. [Uneven shard trial](uneven-shards.md)
+
 ## Next tests
 
 1. Alternate the presence of the RAMMap hold export over repeated fresh-boot pairs while keeping other watchers fixed. Record actual host requests and mark any ownership differences already present before the hold.
