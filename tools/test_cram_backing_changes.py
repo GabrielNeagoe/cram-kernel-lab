@@ -75,7 +75,9 @@ def physical(a,name,folder,deadline,stop):
                             from cram_owner_sampler import record as record_owners
                             groups=json.loads((folder/'pinned.json').read_text())
                             indices=sorted(set(groups['historic_indices'])-set(groups['pinned_indices']))
-                            assert len(indices)==1024 and all(len(frames[i])==1 for i in indices)
+                            assert len(indices)==1024
+                            if a.all_owners: indices=list(range(8192))
+                            assert all(len(frames[i])==1 for i in indices)
                             owner_pool=concurrent.futures.ThreadPoolExecutor(max_workers=1)
                             owner_job=owner_pool.submit(record_owners, folder,
                                 [next(iter(frames[i])) for i in indices], [offsets[i] for i in indices],
@@ -88,6 +90,20 @@ def physical(a,name,folder,deadline,stop):
                             assert anchors==baseline[1],'locked calibration frames changed'
                             pairs=[(x,y) for x,y in zip(baseline[0],frames) if len(x)==len(y)==1]
                             meta.update(comparable=len(pairs),same=sum(x==y for x,y in pairs),changed=sum(x!=y for x,y in pairs))
+                            if a.all_owners:
+                                from cram_owner_sampler import backing_state
+                                from calibrate_rammap_reuse import inspect
+                                changed=[i for i,(x,y) in enumerate(zip(baseline[0],frames))
+                                         if len(x)==len(y)==1 and x!=y]
+                                meta['changed_pages']=[]
+                                if changed:
+                                    old=[next(iter(baseline[0][i])) for i in changed]
+                                    seen,_=inspect(raw,np.asarray(old,dtype=np.uint64),())
+                                    for i,frame in zip(changed,old):
+                                        row=seen.get(frame)
+                                        state=backing_state(*row,file_keys[filename],offsets[i]//4096) if row else 'missing'
+                                        meta['changed_pages'].append(dict(index=i,locked=i in groups['pinned_indices'],
+                                            original_frame_state=state))
                         (folder/('physical-'+phase+'.json')).write_text(json.dumps(meta,indent=2))
                     except Exception as e:
                         (folder/('physical-'+phase+'-error.json')).write_text(json.dumps(dict(error=type(e).__name__,detail=str(e)[:200])))
@@ -119,11 +135,13 @@ if __name__=='__main__':
     p=argparse.ArgumentParser()
     p.add_argument('--retention-control',action='store_true')
     p.add_argument('--frame-owners',action='store_true')
+    p.add_argument('--all-owners',action='store_true')
     p.add_argument('--watch-reentry',action='store_true')
     p.add_argument('mode',choices=['capture','verify'])
     for k in ['private','out','rammap','vm-dir','plink','key','destination','prefix']:p.add_argument('--'+k)
     a=p.parse_args();a.count=8192;out=Path(a.out);stop=out/'stop';deadline=time.monotonic()+2400
     if a.frame_owners and not a.retention_control:p.error('--frame-owners requires --retention-control')
+    if a.all_owners and not a.frame_owners:p.error('--all-owners requires --frame-owners')
     if a.mode=='capture':
         check_response()
         if a.watch_reentry:

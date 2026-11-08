@@ -52,29 +52,50 @@ def _identity_batch(frames):
     return read
 
 
+def backing_state(flags, info, file_key, expected):
+    kind = flags & 15
+    page_list = (flags >> 4) & 7
+    if page_list in (0, 1):
+        return "zeroed" if page_list == 0 else "free"
+    if kind == 1 and info:
+        if info != file_key:
+            return "different-file"
+        return "original" if ((flags >> 12) & ((1 << 45) - 1)) == expected else "different-offset"
+    if kind in (0, 9) and page_list == 6 and ((flags >> 9) & ((1 << 48) - 1)):
+        return "process-backed"
+    return "other-or-unresolved"
+
+
 def record(folder, frames, offsets, file_key, stop, deadline):
-    if len(frames) != 1024 or len(set(offsets)) != 1024:
-        raise ValueError("Invalid unlocked cohort")
+    count = len(frames)
+    if count not in (1024, 8192) or len(set(offsets)) != count or len(set(frames)) != count:
+        raise ValueError("Invalid verified cohort")
     expected = np.asarray(offsets, dtype=np.uint64) // 4096
     with profiling_privilege(), (folder / "ownership.jsonl").open("x") as stream:
-        read = _identity_batch(frames)
+        reads = [_identity_batch(frames[start:start+1024]) for start in range(0,count,1024)]
         first = True
         while not stop.exists() and not (folder / "stop").exists():
             if time.monotonic() >= deadline:
                 raise TimeoutError("Physical ownership sampling timed out")
             start = time.time()
-            rows = read()
+            rows = np.concatenate([read() for read in reads])
             end = time.time()
             flags = rows[:, 0]
             kind = flags & 15
             page_list = (flags >> 4) & 7
             original = ((kind == 1) & (rows[:, 2] == file_key)
                         & (((flags >> 12) & ((1 << 45) - 1)) == expected))
-            if first and not original.all():
+            minimum_baseline = count if count == 1024 else count * .99
+            if first and int(original.sum()) < minimum_baseline:
                 raise RuntimeError("Live baseline disagrees with RAMMap file ownership")
             first = False
             # No addresses, host frame identifiers, process IDs or file keys leave this observer.
-            other = [(int(i), int(kind[i]), int(page_list[i])) for i in np.flatnonzero(~original)]
+            other = []
+            for i in np.flatnonzero(~original):
+                entry = [int(i), int(kind[i]), int(page_list[i])]
+                if count == 8192:
+                    entry.append(backing_state(int(flags[i]), int(rows[i,2]), file_key, int(expected[i])))
+                other.append(entry)
             available = np.flatnonzero((page_list == 0) | (page_list == 1)).tolist()
             print(json.dumps([start, end, int(original.sum()), other, available],
                              separators=(",", ":")), file=stream)

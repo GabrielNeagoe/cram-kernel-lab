@@ -1,0 +1,319 @@
+{
+  "full1": {
+    "whole_window": {
+      "seconds": 232.174,
+      "scans": 10315,
+      "minimum_original": 8185,
+      "distinct_different_backing": 7,
+      "distinct_free_or_zeroed": 7,
+      "maximum_unsampled_ms": 55.161,
+      "maximum_per_frame_revisit_bound_ms": 150.327,
+      "pages": [
+        {
+          "index": 1480,
+          "locked": false,
+          "observed_states": [
+            "different-file",
+            "free",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 3859,
+          "locked": false,
+          "observed_states": [
+            "free",
+            "other-or-unresolved",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 4167,
+          "locked": false,
+          "observed_states": [
+            "different-offset",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 4168,
+          "locked": false,
+          "observed_states": [
+            "free",
+            "other-or-unresolved",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 5169,
+          "locked": false,
+          "observed_states": [
+            "free",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 7389,
+          "locked": false,
+          "observed_states": [
+            "free",
+            "other-or-unresolved",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 8174,
+          "locked": false,
+          "observed_states": [
+            "free",
+            "other-or-unresolved",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        }
+      ],
+      "ordered_reuse": [
+        {
+          "index": 1480,
+          "locked": false,
+          "free_or_zeroed_at_s": 204.6203,
+          "later_active_at_s": 209.4797,
+          "later_backing": "different-file"
+        },
+        {
+          "index": 3859,
+          "locked": false,
+          "free_or_zeroed_at_s": 202.8281,
+          "later_active_at_s": 202.8488,
+          "later_backing": "process-backed"
+        },
+        {
+          "index": 4167,
+          "locked": false,
+          "free_or_zeroed_at_s": 202.9409,
+          "later_active_at_s": 203.0076,
+          "later_backing": "different-offset"
+        },
+        {
+          "index": 4168,
+          "locked": false,
+          "free_or_zeroed_at_s": 202.7144,
+          "later_active_at_s": 202.735,
+          "later_backing": "process-backed"
+        },
+        {
+          "index": 5169,
+          "locked": false,
+          "free_or_zeroed_at_s": 201.4712,
+          "later_active_at_s": 201.7651,
+          "later_backing": "process-backed"
+        },
+        {
+          "index": 7389,
+          "locked": false,
+          "free_or_zeroed_at_s": 201.3824,
+          "later_active_at_s": 202.0795,
+          "later_backing": "process-backed"
+        },
+        {
+          "index": 8174,
+          "locked": false,
+          "free_or_zeroed_at_s": 202.6919,
+          "later_active_at_s": 202.7128,
+          "later_backing": "process-backed"
+        }
+      ]
+    },
+    "snapshot_changes": [],
+    "cohort_pages": 8192,
+    "inflation_including_boundaries": {
+      "seconds": 4.9,
+      "scans": 220,
+      "minimum_original": 8192,
+      "distinct_different_backing": 0,
+      "distinct_free_or_zeroed": 0,
+      "maximum_unsampled_ms": 33.931,
+      "maximum_per_frame_revisit_bound_ms": 35.588,
+      "pages": [],
+      "ordered_reuse": []
+    },
+    "confirmed_full_hold": {
+      "seconds": 225.014,
+      "scans": 9993,
+      "minimum_original": 8185,
+      "distinct_different_backing": 7,
+      "distinct_free_or_zeroed": 7,
+      "maximum_unsampled_ms": 55.161,
+      "maximum_per_frame_revisit_bound_ms": 150.327,
+      "pages": [
+        {
+          "index": 1480,
+          "locked": false,
+          "observed_states": [
+            "different-file",
+            "free",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 3859,
+          "locked": false,
+          "observed_states": [
+            "free",
+            "other-or-unresolved",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 4167,
+          "locked": false,
+          "observed_states": [
+            "different-offset",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 4168,
+          "locked": false,
+          "observed_states": [
+            "free",
+            "other-or-unresolved",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 5169,
+          "locked": false,
+          "observed_states": [
+            "free",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 7389,
+          "locked": false,
+          "observed_states": [
+            "free",
+            "other-or-unresolved",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        },
+        {
+          "index": 8174,
+          "locked": false,
+          "observed_states": [
+            "free",
+            "other-or-unresolved",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        }
+      ],
+      "ordered_reuse": [
+        {
+          "index": 1480,
+          "locked": false,
+          "free_or_zeroed_at_s": 199.7202,
+          "later_active_at_s": 204.5796,
+          "later_backing": "different-file"
+        },
+        {
+          "index": 3859,
+          "locked": false,
+          "free_or_zeroed_at_s": 197.928,
+          "later_active_at_s": 197.9488,
+          "later_backing": "process-backed"
+        },
+        {
+          "index": 4167,
+          "locked": false,
+          "free_or_zeroed_at_s": 198.0408,
+          "later_active_at_s": 198.1075,
+          "later_backing": "different-offset"
+        },
+        {
+          "index": 4168,
+          "locked": false,
+          "free_or_zeroed_at_s": 197.8143,
+          "later_active_at_s": 197.835,
+          "later_backing": "process-backed"
+        },
+        {
+          "index": 5169,
+          "locked": false,
+          "free_or_zeroed_at_s": 196.5711,
+          "later_active_at_s": 196.865,
+          "later_backing": "process-backed"
+        },
+        {
+          "index": 7389,
+          "locked": false,
+          "free_or_zeroed_at_s": 196.4824,
+          "later_active_at_s": 197.1795,
+          "later_backing": "process-backed"
+        },
+        {
+          "index": 8174,
+          "locked": false,
+          "free_or_zeroed_at_s": 197.7918,
+          "later_active_at_s": 197.8128,
+          "later_backing": "process-backed"
+        }
+      ]
+    },
+    "target_mib": [
+      2523.50390625
+    ]
+  },
+  "control": {
+    "whole_window": {
+      "seconds": 238.493,
+      "scans": 10526,
+      "minimum_original": 8191,
+      "distinct_different_backing": 1,
+      "distinct_free_or_zeroed": 1,
+      "maximum_unsampled_ms": 71.121,
+      "maximum_per_frame_revisit_bound_ms": 179.688,
+      "pages": [
+        {
+          "index": 6395,
+          "locked": false,
+          "observed_states": [
+            "free",
+            "other-or-unresolved",
+            "process-backed",
+            "zeroed"
+          ],
+          "observed_free_or_zeroed": true
+        }
+      ],
+      "ordered_reuse": []
+    },
+    "snapshot_changes": [],
+    "cohort_pages": 8192
+  }
+}

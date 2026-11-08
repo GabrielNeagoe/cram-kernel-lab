@@ -1,0 +1,8 @@
+{
+  "scans": 44990,
+  "observed_nonresident_pages": 0,
+  "scans_with_nonresident": 0,
+  "median_scan_ms": 0.9988,
+  "median_interval_ms": 11.7458,
+  "max_start_to_next_end_ms": 64.1623
+}
