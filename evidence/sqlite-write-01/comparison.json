@@ -1,0 +1,144 @@
+{
+  "off": {
+    "confirmed_bytes": [
+      285159424,
+      285159424
+    ],
+    "first_failed_bytes": [
+      302903296,
+      302903296
+    ],
+    "paired_multiple": [
+      1.0,
+      1.0
+    ],
+    "matched": {
+      "runs": 6,
+      "fault_samples": 0,
+      "resident_samples": 6132,
+      "median_run_p99_us": null,
+      "cpu_s_per_gib": 0.8923,
+      "db_mib_per_s": 2590.4099,
+      "scans_restored_pages": 0.0,
+      "database_mib": 254.9219,
+      "peak_charged_mib": 292.4668,
+      "swapcache_at_fill_mib": 0.0,
+      "backing_at_fill_mib": 0.0,
+      "high_events": 18.5,
+      "pages_scanned": 383.5,
+      "rows_modified": 6108.0,
+      "commits": 180.0,
+      "rollbacks": 60.0,
+      "runs_with_sampled_faults": 0
+    },
+    "near": {
+      "runs": 6,
+      "fault_samples": 0,
+      "resident_samples": 6534,
+      "median_run_p99_us": null,
+      "cpu_s_per_gib": 1.0231,
+      "db_mib_per_s": 102.6849,
+      "scans_restored_pages": 0.0,
+      "database_mib": 271.9492,
+      "peak_charged_mib": 309.748,
+      "swapcache_at_fill_mib": 0.0,
+      "backing_at_fill_mib": 0.0,
+      "high_events": 2148.5,
+      "pages_scanned": 7049.0,
+      "rows_modified": 6510.0,
+      "commits": 192.0,
+      "rollbacks": 64.0,
+      "runs_with_sampled_faults": 0
+    },
+    "at_capacity": {
+      "runs": 4,
+      "fault_samples": 0,
+      "resident_samples": 4356,
+      "median_run_p99_us": null,
+      "cpu_s_per_gib": 1.042,
+      "db_mib_per_s": 101.4344,
+      "scans_restored_pages": 0.0,
+      "database_mib": 271.9492,
+      "peak_charged_mib": 309.7441,
+      "swapcache_at_fill_mib": 0.0,
+      "backing_at_fill_mib": 0.0,
+      "high_events": 2190.0,
+      "pages_scanned": 7624.0,
+      "rows_modified": 6510.0,
+      "commits": 192.0,
+      "rollbacks": 64.0,
+      "runs_with_sampled_faults": 0
+    }
+  },
+  "spill": {
+    "confirmed_bytes": [
+      535625728,
+      535625728
+    ],
+    "first_failed_bytes": [
+      553361408,
+      553361408
+    ],
+    "paired_multiple": [
+      1.8783378100805814,
+      1.8783378100805814
+    ],
+    "matched": {
+      "runs": 6,
+      "fault_samples": 0,
+      "resident_samples": 6132,
+      "median_run_p99_us": null,
+      "cpu_s_per_gib": 0.9138,
+      "db_mib_per_s": 2550.5829,
+      "scans_restored_pages": 7.0,
+      "database_mib": 254.9219,
+      "peak_charged_mib": 290.3076,
+      "swapcache_at_fill_mib": 0.0,
+      "backing_at_fill_mib": 0.8438,
+      "high_events": 19.5,
+      "pages_scanned": 16061.0,
+      "rows_modified": 6108.0,
+      "commits": 180.0,
+      "rollbacks": 60.0,
+      "runs_with_sampled_faults": 0
+    },
+    "near": {
+      "runs": 6,
+      "fault_samples": 595,
+      "resident_samples": 5939,
+      "median_run_p99_us": 955.063,
+      "cpu_s_per_gib": 3.2855,
+      "db_mib_per_s": 897.2919,
+      "scans_restored_pages": 52639.0,
+      "database_mib": 271.9492,
+      "peak_charged_mib": 292.0012,
+      "swapcache_at_fill_mib": 6.0762,
+      "backing_at_fill_mib": 8.5547,
+      "high_events": 861.5,
+      "pages_scanned": 206070.5,
+      "rows_modified": 6510.0,
+      "commits": 192.0,
+      "rollbacks": 64.0,
+      "runs_with_sampled_faults": 6
+    },
+    "at_capacity": {
+      "runs": 4,
+      "fault_samples": 7937,
+      "resident_samples": 259,
+      "median_run_p99_us": 714.409,
+      "cpu_s_per_gib": 9.7128,
+      "db_mib_per_s": 380.8599,
+      "scans_restored_pages": 413019.0,
+      "database_mib": 510.8125,
+      "peak_charged_mib": 299.5718,
+      "swapcache_at_fill_mib": 1.3496,
+      "backing_at_fill_mib": 226.5469,
+      "high_events": 7392.5,
+      "pages_scanned": 1173302.5,
+      "rows_modified": 12222.0,
+      "commits": 360.0,
+      "rollbacks": 120.0,
+      "runs_with_sampled_faults": 4
+    }
+  }
+}

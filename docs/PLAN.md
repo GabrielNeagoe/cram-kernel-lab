@@ -32,9 +32,11 @@
 
 - [x] Repeat the SQLite comparison with Ubuntu as the only running VM and compare capacity, CPU and fault p99 against the shared-host measurements. [Isolated SQLite trial](sqlite-isolated.md)
 
+- [x] Test writable in-memory SQLite under kernel-driven reclaim on the isolated Ubuntu VM. [Writable SQLite](sqlite-writable.md)
+
 ## Next tests
 
 1. Alternate the presence of the RAMMap hold export over repeated fresh-boot pairs while keeping other watchers fixed. Record actual host requests and mark any ownership differences already present before the hold.
 2. Repeat the paired run on fresh boots and report the distribution of observation gaps and owner changes. Use the same 4 GiB ceiling, matched control, workload readback and verified rollback.
 3. Quantify net Windows RAM savings independently of individual frame reuse. Compare host-wide accounting across repeated trials and report variability.
-4. Test a writable application under organic memory pressure before changing the deployed 4 MiB configuration.
+4. Evaluate a disk-backed writable application and storage latency before changing the deployed 4 MiB configuration.
