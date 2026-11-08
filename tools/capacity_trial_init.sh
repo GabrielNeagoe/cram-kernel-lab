@@ -18,16 +18,19 @@ for v in $(cat /proc/cmdline); do
         cram.trial=*) mode=${v#*=};;
         cram.volume=*) dataset=${v#*=};;
         cram.run=*) case_id=${v#*=};;
-        cram.series=demand-01|cram.series=profile-01|cram.series=hash-01|cram.series=shard-01|cram.series=skew-01|cram.series=spill-01) series=${v#*=};;
+        cram.series=demand-01|cram.series=profile-01|cram.series=hash-01|cram.series=shard-01|cram.series=skew-01|cram.series=spill-01|cram.series=shuffle-01) series=${v#*=};;
         cram.hotprobe=1) hotprobe=1;;
         cram.smoke=1) smoke=1;;
     esac
 done
 is_skew_series() {
-    [ "$series" = skew-01 ] || [ "$series" = spill-01 ]
+    [ "$series" = skew-01 ] || is_spill_series
+}
+is_spill_series() {
+    [ "$series" = spill-01 ] || [ "$series" = shuffle-01 ]
 }
 uses_skew() {
-    [ "$mode" = skew ] || [ "$mode" = spill ]
+    [ "$mode" = skew ] || [ "$mode" = spill ] || [ "$mode" = shuffle ]
 }
 is_hash_trial() {
     [ "$series" = hash-01 ] || { [ "$series" = shard-01 ] || is_skew_series; }
@@ -46,7 +49,7 @@ finish() {
 }
 trap finish EXIT
 set -eu
-case "$mode" in off|lz4|zstd1|demand|indexed|wide|sharded|skew|spill) ;; *) exit 2;; esac
+case "$mode" in off|lz4|zstd1|demand|indexed|wide|sharded|skew|spill|shuffle) ;; *) exit 2;; esac
 case "$case_id" in ''|*[!a-z0-9]*) exit 2;; esac
 out=
 if [ "$smoke" = 1 ]; then
@@ -121,9 +124,14 @@ else
         if uses_skew; then test "$(cat "$params/cram_skew_test")" = Y
         else test "$(cat "$params/cram_skew_test")" = N; fi
     fi
-    if [ "$series" = spill-01 ]; then
-        if [ "$mode" = spill ]; then test "$(cat "$params/cram_spill")" = Y
+    if is_spill_series; then
+        if [ "$mode" != skew ]; then test "$(cat "$params/cram_spill")" = Y
         else test "$(cat "$params/cram_spill")" = N; fi
+    fi
+    if [ "$series" = shuffle-01 ]; then
+        if [ "$mode" = shuffle ]; then test "$(cat "$params/cram_shuffle")" = Y
+        else test "$(cat "$params/cram_shuffle")" = N; fi
+        export CRAM_HEADROOM_ARENA=1
     fi
     swapon "$swap"
     arena=$(cat "$debug/arena_backing_bytes")
@@ -148,9 +156,10 @@ point() {
     counters=
     if is_skew_series && [ -n "${CRAM_TWO_SHARDS:-}" ]; then
         counters="reject_full peer_checks peer_busy peer_fit peer_backed shard0_stores shard1_stores"
-        if [ "$series" = spill-01 ]; then
+        if is_spill_series; then
             counters="$counters spill_tries spill_stores spill_loads spill_removes spill_invalidates"
         fi
+        if [ "$series" = shuffle-01 ]; then counters="$counters reject_poor reject_quota"; fi
         for name in $counters; do cat "$debug/arena_$name" >"$out/before-$name"; done
     fi
     rc=0
@@ -162,7 +171,7 @@ point() {
         test "$(cat "$debug/arena_resident_bytes")" -eq "$idle" || exit 5
         test "$(cat "$debug/arena_resident_peak_bytes")" -le "$arena" || exit 5
     fi
-    if [ "$series" = spill-01 ] && [ "$mode" != off ]; then
+    if is_spill_series && [ "$mode" != off ]; then
         test "$(cat "$debug/arena_spill_live")" -eq 0 || exit 5
         test "$(cat "$debug/arena_spill_stores")" -eq "$(cat "$debug/arena_spill_removes")" || exit 5
     fi
@@ -195,7 +204,7 @@ if [ "$smoke" = 1 ]; then
         extra_arg=--profile
     fi
     profile=structured
-    if [ "$series" = spill-01 ] && [ "$mode" = spill ]; then
+    if is_spill_series && [ "$mode" = spill ]; then
         point common 480
         test "$(cat "$debug/arena_spill_loads")" -gt 0
         test "$(cat "$debug/arena_spill_invalidates")" -gt 0
@@ -232,7 +241,7 @@ for profile in structured mixed; do
             extra_arg=--arena-stats
         done
     fi
-    if [ "$series" = spill-01 ] && [ "$mode" != off ]; then
+    if is_spill_series && [ "$mode" != off ]; then
         sizes=384
         if [ "$profile" = structured ]; then sizes="384 512"; fi
         for size in $sizes; do

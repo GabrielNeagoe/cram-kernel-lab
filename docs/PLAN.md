@@ -26,6 +26,8 @@
 
 - [x] Test peer placement under hot-shard saturation and recheck four-worker capacity, CPU, lock contention, and fault latency. [Spillover](spillover.md)
 
+- [x] Measure guest headroom and arena use at the first failed capacity point and test reversible byte shuffle before LZ4. [Byte-shuffle trial](byte-shuffle.md)
+
 ## Next tests
 
 1. Alternate the presence of the RAMMap hold export over repeated fresh-boot pairs while keeping other watchers fixed. Record actual host requests and mark any ownership differences already present before the hold.

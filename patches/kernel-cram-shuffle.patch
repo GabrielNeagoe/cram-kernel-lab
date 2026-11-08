@@ -1,0 +1,91 @@
+--- a/mm/cram-arena.inc
++++ b/mm/cram-arena.inc
+@@ -32,6 +32,9 @@
+ static bool cram_two_shards;
+ module_param(cram_two_shards, bool, 0444);
+ /* Trial-only routing bias. The local bucket still uses the upper 15 hash bits. */
++/* Boot-wide encoding: every stored page uses the same reversible byte order. */
++static bool cram_shuffle;
++module_param(cram_shuffle, bool, 0444);
+ static bool cram_spill;
+ module_param(cram_spill, bool, 0444);
+ static struct lock_class_key ca_peer_lock_class;
+@@ -58,6 +61,7 @@
+ 
+ struct ca_shard {
+  spinlock_t lock;
++ u8 *shuffle_page;
+  u32 *heads, *spill_buckets;
+  u64 spill_tries, spill_stores, spill_loads, spill_removes, spill_live, spill_invalidates;
+  u64 lookups, visits, acquires, contended;
+@@ -296,6 +300,21 @@
+  }
+  spin_unlock(&peer->lock);
+ }
++/* Group equal byte positions of consecutive four-byte words before LZ4. */
++static void ca_shuffle_page(u8 *dst, const u8 *src)
++{
++ unsigned int i, lane;
++ for (lane = 0; lane < 4; lane++)
++  for (i = 0; i < PAGE_SIZE / 4; i++)
++   dst[lane * (PAGE_SIZE / 4) + i] = src[4 * i + lane];
++}
++static void ca_unshuffle_page(u8 *dst, const u8 *src)
++{
++ unsigned int i, lane;
++ for (i = 0; i < PAGE_SIZE / 4; i++)
++  for (lane = 0; lane < 4; lane++)
++   dst[4 * i + lane] = src[lane * (PAGE_SIZE / 4) + i];
++}
+ static bool ca_store(struct folio *folio)
+ {
+  struct ca_shard *sh = ca_owner(folio->swap.val);
+@@ -335,7 +354,9 @@
+                                 input, PAGE_SIZE, &sh->zparams);
+   length = zstd_is_error(n) ? 0 : (int)n;
+  } else {
+-  length = LZ4_compress_default(input, sh->control->output, PAGE_SIZE, PAGE_SIZE - 1,
++  if (cram_shuffle)
++   ca_shuffle_page(sh->shuffle_page, input);
++  length = LZ4_compress_default(cram_shuffle ? sh->shuffle_page : input, sh->control->output, PAGE_SIZE, PAGE_SIZE - 1,
+                                 sh->control->workspace);
+  }
+  kunmap_local(input);
+@@ -454,7 +475,9 @@
+   size_t n = zstd_decompress_dctx(sh->dctx, output, PAGE_SIZE, e + 1, e->length);
+   length = zstd_is_error(n) ? -EIO : (int)n;
+  } else {
+-  length = LZ4_decompress_safe((void *)(e + 1), output, e->length, PAGE_SIZE);
++  length = LZ4_decompress_safe((void *)(e + 1), cram_shuffle ? sh->shuffle_page : output, e->length, PAGE_SIZE);
++  if (cram_shuffle && length == PAGE_SIZE)
++   ca_unshuffle_page(output, sh->shuffle_page);
+  }
+  kunmap_local(output);
+  ca_elapsed(start, &sh->codec_ns);
+@@ -525,6 +548,8 @@
+   enc = ALIGN(zstd_cctx_workspace_bound(&sh->zparams.cParams), 8);
+   dec = zstd_dctx_workspace_bound();
+  }
++ if (cram_shuffle)
++  start += PAGE_SIZE;
+  sh->header_bytes = ALIGN(start + enc + dec, CA_BLOCK);
+  if (cram_demand)
+   sh->header_bytes = PAGE_ALIGN(sh->header_bytes + (bytes / CA_CHUNK_BYTES) * sizeof(void *));
+@@ -542,6 +567,8 @@
+  sh->heads = cram_wide_hash ? (u32 *)((char *)sh->control + ALIGN(sizeof(*sh->control), 8)) : sh->control->heads;
+  if (cram_spill && sh == &ca_shards[1])
+   sh->spill_buckets = sh->heads + (1U << ca_hash_bits);
++ if (cram_shuffle)
++  sh->shuffle_page = (u8 *)sh->control + start - PAGE_SIZE;
+  sh->bytes = bytes;
+  if (cram_zstd1) {
+   sh->cctx = zstd_init_cctx((char *)sh->control + start, enc);
+@@ -577,6 +604,8 @@
+  int ret;
+ 
+  if (!budget || budget > CA_MAX_BYTES || !is_power_of_2(budget))
++  return -EINVAL;
++ if (cram_shuffle && !cram_spill)
+   return -EINVAL;
+  if (cram_spill && (!cram_two_shards || !cram_skew_test))
+   return -EINVAL;

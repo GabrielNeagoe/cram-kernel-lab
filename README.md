@@ -4,6 +4,7 @@ Experimental compressed memory on Ubuntu 26 in VMware Workstation. This reposito
 
 - [Development plan](docs/PLAN.md)
 - [Peer-shard spillover under 7:1 load](docs/spillover.md)
+- [Byte shuffle before LZ4 under skewed spillover](docs/byte-shuffle.md)
 - [Uneven shard load and four-worker capacity](docs/uneven-shards.md)
 - [One versus two arena locks at matched occupancy](docs/sharded-arena.md)
 - [Parallel fault, hash lookup and lock contention measurements](docs/parallel-hash-profile.md)

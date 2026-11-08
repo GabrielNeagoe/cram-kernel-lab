@@ -103,6 +103,9 @@ static int dense_block(unsigned block, int mixed)
     return block%4==0 || (mixed && (k==1 || k==3 || k==6));
 }
 
+static _Atomic unsigned filled_mib;
+static atomic_flag headroom_exit = ATOMIC_FLAG_INIT;
+
 static void check_headroom(unsigned mib)
 {
     unsigned long v = stat_value("/proc/meminfo", "MemAvailable:");
@@ -110,7 +113,14 @@ static void check_headroom(unsigned mib)
     while (v < previous && !atomic_compare_exchange_weak(&low_available, &previous, v)) {}
 
     if (v < FLOOR_KIB) {
-        printf("{\"mib\":%u,\"status\":\"headroom\",\"available_kib\":%lu}\n", mib, v);
+        if (atomic_flag_test_and_set(&headroom_exit))
+            for (;;) pause();
+        printf("{\"mib\":%u,\"status\":\"headroom\",\"available_kib\":%lu", mib, v);
+        if (getenv("CRAM_HEADROOM_ARENA"))
+            printf(",\"filled_mib\":%u,\"arena_resident_bytes\":%lu,\"arena_used_bytes\":%lu,\"arena_entries\":%lu",
+                   atomic_load(&filled_mib), arena_stat("arena_resident_bytes"),
+                   arena_stat("arena_used_bytes"), arena_stat("arena_entries"));
+        puts("}");
         exit(42);
     }
 }
@@ -202,6 +212,7 @@ int main(int argc, char **argv)
             if (mlock(base,MIB)) { perror("mlock"); return 2; }
         } else evict_cold(base);
         order[block]=block;
+        atomic_store(&filled_mib, block + 1);
     }
     check_headroom(mib);
     unsigned long after_fill = sample_arena ? arena_stat("arena_resident_bytes") : 0;
