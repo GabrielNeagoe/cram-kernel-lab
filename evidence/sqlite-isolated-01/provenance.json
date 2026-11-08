@@ -1,0 +1,18 @@
+{
+  "kernel_sha256": "f0498d90f63fe893deb78ccc4d85ccfb2025cace72627eb02c59ca1e8dde8118",
+  "fault_sampler_so_sha256": "cc60709720a6bf53cdaa1237354ab97898ea7ed558060464f15d1c49d18d3e9a",
+  "source_sha256_lf": {
+    "workload.py": "8b3e6b06e0ed6fd698aa3c1df21ad619feef1de17ca89b1e1e602e0993cb17f5",
+    "trial.py": "a7f735772e15f69f03452c4c0aff490f53670616610db80d822c3c7ecef8b667",
+    "faults.c": "28b1e2035f30f93e148311dd9efd51ed577a0fa3c58e93928d1b7b4a0d6471b1",
+    "make_corpus.py": "b24dcb1da545ef6db3a409f09265373569dbbfa976cf59108830d19263aaec69"
+  },
+  "boot_order": [
+    "off1",
+    "spill1",
+    "shuffle1",
+    "shuffle2",
+    "spill2",
+    "off2"
+  ]
+}

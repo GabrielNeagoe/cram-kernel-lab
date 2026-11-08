@@ -1,0 +1,3234 @@
+{
+  "linux_commit": "22cb35457d24fb35765ef124f9c74c08a5f546a9",
+  "sqlite_version": "3.46.1",
+  "needles": [
+    "mutex_lock",
+    "return -EINVAL",
+    "spin_lock",
+    "EXPORT_SYMBOL",
+    "kfree(",
+    "struct device"
+  ],
+  "parts": [
+    {
+      "file": "part-0000.db",
+      "rows": 328,
+      "source_bytes": 4216944,
+      "hits": [
+        18,
+        72,
+        39,
+        33,
+        49,
+        71
+      ],
+      "db_bytes": 4481024
+    },
+    {
+      "file": "part-0001.db",
+      "rows": 350,
+      "source_bytes": 4211876,
+      "hits": [
+        23,
+        75,
+        37,
+        32,
+        45,
+        67
+      ],
+      "db_bytes": 4497408
+    },
+    {
+      "file": "part-0002.db",
+      "rows": 294,
+      "source_bytes": 4195701,
+      "hits": [
+        28,
+        70,
+        24,
+        31,
+        52,
+        60
+      ],
+      "db_bytes": 4444160
+    },
+    {
+      "file": "part-0003.db",
+      "rows": 321,
+      "source_bytes": 4246182,
+      "hits": [
+        27,
+        70,
+        28,
+        27,
+        40,
+        56
+      ],
+      "db_bytes": 4505600
+    },
+    {
+      "file": "part-0004.db",
+      "rows": 241,
+      "source_bytes": 4257549,
+      "hits": [
+        21,
+        53,
+        23,
+        27,
+        38,
+        49
+      ],
+      "db_bytes": 4440064
+    },
+    {
+      "file": "part-0005.db",
+      "rows": 321,
+      "source_bytes": 4201583,
+      "hits": [
+        35,
+        68,
+        34,
+        30,
+        51,
+        59
+      ],
+      "db_bytes": 4431872
+    },
+    {
+      "file": "part-0006.db",
+      "rows": 309,
+      "source_bytes": 4509156,
+      "hits": [
+        23,
+        70,
+        30,
+        28,
+        54,
+        63
+      ],
+      "db_bytes": 4755456
+    },
+    {
+      "file": "part-0007.db",
+      "rows": 339,
+      "source_bytes": 4236542,
+      "hits": [
+        28,
+        66,
+        38,
+        30,
+        42,
+        67
+      ],
+      "db_bytes": 4521984
+    },
+    {
+      "file": "part-0008.db",
+      "rows": 303,
+      "source_bytes": 4202817,
+      "hits": [
+        29,
+        72,
+        26,
+        33,
+        50,
+        63
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0009.db",
+      "rows": 260,
+      "source_bytes": 4207823,
+      "hits": [
+        22,
+        72,
+        40,
+        31,
+        52,
+        55
+      ],
+      "db_bytes": 4419584
+    },
+    {
+      "file": "part-0010.db",
+      "rows": 304,
+      "source_bytes": 4214151,
+      "hits": [
+        27,
+        87,
+        34,
+        25,
+        47,
+        62
+      ],
+      "db_bytes": 4456448
+    },
+    {
+      "file": "part-0011.db",
+      "rows": 275,
+      "source_bytes": 4196526,
+      "hits": [
+        23,
+        77,
+        26,
+        28,
+        44,
+        59
+      ],
+      "db_bytes": 4403200
+    },
+    {
+      "file": "part-0012.db",
+      "rows": 284,
+      "source_bytes": 4203144,
+      "hits": [
+        26,
+        60,
+        32,
+        34,
+        37,
+        50
+      ],
+      "db_bytes": 4431872
+    },
+    {
+      "file": "part-0013.db",
+      "rows": 335,
+      "source_bytes": 4200903,
+      "hits": [
+        33,
+        77,
+        33,
+        31,
+        57,
+        70
+      ],
+      "db_bytes": 4460544
+    },
+    {
+      "file": "part-0014.db",
+      "rows": 207,
+      "source_bytes": 4217138,
+      "hits": [
+        21,
+        55,
+        29,
+        16,
+        38,
+        41
+      ],
+      "db_bytes": 4386816
+    },
+    {
+      "file": "part-0015.db",
+      "rows": 378,
+      "source_bytes": 4880743,
+      "hits": [
+        35,
+        73,
+        29,
+        27,
+        51,
+        76
+      ],
+      "db_bytes": 5160960
+    },
+    {
+      "file": "part-0016.db",
+      "rows": 307,
+      "source_bytes": 4223903,
+      "hits": [
+        22,
+        82,
+        39,
+        26,
+        54,
+        69
+      ],
+      "db_bytes": 4460544
+    },
+    {
+      "file": "part-0017.db",
+      "rows": 292,
+      "source_bytes": 4201075,
+      "hits": [
+        29,
+        76,
+        35,
+        30,
+        46,
+        73
+      ],
+      "db_bytes": 4456448
+    },
+    {
+      "file": "part-0018.db",
+      "rows": 254,
+      "source_bytes": 4289665,
+      "hits": [
+        24,
+        73,
+        26,
+        19,
+        30,
+        59
+      ],
+      "db_bytes": 4497408
+    },
+    {
+      "file": "part-0019.db",
+      "rows": 272,
+      "source_bytes": 4197974,
+      "hits": [
+        24,
+        76,
+        25,
+        31,
+        42,
+        60
+      ],
+      "db_bytes": 4403200
+    },
+    {
+      "file": "part-0020.db",
+      "rows": 258,
+      "source_bytes": 4207329,
+      "hits": [
+        21,
+        67,
+        39,
+        24,
+        49,
+        57
+      ],
+      "db_bytes": 4399104
+    },
+    {
+      "file": "part-0021.db",
+      "rows": 352,
+      "source_bytes": 4209022,
+      "hits": [
+        23,
+        81,
+        29,
+        30,
+        54,
+        62
+      ],
+      "db_bytes": 4472832
+    },
+    {
+      "file": "part-0022.db",
+      "rows": 280,
+      "source_bytes": 4194969,
+      "hits": [
+        23,
+        60,
+        31,
+        26,
+        35,
+        54
+      ],
+      "db_bytes": 4403200
+    },
+    {
+      "file": "part-0023.db",
+      "rows": 213,
+      "source_bytes": 4194851,
+      "hits": [
+        17,
+        49,
+        20,
+        13,
+        33,
+        49
+      ],
+      "db_bytes": 4390912
+    },
+    {
+      "file": "part-0024.db",
+      "rows": 215,
+      "source_bytes": 4215087,
+      "hits": [
+        21,
+        63,
+        32,
+        29,
+        43,
+        55
+      ],
+      "db_bytes": 4411392
+    },
+    {
+      "file": "part-0025.db",
+      "rows": 287,
+      "source_bytes": 4195500,
+      "hits": [
+        26,
+        73,
+        34,
+        30,
+        45,
+        57
+      ],
+      "db_bytes": 4452352
+    },
+    {
+      "file": "part-0026.db",
+      "rows": 260,
+      "source_bytes": 4197475,
+      "hits": [
+        27,
+        62,
+        21,
+        30,
+        43,
+        60
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0027.db",
+      "rows": 299,
+      "source_bytes": 4314533,
+      "hits": [
+        25,
+        76,
+        27,
+        18,
+        48,
+        60
+      ],
+      "db_bytes": 4567040
+    },
+    {
+      "file": "part-0028.db",
+      "rows": 283,
+      "source_bytes": 4205368,
+      "hits": [
+        23,
+        67,
+        33,
+        22,
+        46,
+        59
+      ],
+      "db_bytes": 4423680
+    },
+    {
+      "file": "part-0029.db",
+      "rows": 264,
+      "source_bytes": 4334333,
+      "hits": [
+        37,
+        75,
+        34,
+        26,
+        52,
+        57
+      ],
+      "db_bytes": 4562944
+    },
+    {
+      "file": "part-0030.db",
+      "rows": 197,
+      "source_bytes": 4194414,
+      "hits": [
+        19,
+        48,
+        21,
+        23,
+        41,
+        41
+      ],
+      "db_bytes": 4341760
+    },
+    {
+      "file": "part-0031.db",
+      "rows": 265,
+      "source_bytes": 4228348,
+      "hits": [
+        24,
+        70,
+        31,
+        29,
+        43,
+        54
+      ],
+      "db_bytes": 4423680
+    },
+    {
+      "file": "part-0032.db",
+      "rows": 314,
+      "source_bytes": 4222563,
+      "hits": [
+        28,
+        68,
+        30,
+        29,
+        59,
+        62
+      ],
+      "db_bytes": 4440064
+    },
+    {
+      "file": "part-0033.db",
+      "rows": 283,
+      "source_bytes": 4293983,
+      "hits": [
+        21,
+        66,
+        30,
+        24,
+        50,
+        65
+      ],
+      "db_bytes": 4505600
+    },
+    {
+      "file": "part-0034.db",
+      "rows": 267,
+      "source_bytes": 4206158,
+      "hits": [
+        27,
+        67,
+        40,
+        28,
+        48,
+        53
+      ],
+      "db_bytes": 4427776
+    },
+    {
+      "file": "part-0035.db",
+      "rows": 218,
+      "source_bytes": 4195916,
+      "hits": [
+        26,
+        57,
+        22,
+        24,
+        35,
+        52
+      ],
+      "db_bytes": 4362240
+    },
+    {
+      "file": "part-0036.db",
+      "rows": 318,
+      "source_bytes": 4197580,
+      "hits": [
+        27,
+        83,
+        33,
+        32,
+        46,
+        67
+      ],
+      "db_bytes": 4472832
+    },
+    {
+      "file": "part-0037.db",
+      "rows": 237,
+      "source_bytes": 4199138,
+      "hits": [
+        19,
+        47,
+        20,
+        31,
+        39,
+        54
+      ],
+      "db_bytes": 4386816
+    },
+    {
+      "file": "part-0038.db",
+      "rows": 218,
+      "source_bytes": 4213281,
+      "hits": [
+        19,
+        52,
+        26,
+        17,
+        24,
+        44
+      ],
+      "db_bytes": 4399104
+    },
+    {
+      "file": "part-0039.db",
+      "rows": 287,
+      "source_bytes": 4202078,
+      "hits": [
+        25,
+        69,
+        36,
+        21,
+        45,
+        65
+      ],
+      "db_bytes": 4423680
+    },
+    {
+      "file": "part-0040.db",
+      "rows": 291,
+      "source_bytes": 4195270,
+      "hits": [
+        30,
+        72,
+        31,
+        32,
+        43,
+        58
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0041.db",
+      "rows": 242,
+      "source_bytes": 4195704,
+      "hits": [
+        17,
+        60,
+        23,
+        22,
+        38,
+        45
+      ],
+      "db_bytes": 4407296
+    },
+    {
+      "file": "part-0042.db",
+      "rows": 274,
+      "source_bytes": 4205709,
+      "hits": [
+        28,
+        63,
+        35,
+        21,
+        41,
+        68
+      ],
+      "db_bytes": 4415488
+    },
+    {
+      "file": "part-0043.db",
+      "rows": 284,
+      "source_bytes": 4197277,
+      "hits": [
+        30,
+        77,
+        39,
+        39,
+        60,
+        65
+      ],
+      "db_bytes": 4411392
+    },
+    {
+      "file": "part-0044.db",
+      "rows": 221,
+      "source_bytes": 4194800,
+      "hits": [
+        26,
+        64,
+        28,
+        27,
+        32,
+        39
+      ],
+      "db_bytes": 4366336
+    },
+    {
+      "file": "part-0045.db",
+      "rows": 246,
+      "source_bytes": 4194870,
+      "hits": [
+        27,
+        50,
+        28,
+        30,
+        43,
+        48
+      ],
+      "db_bytes": 4403200
+    },
+    {
+      "file": "part-0046.db",
+      "rows": 286,
+      "source_bytes": 4315839,
+      "hits": [
+        24,
+        78,
+        22,
+        25,
+        35,
+        54
+      ],
+      "db_bytes": 4534272
+    },
+    {
+      "file": "part-0047.db",
+      "rows": 331,
+      "source_bytes": 4245152,
+      "hits": [
+        25,
+        71,
+        31,
+        22,
+        43,
+        66
+      ],
+      "db_bytes": 4481024
+    },
+    {
+      "file": "part-0048.db",
+      "rows": 277,
+      "source_bytes": 4198814,
+      "hits": [
+        25,
+        64,
+        37,
+        27,
+        41,
+        48
+      ],
+      "db_bytes": 4419584
+    },
+    {
+      "file": "part-0049.db",
+      "rows": 344,
+      "source_bytes": 4209231,
+      "hits": [
+        25,
+        74,
+        30,
+        36,
+        49,
+        84
+      ],
+      "db_bytes": 4464640
+    },
+    {
+      "file": "part-0050.db",
+      "rows": 232,
+      "source_bytes": 4194723,
+      "hits": [
+        24,
+        58,
+        20,
+        19,
+        37,
+        58
+      ],
+      "db_bytes": 4374528
+    },
+    {
+      "file": "part-0051.db",
+      "rows": 266,
+      "source_bytes": 4194329,
+      "hits": [
+        26,
+        52,
+        24,
+        24,
+        46,
+        56
+      ],
+      "db_bytes": 4411392
+    },
+    {
+      "file": "part-0052.db",
+      "rows": 238,
+      "source_bytes": 4340888,
+      "hits": [
+        13,
+        54,
+        19,
+        32,
+        29,
+        47
+      ],
+      "db_bytes": 4505600
+    },
+    {
+      "file": "part-0053.db",
+      "rows": 234,
+      "source_bytes": 4341907,
+      "hits": [
+        27,
+        58,
+        30,
+        21,
+        43,
+        50
+      ],
+      "db_bytes": 4542464
+    },
+    {
+      "file": "part-0054.db",
+      "rows": 250,
+      "source_bytes": 4196543,
+      "hits": [
+        25,
+        71,
+        32,
+        28,
+        43,
+        58
+      ],
+      "db_bytes": 4395008
+    },
+    {
+      "file": "part-0055.db",
+      "rows": 296,
+      "source_bytes": 4197821,
+      "hits": [
+        27,
+        82,
+        33,
+        33,
+        45,
+        71
+      ],
+      "db_bytes": 4427776
+    },
+    {
+      "file": "part-0056.db",
+      "rows": 242,
+      "source_bytes": 4197884,
+      "hits": [
+        27,
+        59,
+        29,
+        17,
+        37,
+        46
+      ],
+      "db_bytes": 4382720
+    },
+    {
+      "file": "part-0057.db",
+      "rows": 225,
+      "source_bytes": 4213462,
+      "hits": [
+        21,
+        52,
+        31,
+        17,
+        36,
+        49
+      ],
+      "db_bytes": 4395008
+    },
+    {
+      "file": "part-0058.db",
+      "rows": 223,
+      "source_bytes": 4194449,
+      "hits": [
+        25,
+        55,
+        28,
+        23,
+        36,
+        43
+      ],
+      "db_bytes": 4403200
+    },
+    {
+      "file": "part-0059.db",
+      "rows": 207,
+      "source_bytes": 4195133,
+      "hits": [
+        19,
+        45,
+        24,
+        25,
+        28,
+        37
+      ],
+      "db_bytes": 4374528
+    },
+    {
+      "file": "part-0060.db",
+      "rows": 290,
+      "source_bytes": 4211895,
+      "hits": [
+        20,
+        65,
+        23,
+        26,
+        34,
+        55
+      ],
+      "db_bytes": 4456448
+    },
+    {
+      "file": "part-0061.db",
+      "rows": 222,
+      "source_bytes": 4210449,
+      "hits": [
+        19,
+        62,
+        27,
+        18,
+        41,
+        53
+      ],
+      "db_bytes": 4395008
+    },
+    {
+      "file": "part-0062.db",
+      "rows": 278,
+      "source_bytes": 4295450,
+      "hits": [
+        39,
+        69,
+        32,
+        26,
+        40,
+        59
+      ],
+      "db_bytes": 4505600
+    },
+    {
+      "file": "part-0063.db",
+      "rows": 296,
+      "source_bytes": 4268744,
+      "hits": [
+        30,
+        67,
+        34,
+        22,
+        50,
+        50
+      ],
+      "db_bytes": 4497408
+    },
+    {
+      "file": "part-0064.db",
+      "rows": 271,
+      "source_bytes": 4246185,
+      "hits": [
+        19,
+        50,
+        29,
+        20,
+        39,
+        58
+      ],
+      "db_bytes": 4456448
+    },
+    {
+      "file": "part-0065.db",
+      "rows": 265,
+      "source_bytes": 4201175,
+      "hits": [
+        21,
+        73,
+        32,
+        24,
+        48,
+        58
+      ],
+      "db_bytes": 4403200
+    },
+    {
+      "file": "part-0066.db",
+      "rows": 297,
+      "source_bytes": 4238525,
+      "hits": [
+        22,
+        63,
+        37,
+        32,
+        40,
+        69
+      ],
+      "db_bytes": 4472832
+    },
+    {
+      "file": "part-0067.db",
+      "rows": 295,
+      "source_bytes": 4198975,
+      "hits": [
+        27,
+        70,
+        33,
+        32,
+        27,
+        54
+      ],
+      "db_bytes": 4411392
+    },
+    {
+      "file": "part-0068.db",
+      "rows": 298,
+      "source_bytes": 4197664,
+      "hits": [
+        22,
+        64,
+        26,
+        26,
+        39,
+        56
+      ],
+      "db_bytes": 4399104
+    },
+    {
+      "file": "part-0069.db",
+      "rows": 190,
+      "source_bytes": 4194413,
+      "hits": [
+        14,
+        44,
+        22,
+        21,
+        35,
+        33
+      ],
+      "db_bytes": 4345856
+    },
+    {
+      "file": "part-0070.db",
+      "rows": 323,
+      "source_bytes": 4273475,
+      "hits": [
+        33,
+        76,
+        32,
+        29,
+        52,
+        76
+      ],
+      "db_bytes": 4513792
+    },
+    {
+      "file": "part-0071.db",
+      "rows": 327,
+      "source_bytes": 4198949,
+      "hits": [
+        23,
+        84,
+        34,
+        37,
+        54,
+        75
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0072.db",
+      "rows": 286,
+      "source_bytes": 4197695,
+      "hits": [
+        20,
+        65,
+        26,
+        34,
+        38,
+        63
+      ],
+      "db_bytes": 4415488
+    },
+    {
+      "file": "part-0073.db",
+      "rows": 303,
+      "source_bytes": 4202640,
+      "hits": [
+        33,
+        75,
+        31,
+        29,
+        50,
+        65
+      ],
+      "db_bytes": 4427776
+    },
+    {
+      "file": "part-0074.db",
+      "rows": 242,
+      "source_bytes": 4196964,
+      "hits": [
+        16,
+        45,
+        21,
+        21,
+        30,
+        45
+      ],
+      "db_bytes": 4382720
+    },
+    {
+      "file": "part-0075.db",
+      "rows": 309,
+      "source_bytes": 4197672,
+      "hits": [
+        24,
+        65,
+        28,
+        34,
+        35,
+        56
+      ],
+      "db_bytes": 4452352
+    },
+    {
+      "file": "part-0076.db",
+      "rows": 295,
+      "source_bytes": 4213390,
+      "hits": [
+        31,
+        76,
+        40,
+        24,
+        48,
+        75
+      ],
+      "db_bytes": 4440064
+    },
+    {
+      "file": "part-0077.db",
+      "rows": 279,
+      "source_bytes": 4213987,
+      "hits": [
+        37,
+        69,
+        45,
+        29,
+        49,
+        73
+      ],
+      "db_bytes": 4448256
+    },
+    {
+      "file": "part-0078.db",
+      "rows": 275,
+      "source_bytes": 4195295,
+      "hits": [
+        31,
+        76,
+        30,
+        27,
+        45,
+        49
+      ],
+      "db_bytes": 4411392
+    },
+    {
+      "file": "part-0079.db",
+      "rows": 285,
+      "source_bytes": 4202004,
+      "hits": [
+        23,
+        68,
+        34,
+        24,
+        44,
+        61
+      ],
+      "db_bytes": 4427776
+    },
+    {
+      "file": "part-0080.db",
+      "rows": 268,
+      "source_bytes": 4195220,
+      "hits": [
+        25,
+        62,
+        31,
+        27,
+        48,
+        62
+      ],
+      "db_bytes": 4411392
+    },
+    {
+      "file": "part-0081.db",
+      "rows": 308,
+      "source_bytes": 4219392,
+      "hits": [
+        25,
+        68,
+        25,
+        23,
+        50,
+        70
+      ],
+      "db_bytes": 4464640
+    },
+    {
+      "file": "part-0082.db",
+      "rows": 255,
+      "source_bytes": 4196945,
+      "hits": [
+        24,
+        67,
+        31,
+        29,
+        54,
+        60
+      ],
+      "db_bytes": 4403200
+    },
+    {
+      "file": "part-0083.db",
+      "rows": 249,
+      "source_bytes": 4218696,
+      "hits": [
+        22,
+        61,
+        21,
+        21,
+        38,
+        53
+      ],
+      "db_bytes": 4427776
+    },
+    {
+      "file": "part-0084.db",
+      "rows": 292,
+      "source_bytes": 4845482,
+      "hits": [
+        23,
+        69,
+        23,
+        22,
+        48,
+        72
+      ],
+      "db_bytes": 5083136
+    },
+    {
+      "file": "part-0085.db",
+      "rows": 179,
+      "source_bytes": 4201546,
+      "hits": [
+        13,
+        53,
+        19,
+        16,
+        32,
+        50
+      ],
+      "db_bytes": 4345856
+    },
+    {
+      "file": "part-0086.db",
+      "rows": 227,
+      "source_bytes": 4449217,
+      "hits": [
+        17,
+        50,
+        30,
+        29,
+        32,
+        48
+      ],
+      "db_bytes": 4648960
+    },
+    {
+      "file": "part-0087.db",
+      "rows": 224,
+      "source_bytes": 4195081,
+      "hits": [
+        18,
+        54,
+        25,
+        33,
+        34,
+        43
+      ],
+      "db_bytes": 4382720
+    },
+    {
+      "file": "part-0088.db",
+      "rows": 272,
+      "source_bytes": 4203651,
+      "hits": [
+        29,
+        70,
+        29,
+        36,
+        44,
+        61
+      ],
+      "db_bytes": 4399104
+    },
+    {
+      "file": "part-0089.db",
+      "rows": 256,
+      "source_bytes": 4238306,
+      "hits": [
+        19,
+        56,
+        26,
+        17,
+        34,
+        55
+      ],
+      "db_bytes": 4444160
+    },
+    {
+      "file": "part-0090.db",
+      "rows": 341,
+      "source_bytes": 4218292,
+      "hits": [
+        29,
+        81,
+        29,
+        38,
+        49,
+        71
+      ],
+      "db_bytes": 4456448
+    },
+    {
+      "file": "part-0091.db",
+      "rows": 226,
+      "source_bytes": 4196117,
+      "hits": [
+        20,
+        50,
+        19,
+        18,
+        32,
+        56
+      ],
+      "db_bytes": 4378624
+    },
+    {
+      "file": "part-0092.db",
+      "rows": 303,
+      "source_bytes": 4255752,
+      "hits": [
+        27,
+        70,
+        26,
+        35,
+        40,
+        63
+      ],
+      "db_bytes": 4476928
+    },
+    {
+      "file": "part-0093.db",
+      "rows": 286,
+      "source_bytes": 4247011,
+      "hits": [
+        15,
+        56,
+        27,
+        27,
+        38,
+        56
+      ],
+      "db_bytes": 4472832
+    },
+    {
+      "file": "part-0094.db",
+      "rows": 361,
+      "source_bytes": 4199975,
+      "hits": [
+        29,
+        80,
+        36,
+        23,
+        52,
+        83
+      ],
+      "db_bytes": 4493312
+    },
+    {
+      "file": "part-0095.db",
+      "rows": 317,
+      "source_bytes": 4243440,
+      "hits": [
+        22,
+        73,
+        30,
+        26,
+        41,
+        65
+      ],
+      "db_bytes": 4485120
+    },
+    {
+      "file": "part-0096.db",
+      "rows": 276,
+      "source_bytes": 4195413,
+      "hits": [
+        27,
+        74,
+        36,
+        30,
+        41,
+        61
+      ],
+      "db_bytes": 4431872
+    },
+    {
+      "file": "part-0097.db",
+      "rows": 274,
+      "source_bytes": 4576263,
+      "hits": [
+        16,
+        60,
+        27,
+        21,
+        44,
+        57
+      ],
+      "db_bytes": 4775936
+    },
+    {
+      "file": "part-0098.db",
+      "rows": 298,
+      "source_bytes": 4301316,
+      "hits": [
+        26,
+        78,
+        27,
+        33,
+        43,
+        79
+      ],
+      "db_bytes": 4526080
+    },
+    {
+      "file": "part-0099.db",
+      "rows": 284,
+      "source_bytes": 4255412,
+      "hits": [
+        18,
+        65,
+        27,
+        28,
+        35,
+        53
+      ],
+      "db_bytes": 4468736
+    },
+    {
+      "file": "part-0100.db",
+      "rows": 276,
+      "source_bytes": 4200546,
+      "hits": [
+        17,
+        57,
+        28,
+        33,
+        48,
+        53
+      ],
+      "db_bytes": 4431872
+    },
+    {
+      "file": "part-0101.db",
+      "rows": 229,
+      "source_bytes": 4247672,
+      "hits": [
+        17,
+        65,
+        28,
+        20,
+        44,
+        57
+      ],
+      "db_bytes": 4444160
+    },
+    {
+      "file": "part-0102.db",
+      "rows": 256,
+      "source_bytes": 4301722,
+      "hits": [
+        24,
+        71,
+        25,
+        28,
+        41,
+        48
+      ],
+      "db_bytes": 4493312
+    },
+    {
+      "file": "part-0103.db",
+      "rows": 228,
+      "source_bytes": 4197183,
+      "hits": [
+        26,
+        64,
+        38,
+        26,
+        37,
+        51
+      ],
+      "db_bytes": 4382720
+    },
+    {
+      "file": "part-0104.db",
+      "rows": 327,
+      "source_bytes": 4206296,
+      "hits": [
+        23,
+        64,
+        31,
+        22,
+        41,
+        60
+      ],
+      "db_bytes": 4444160
+    },
+    {
+      "file": "part-0105.db",
+      "rows": 279,
+      "source_bytes": 4202694,
+      "hits": [
+        17,
+        69,
+        25,
+        25,
+        34,
+        54
+      ],
+      "db_bytes": 4419584
+    },
+    {
+      "file": "part-0106.db",
+      "rows": 318,
+      "source_bytes": 4224070,
+      "hits": [
+        30,
+        70,
+        34,
+        31,
+        49,
+        72
+      ],
+      "db_bytes": 4468736
+    },
+    {
+      "file": "part-0107.db",
+      "rows": 296,
+      "source_bytes": 4230979,
+      "hits": [
+        29,
+        68,
+        28,
+        30,
+        40,
+        54
+      ],
+      "db_bytes": 4468736
+    },
+    {
+      "file": "part-0108.db",
+      "rows": 262,
+      "source_bytes": 4227459,
+      "hits": [
+        18,
+        64,
+        25,
+        27,
+        41,
+        50
+      ],
+      "db_bytes": 4419584
+    },
+    {
+      "file": "part-0109.db",
+      "rows": 240,
+      "source_bytes": 4264466,
+      "hits": [
+        24,
+        65,
+        28,
+        29,
+        38,
+        39
+      ],
+      "db_bytes": 4456448
+    },
+    {
+      "file": "part-0110.db",
+      "rows": 243,
+      "source_bytes": 4208977,
+      "hits": [
+        28,
+        68,
+        31,
+        13,
+        35,
+        49
+      ],
+      "db_bytes": 4390912
+    },
+    {
+      "file": "part-0111.db",
+      "rows": 147,
+      "source_bytes": 4415390,
+      "hits": [
+        14,
+        34,
+        20,
+        13,
+        26,
+        28
+      ],
+      "db_bytes": 4530176
+    },
+    {
+      "file": "part-0112.db",
+      "rows": 255,
+      "source_bytes": 4541450,
+      "hits": [
+        20,
+        62,
+        31,
+        23,
+        39,
+        49
+      ],
+      "db_bytes": 4730880
+    },
+    {
+      "file": "part-0113.db",
+      "rows": 304,
+      "source_bytes": 4236047,
+      "hits": [
+        22,
+        73,
+        40,
+        36,
+        46,
+        68
+      ],
+      "db_bytes": 4489216
+    },
+    {
+      "file": "part-0114.db",
+      "rows": 273,
+      "source_bytes": 4206656,
+      "hits": [
+        22,
+        63,
+        33,
+        18,
+        41,
+        47
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0115.db",
+      "rows": 290,
+      "source_bytes": 4563158,
+      "hits": [
+        13,
+        61,
+        25,
+        21,
+        31,
+        46
+      ],
+      "db_bytes": 4788224
+    },
+    {
+      "file": "part-0116.db",
+      "rows": 292,
+      "source_bytes": 4266644,
+      "hits": [
+        23,
+        68,
+        33,
+        25,
+        50,
+        50
+      ],
+      "db_bytes": 4526080
+    },
+    {
+      "file": "part-0117.db",
+      "rows": 305,
+      "source_bytes": 4202232,
+      "hits": [
+        32,
+        79,
+        32,
+        36,
+        46,
+        67
+      ],
+      "db_bytes": 4452352
+    },
+    {
+      "file": "part-0118.db",
+      "rows": 335,
+      "source_bytes": 4200266,
+      "hits": [
+        29,
+        72,
+        40,
+        44,
+        49,
+        71
+      ],
+      "db_bytes": 4464640
+    },
+    {
+      "file": "part-0119.db",
+      "rows": 254,
+      "source_bytes": 4197586,
+      "hits": [
+        25,
+        59,
+        22,
+        22,
+        42,
+        53
+      ],
+      "db_bytes": 4407296
+    },
+    {
+      "file": "part-0120.db",
+      "rows": 222,
+      "source_bytes": 4199243,
+      "hits": [
+        24,
+        56,
+        30,
+        18,
+        26,
+        44
+      ],
+      "db_bytes": 4370432
+    },
+    {
+      "file": "part-0121.db",
+      "rows": 320,
+      "source_bytes": 4196481,
+      "hits": [
+        22,
+        67,
+        34,
+        33,
+        55,
+        58
+      ],
+      "db_bytes": 4456448
+    },
+    {
+      "file": "part-0122.db",
+      "rows": 244,
+      "source_bytes": 4253118,
+      "hits": [
+        22,
+        57,
+        31,
+        28,
+        37,
+        57
+      ],
+      "db_bytes": 4448256
+    },
+    {
+      "file": "part-0123.db",
+      "rows": 300,
+      "source_bytes": 4213125,
+      "hits": [
+        25,
+        68,
+        26,
+        20,
+        47,
+        55
+      ],
+      "db_bytes": 4460544
+    },
+    {
+      "file": "part-0124.db",
+      "rows": 305,
+      "source_bytes": 4201590,
+      "hits": [
+        31,
+        70,
+        36,
+        27,
+        52,
+        60
+      ],
+      "db_bytes": 4444160
+    },
+    {
+      "file": "part-0125.db",
+      "rows": 263,
+      "source_bytes": 4199507,
+      "hits": [
+        15,
+        58,
+        30,
+        31,
+        45,
+        58
+      ],
+      "db_bytes": 4386816
+    },
+    {
+      "file": "part-0126.db",
+      "rows": 296,
+      "source_bytes": 4272008,
+      "hits": [
+        27,
+        69,
+        32,
+        20,
+        45,
+        55
+      ],
+      "db_bytes": 4521984
+    },
+    {
+      "file": "part-0127.db",
+      "rows": 260,
+      "source_bytes": 4291851,
+      "hits": [
+        20,
+        71,
+        30,
+        27,
+        45,
+        66
+      ],
+      "db_bytes": 4501504
+    },
+    {
+      "file": "part-0128.db",
+      "rows": 257,
+      "source_bytes": 4210882,
+      "hits": [
+        24,
+        65,
+        22,
+        30,
+        50,
+        50
+      ],
+      "db_bytes": 4403200
+    },
+    {
+      "file": "part-0129.db",
+      "rows": 197,
+      "source_bytes": 4228705,
+      "hits": [
+        13,
+        40,
+        32,
+        17,
+        39,
+        30
+      ],
+      "db_bytes": 4378624
+    },
+    {
+      "file": "part-0130.db",
+      "rows": 315,
+      "source_bytes": 4318315,
+      "hits": [
+        33,
+        78,
+        40,
+        26,
+        64,
+        74
+      ],
+      "db_bytes": 4587520
+    },
+    {
+      "file": "part-0131.db",
+      "rows": 288,
+      "source_bytes": 4196977,
+      "hits": [
+        20,
+        67,
+        38,
+        32,
+        44,
+        56
+      ],
+      "db_bytes": 4411392
+    },
+    {
+      "file": "part-0132.db",
+      "rows": 305,
+      "source_bytes": 4200899,
+      "hits": [
+        36,
+        79,
+        40,
+        36,
+        57,
+        60
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0133.db",
+      "rows": 331,
+      "source_bytes": 4243121,
+      "hits": [
+        21,
+        67,
+        32,
+        26,
+        48,
+        66
+      ],
+      "db_bytes": 4521984
+    },
+    {
+      "file": "part-0134.db",
+      "rows": 358,
+      "source_bytes": 4198113,
+      "hits": [
+        32,
+        90,
+        29,
+        33,
+        50,
+        83
+      ],
+      "db_bytes": 4456448
+    },
+    {
+      "file": "part-0135.db",
+      "rows": 227,
+      "source_bytes": 4196783,
+      "hits": [
+        21,
+        53,
+        20,
+        12,
+        30,
+        44
+      ],
+      "db_bytes": 4370432
+    },
+    {
+      "file": "part-0136.db",
+      "rows": 245,
+      "source_bytes": 4227253,
+      "hits": [
+        17,
+        66,
+        44,
+        26,
+        45,
+        60
+      ],
+      "db_bytes": 4431872
+    },
+    {
+      "file": "part-0137.db",
+      "rows": 303,
+      "source_bytes": 4219677,
+      "hits": [
+        21,
+        68,
+        26,
+        31,
+        49,
+        62
+      ],
+      "db_bytes": 4464640
+    },
+    {
+      "file": "part-0138.db",
+      "rows": 274,
+      "source_bytes": 4199205,
+      "hits": [
+        23,
+        55,
+        28,
+        37,
+        53,
+        56
+      ],
+      "db_bytes": 4419584
+    },
+    {
+      "file": "part-0139.db",
+      "rows": 282,
+      "source_bytes": 4196238,
+      "hits": [
+        33,
+        55,
+        35,
+        30,
+        39,
+        58
+      ],
+      "db_bytes": 4411392
+    },
+    {
+      "file": "part-0140.db",
+      "rows": 279,
+      "source_bytes": 4228987,
+      "hits": [
+        28,
+        71,
+        23,
+        33,
+        36,
+        53
+      ],
+      "db_bytes": 4431872
+    },
+    {
+      "file": "part-0141.db",
+      "rows": 234,
+      "source_bytes": 4235573,
+      "hits": [
+        20,
+        60,
+        25,
+        27,
+        34,
+        45
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0142.db",
+      "rows": 241,
+      "source_bytes": 4203464,
+      "hits": [
+        21,
+        64,
+        27,
+        28,
+        35,
+        48
+      ],
+      "db_bytes": 4395008
+    },
+    {
+      "file": "part-0143.db",
+      "rows": 272,
+      "source_bytes": 4197650,
+      "hits": [
+        19,
+        62,
+        27,
+        30,
+        40,
+        53
+      ],
+      "db_bytes": 4427776
+    },
+    {
+      "file": "part-0144.db",
+      "rows": 276,
+      "source_bytes": 4248355,
+      "hits": [
+        25,
+        78,
+        26,
+        29,
+        43,
+        54
+      ],
+      "db_bytes": 4460544
+    },
+    {
+      "file": "part-0145.db",
+      "rows": 279,
+      "source_bytes": 4214206,
+      "hits": [
+        32,
+        64,
+        40,
+        28,
+        50,
+        58
+      ],
+      "db_bytes": 4427776
+    },
+    {
+      "file": "part-0146.db",
+      "rows": 226,
+      "source_bytes": 4196117,
+      "hits": [
+        23,
+        48,
+        23,
+        20,
+        38,
+        42
+      ],
+      "db_bytes": 4395008
+    },
+    {
+      "file": "part-0147.db",
+      "rows": 263,
+      "source_bytes": 4200361,
+      "hits": [
+        15,
+        71,
+        19,
+        25,
+        43,
+        56
+      ],
+      "db_bytes": 4407296
+    },
+    {
+      "file": "part-0148.db",
+      "rows": 295,
+      "source_bytes": 4195330,
+      "hits": [
+        19,
+        65,
+        32,
+        31,
+        44,
+        61
+      ],
+      "db_bytes": 4427776
+    },
+    {
+      "file": "part-0149.db",
+      "rows": 264,
+      "source_bytes": 4227336,
+      "hits": [
+        18,
+        73,
+        36,
+        27,
+        45,
+        55
+      ],
+      "db_bytes": 4419584
+    },
+    {
+      "file": "part-0150.db",
+      "rows": 269,
+      "source_bytes": 4208270,
+      "hits": [
+        24,
+        65,
+        35,
+        31,
+        39,
+        58
+      ],
+      "db_bytes": 4415488
+    },
+    {
+      "file": "part-0151.db",
+      "rows": 307,
+      "source_bytes": 4313337,
+      "hits": [
+        26,
+        66,
+        36,
+        35,
+        39,
+        56
+      ],
+      "db_bytes": 4558848
+    },
+    {
+      "file": "part-0152.db",
+      "rows": 214,
+      "source_bytes": 4198357,
+      "hits": [
+        18,
+        55,
+        20,
+        11,
+        31,
+        47
+      ],
+      "db_bytes": 4362240
+    },
+    {
+      "file": "part-0153.db",
+      "rows": 238,
+      "source_bytes": 4238798,
+      "hits": [
+        28,
+        62,
+        32,
+        20,
+        42,
+        62
+      ],
+      "db_bytes": 4419584
+    },
+    {
+      "file": "part-0154.db",
+      "rows": 280,
+      "source_bytes": 4264731,
+      "hits": [
+        25,
+        63,
+        27,
+        26,
+        38,
+        61
+      ],
+      "db_bytes": 4481024
+    },
+    {
+      "file": "part-0155.db",
+      "rows": 251,
+      "source_bytes": 4204669,
+      "hits": [
+        28,
+        65,
+        24,
+        28,
+        48,
+        60
+      ],
+      "db_bytes": 4407296
+    },
+    {
+      "file": "part-0156.db",
+      "rows": 286,
+      "source_bytes": 4195951,
+      "hits": [
+        30,
+        74,
+        42,
+        31,
+        51,
+        60
+      ],
+      "db_bytes": 4415488
+    },
+    {
+      "file": "part-0157.db",
+      "rows": 300,
+      "source_bytes": 4542420,
+      "hits": [
+        27,
+        67,
+        29,
+        30,
+        45,
+        65
+      ],
+      "db_bytes": 4771840
+    },
+    {
+      "file": "part-0158.db",
+      "rows": 262,
+      "source_bytes": 4201538,
+      "hits": [
+        32,
+        76,
+        31,
+        26,
+        44,
+        56
+      ],
+      "db_bytes": 4415488
+    },
+    {
+      "file": "part-0159.db",
+      "rows": 352,
+      "source_bytes": 4321027,
+      "hits": [
+        28,
+        88,
+        35,
+        25,
+        51,
+        84
+      ],
+      "db_bytes": 4595712
+    },
+    {
+      "file": "part-0160.db",
+      "rows": 321,
+      "source_bytes": 4223508,
+      "hits": [
+        24,
+        76,
+        34,
+        22,
+        42,
+        59
+      ],
+      "db_bytes": 4460544
+    },
+    {
+      "file": "part-0161.db",
+      "rows": 258,
+      "source_bytes": 4292646,
+      "hits": [
+        22,
+        64,
+        23,
+        25,
+        40,
+        61
+      ],
+      "db_bytes": 4501504
+    },
+    {
+      "file": "part-0162.db",
+      "rows": 210,
+      "source_bytes": 4200810,
+      "hits": [
+        21,
+        52,
+        17,
+        25,
+        26,
+        40
+      ],
+      "db_bytes": 4354048
+    },
+    {
+      "file": "part-0163.db",
+      "rows": 280,
+      "source_bytes": 4201435,
+      "hits": [
+        29,
+        75,
+        38,
+        31,
+        38,
+        69
+      ],
+      "db_bytes": 4423680
+    },
+    {
+      "file": "part-0164.db",
+      "rows": 288,
+      "source_bytes": 4218141,
+      "hits": [
+        19,
+        65,
+        32,
+        23,
+        41,
+        63
+      ],
+      "db_bytes": 4448256
+    },
+    {
+      "file": "part-0165.db",
+      "rows": 258,
+      "source_bytes": 4247179,
+      "hits": [
+        22,
+        53,
+        24,
+        21,
+        33,
+        48
+      ],
+      "db_bytes": 4452352
+    },
+    {
+      "file": "part-0166.db",
+      "rows": 290,
+      "source_bytes": 4218113,
+      "hits": [
+        22,
+        61,
+        29,
+        17,
+        32,
+        62
+      ],
+      "db_bytes": 4448256
+    },
+    {
+      "file": "part-0167.db",
+      "rows": 286,
+      "source_bytes": 4194587,
+      "hits": [
+        33,
+        75,
+        37,
+        29,
+        49,
+        62
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0168.db",
+      "rows": 272,
+      "source_bytes": 4200259,
+      "hits": [
+        21,
+        58,
+        27,
+        28,
+        42,
+        53
+      ],
+      "db_bytes": 4407296
+    },
+    {
+      "file": "part-0169.db",
+      "rows": 291,
+      "source_bytes": 4198866,
+      "hits": [
+        25,
+        72,
+        33,
+        31,
+        40,
+        63
+      ],
+      "db_bytes": 4431872
+    },
+    {
+      "file": "part-0170.db",
+      "rows": 350,
+      "source_bytes": 4199684,
+      "hits": [
+        29,
+        90,
+        43,
+        32,
+        40,
+        70
+      ],
+      "db_bytes": 4476928
+    },
+    {
+      "file": "part-0171.db",
+      "rows": 317,
+      "source_bytes": 4205886,
+      "hits": [
+        25,
+        78,
+        25,
+        34,
+        52,
+        66
+      ],
+      "db_bytes": 4460544
+    },
+    {
+      "file": "part-0172.db",
+      "rows": 247,
+      "source_bytes": 4194399,
+      "hits": [
+        16,
+        45,
+        15,
+        17,
+        22,
+        44
+      ],
+      "db_bytes": 4399104
+    },
+    {
+      "file": "part-0173.db",
+      "rows": 279,
+      "source_bytes": 4407383,
+      "hits": [
+        24,
+        67,
+        28,
+        30,
+        42,
+        59
+      ],
+      "db_bytes": 4603904
+    },
+    {
+      "file": "part-0174.db",
+      "rows": 229,
+      "source_bytes": 4267895,
+      "hits": [
+        22,
+        59,
+        23,
+        19,
+        34,
+        42
+      ],
+      "db_bytes": 4464640
+    },
+    {
+      "file": "part-0175.db",
+      "rows": 244,
+      "source_bytes": 4237843,
+      "hits": [
+        29,
+        64,
+        24,
+        17,
+        42,
+        50
+      ],
+      "db_bytes": 4419584
+    },
+    {
+      "file": "part-0176.db",
+      "rows": 295,
+      "source_bytes": 4195554,
+      "hits": [
+        25,
+        77,
+        27,
+        26,
+        36,
+        65
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0177.db",
+      "rows": 291,
+      "source_bytes": 4546162,
+      "hits": [
+        26,
+        75,
+        26,
+        31,
+        49,
+        62
+      ],
+      "db_bytes": 4788224
+    },
+    {
+      "file": "part-0178.db",
+      "rows": 303,
+      "source_bytes": 4199046,
+      "hits": [
+        32,
+        72,
+        45,
+        34,
+        62,
+        58
+      ],
+      "db_bytes": 4456448
+    },
+    {
+      "file": "part-0179.db",
+      "rows": 299,
+      "source_bytes": 4196095,
+      "hits": [
+        26,
+        72,
+        32,
+        22,
+        43,
+        63
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0180.db",
+      "rows": 264,
+      "source_bytes": 4199074,
+      "hits": [
+        31,
+        70,
+        29,
+        23,
+        44,
+        68
+      ],
+      "db_bytes": 4395008
+    },
+    {
+      "file": "part-0181.db",
+      "rows": 310,
+      "source_bytes": 4216232,
+      "hits": [
+        27,
+        68,
+        29,
+        27,
+        48,
+        64
+      ],
+      "db_bytes": 4464640
+    },
+    {
+      "file": "part-0182.db",
+      "rows": 212,
+      "source_bytes": 4227376,
+      "hits": [
+        16,
+        57,
+        22,
+        15,
+        35,
+        43
+      ],
+      "db_bytes": 4403200
+    },
+    {
+      "file": "part-0183.db",
+      "rows": 310,
+      "source_bytes": 4284038,
+      "hits": [
+        25,
+        63,
+        34,
+        27,
+        38,
+        70
+      ],
+      "db_bytes": 4513792
+    },
+    {
+      "file": "part-0184.db",
+      "rows": 225,
+      "source_bytes": 4218539,
+      "hits": [
+        22,
+        62,
+        29,
+        32,
+        44,
+        52
+      ],
+      "db_bytes": 4411392
+    },
+    {
+      "file": "part-0185.db",
+      "rows": 297,
+      "source_bytes": 4195907,
+      "hits": [
+        31,
+        73,
+        26,
+        22,
+        52,
+        69
+      ],
+      "db_bytes": 4431872
+    },
+    {
+      "file": "part-0186.db",
+      "rows": 306,
+      "source_bytes": 4219923,
+      "hits": [
+        22,
+        81,
+        33,
+        24,
+        49,
+        66
+      ],
+      "db_bytes": 4476928
+    },
+    {
+      "file": "part-0187.db",
+      "rows": 299,
+      "source_bytes": 4229505,
+      "hits": [
+        28,
+        76,
+        30,
+        25,
+        43,
+        62
+      ],
+      "db_bytes": 4493312
+    },
+    {
+      "file": "part-0188.db",
+      "rows": 262,
+      "source_bytes": 4196680,
+      "hits": [
+        29,
+        61,
+        34,
+        28,
+        43,
+        59
+      ],
+      "db_bytes": 4407296
+    },
+    {
+      "file": "part-0189.db",
+      "rows": 280,
+      "source_bytes": 4196425,
+      "hits": [
+        20,
+        73,
+        34,
+        24,
+        48,
+        67
+      ],
+      "db_bytes": 4407296
+    },
+    {
+      "file": "part-0190.db",
+      "rows": 215,
+      "source_bytes": 4202986,
+      "hits": [
+        19,
+        51,
+        22,
+        16,
+        29,
+        42
+      ],
+      "db_bytes": 4403200
+    },
+    {
+      "file": "part-0191.db",
+      "rows": 305,
+      "source_bytes": 4419388,
+      "hits": [
+        29,
+        73,
+        32,
+        21,
+        45,
+        54
+      ],
+      "db_bytes": 4669440
+    },
+    {
+      "file": "part-0192.db",
+      "rows": 262,
+      "source_bytes": 4407512,
+      "hits": [
+        29,
+        65,
+        25,
+        25,
+        49,
+        60
+      ],
+      "db_bytes": 4608000
+    },
+    {
+      "file": "part-0193.db",
+      "rows": 294,
+      "source_bytes": 4194740,
+      "hits": [
+        24,
+        67,
+        32,
+        20,
+        43,
+        57
+      ],
+      "db_bytes": 4419584
+    },
+    {
+      "file": "part-0194.db",
+      "rows": 262,
+      "source_bytes": 4216043,
+      "hits": [
+        20,
+        56,
+        34,
+        17,
+        40,
+        51
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0195.db",
+      "rows": 280,
+      "source_bytes": 4194710,
+      "hits": [
+        24,
+        64,
+        26,
+        31,
+        41,
+        67
+      ],
+      "db_bytes": 4431872
+    },
+    {
+      "file": "part-0196.db",
+      "rows": 301,
+      "source_bytes": 4310410,
+      "hits": [
+        28,
+        72,
+        31,
+        30,
+        46,
+        68
+      ],
+      "db_bytes": 4567040
+    },
+    {
+      "file": "part-0197.db",
+      "rows": 325,
+      "source_bytes": 4200339,
+      "hits": [
+        22,
+        68,
+        31,
+        25,
+        44,
+        58
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0198.db",
+      "rows": 303,
+      "source_bytes": 4219271,
+      "hits": [
+        20,
+        69,
+        28,
+        28,
+        50,
+        60
+      ],
+      "db_bytes": 4464640
+    },
+    {
+      "file": "part-0199.db",
+      "rows": 254,
+      "source_bytes": 4233438,
+      "hits": [
+        25,
+        69,
+        31,
+        24,
+        40,
+        52
+      ],
+      "db_bytes": 4460544
+    },
+    {
+      "file": "part-0200.db",
+      "rows": 288,
+      "source_bytes": 4362871,
+      "hits": [
+        21,
+        64,
+        39,
+        27,
+        38,
+        53
+      ],
+      "db_bytes": 4591616
+    },
+    {
+      "file": "part-0201.db",
+      "rows": 268,
+      "source_bytes": 4194363,
+      "hits": [
+        25,
+        62,
+        26,
+        26,
+        44,
+        59
+      ],
+      "db_bytes": 4411392
+    },
+    {
+      "file": "part-0202.db",
+      "rows": 262,
+      "source_bytes": 4217876,
+      "hits": [
+        29,
+        62,
+        32,
+        30,
+        46,
+        60
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0203.db",
+      "rows": 270,
+      "source_bytes": 4205801,
+      "hits": [
+        24,
+        64,
+        27,
+        28,
+        35,
+        59
+      ],
+      "db_bytes": 4419584
+    },
+    {
+      "file": "part-0204.db",
+      "rows": 275,
+      "source_bytes": 4199452,
+      "hits": [
+        31,
+        78,
+        31,
+        29,
+        52,
+        54
+      ],
+      "db_bytes": 4399104
+    },
+    {
+      "file": "part-0205.db",
+      "rows": 285,
+      "source_bytes": 4210263,
+      "hits": [
+        25,
+        64,
+        27,
+        25,
+        39,
+        58
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0206.db",
+      "rows": 270,
+      "source_bytes": 4340126,
+      "hits": [
+        23,
+        60,
+        37,
+        30,
+        40,
+        50
+      ],
+      "db_bytes": 4542464
+    },
+    {
+      "file": "part-0207.db",
+      "rows": 259,
+      "source_bytes": 4214451,
+      "hits": [
+        34,
+        68,
+        36,
+        22,
+        44,
+        46
+      ],
+      "db_bytes": 4423680
+    },
+    {
+      "file": "part-0208.db",
+      "rows": 342,
+      "source_bytes": 4257259,
+      "hits": [
+        35,
+        83,
+        30,
+        27,
+        50,
+        73
+      ],
+      "db_bytes": 4505600
+    },
+    {
+      "file": "part-0209.db",
+      "rows": 229,
+      "source_bytes": 4206385,
+      "hits": [
+        21,
+        60,
+        30,
+        16,
+        36,
+        46
+      ],
+      "db_bytes": 4431872
+    },
+    {
+      "file": "part-0210.db",
+      "rows": 292,
+      "source_bytes": 4211420,
+      "hits": [
+        25,
+        65,
+        37,
+        38,
+        42,
+        50
+      ],
+      "db_bytes": 4427776
+    },
+    {
+      "file": "part-0211.db",
+      "rows": 277,
+      "source_bytes": 4194332,
+      "hits": [
+        17,
+        68,
+        27,
+        25,
+        37,
+        55
+      ],
+      "db_bytes": 4403200
+    },
+    {
+      "file": "part-0212.db",
+      "rows": 317,
+      "source_bytes": 4998683,
+      "hits": [
+        29,
+        70,
+        36,
+        28,
+        43,
+        55
+      ],
+      "db_bytes": 5238784
+    },
+    {
+      "file": "part-0213.db",
+      "rows": 264,
+      "source_bytes": 4200422,
+      "hits": [
+        26,
+        67,
+        31,
+        24,
+        44,
+        50
+      ],
+      "db_bytes": 4415488
+    },
+    {
+      "file": "part-0214.db",
+      "rows": 266,
+      "source_bytes": 4219030,
+      "hits": [
+        27,
+        69,
+        32,
+        32,
+        42,
+        52
+      ],
+      "db_bytes": 4435968
+    },
+    {
+      "file": "part-0215.db",
+      "rows": 265,
+      "source_bytes": 4195207,
+      "hits": [
+        19,
+        59,
+        32,
+        19,
+        45,
+        50
+      ],
+      "db_bytes": 4399104
+    },
+    {
+      "file": "part-0216.db",
+      "rows": 278,
+      "source_bytes": 4205818,
+      "hits": [
+        24,
+        76,
+        35,
+        31,
+        50,
+        53
+      ],
+      "db_bytes": 4419584
+    },
+    {
+      "file": "part-0217.db",
+      "rows": 294,
+      "source_bytes": 4219335,
+      "hits": [
+        25,
+        74,
+        31,
+        26,
+        46,
+        69
+      ],
+      "db_bytes": 4460544
+    },
+    {
+      "file": "part-0218.db",
+      "rows": 266,
+      "source_bytes": 4202272,
+      "hits": [
+        20,
+        50,
+        25,
+        18,
+        34,
+        49
+      ],
+      "db_bytes": 4399104
+    },
+    {
+      "file": "part-0219.db",
+      "rows": 295,
+      "source_bytes": 4212012,
+      "hits": [
+        33,
+        80,
+        45,
+        32,
+        46,
+        67
+      ],
+      "db_bytes": 4452352
+    },
+    {
+      "file": "part-0220.db",
+      "rows": 344,
+      "source_bytes": 4214686,
+      "hits": [
+        21,
+        70,
+        32,
+        36,
+        54,
+        65
+      ],
+      "db_bytes": 4485120
+    },
+    {
+      "file": "part-0221.db",
+      "rows": 313,
+      "source_bytes": 4196071,
+      "hits": [
+        28,
+        72,
+        37,
+        33,
+        46,
+        61
+      ],
+      "db_bytes": 4431872
+    },
+    {
+      "file": "part-0222.db",
+      "rows": 280,
+      "source_bytes": 4212670,
+      "hits": [
+        12,
+        59,
+        22,
+        25,
+        38,
+        49
+      ],
+      "db_bytes": 4423680
+    },
+    {
+      "file": "part-0223.db",
+      "rows": 267,
+      "source_bytes": 4197945,
+      "hits": [
+        22,
+        53,
+        27,
+        23,
+        35,
+        50
+      ],
+      "db_bytes": 4395008
+    },
+    {
+      "file": "part-0224.db",
+      "rows": 250,
+      "source_bytes": 4197760,
+      "hits": [
+        27,
+        61,
+        25,
+        30,
+        35,
+        47
+      ],
+      "db_bytes": 4399104
+    },
+    {
+      "file": "part-0225.db",
+      "rows": 281,
+      "source_bytes": 4446338,
+      "hits": [
+        25,
+        78,
+        36,
+        34,
+        46,
+        68
+      ],
+      "db_bytes": 4673536
+    },
+    {
+      "file": "part-0226.db",
+      "rows": 264,
+      "source_bytes": 4209791,
+      "hits": [
+        26,
+        70,
+        36,
+        31,
+        50,
+        54
+      ],
+      "db_bytes": 4407296
+    },
+    {
+      "file": "part-0227.db",
+      "rows": 248,
+      "source_bytes": 4195469,
+      "hits": [
+        24,
+        57,
+        19,
+        15,
+        26,
+        58
+      ],
+      "db_bytes": 4419584
+    },
+    {
+      "file": "part-0228.db",
+      "rows": 337,
+      "source_bytes": 4280521,
+      "hits": [
+        23,
+        92,
+        37,
+        29,
+        51,
+        77
+      ],
+      "db_bytes": 4554752
+    },
+    {
+      "file": "part-0229.db",
+      "rows": 327,
+      "source_bytes": 4208267,
+      "hits": [
+        21,
+        77,
+        27,
+        29,
+        46,
+        69
+      ],
+      "db_bytes": 4427776
+    }
+  ]
+}

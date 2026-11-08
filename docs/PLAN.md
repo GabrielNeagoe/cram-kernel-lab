@@ -30,6 +30,8 @@
 
 - [x] Measure usable capacity, process CPU and p99 database-page fault latency for four concurrent SQLite searches on full Ubuntu boots. [SQLite application trial](sqlite-capacity.md)
 
+- [x] Repeat the SQLite comparison with Ubuntu as the only running VM and compare capacity, CPU and fault p99 against the shared-host measurements. [Isolated SQLite trial](sqlite-isolated.md)
+
 ## Next tests
 
 1. Alternate the presence of the RAMMap hold export over repeated fresh-boot pairs while keeping other watchers fixed. Record actual host requests and mark any ownership differences already present before the hold.
