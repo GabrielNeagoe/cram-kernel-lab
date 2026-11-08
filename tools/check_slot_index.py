@@ -19,9 +19,18 @@ HEADER = r"""
 typedef uint64_t u64;
 static struct control { unsigned long bitmap[CHUNKS]; } control, *ca = &control;
 static unsigned long ca_fit[CA_MAX_RUN * WORDS];
-static unsigned ca_row_words = WORDS, ca_blocks = CHUNKS * CA_SLOTS;
-static bool cram_index = true, cram_demand = true;
+#ifdef SHARD_HELPERS
+static struct ca_shard {
+    struct control *control;
+    unsigned long *fit;
+    unsigned row_words, blocks;
+    u64 index_ns;
+} test_shard = { &control, ca_fit, WORDS, CHUNKS * CA_SLOTS, 0 };
+#else
 static u64 ca_index_ns;
+static unsigned ca_row_words = WORDS, ca_blocks = CHUNKS * CA_SLOTS;
+#endif
+static bool cram_index = true, cram_demand = true;
 static u64 ca_tick(void) { return 0; }
 static void ca_elapsed(u64 start, u64 *counter) { (void)start; (void)counter; }
 static void __set_bit(unsigned i, unsigned long *p) { p[i/64] |= 1UL << (i%64); }
@@ -45,6 +54,10 @@ static unsigned bitmap_find_next_zero_area(const unsigned long *p, unsigned end,
 """
 
 CHECK = r"""
+#ifdef SHARD_HELPERS
+#define ca_update_fit(n) ca_update_fit(&test_shard, n)
+#define ca_slot(n) ca_slot(&test_shard, n)
+#endif
 static unsigned long random_state = 0x267b1ab534e3c1UL;
 static unsigned long random_word(void) {
     random_state ^= random_state << 13;
@@ -87,7 +100,9 @@ def run(source, compiler):
     end = source.index("static struct ca_entry *ca_at(", start)
     with tempfile.TemporaryDirectory() as tmp:
         work = Path(tmp)
-        (work / "check.c").write_text(HEADER + source[start:end] + CHECK)
+        helpers = source[start:end]
+        config = "#define SHARD_HELPERS 1\n" if "ca_slot(struct ca_shard *" in helpers else ""
+        (work / "check.c").write_text(config + HEADER + helpers + CHECK)
         exe = work / "check"
         subprocess.run([compiler, "-std=c11", "-O2", "-Wall", "-Wextra", "-Werror",
                         str(work / "check.c"), "-o", str(exe)], check=True)

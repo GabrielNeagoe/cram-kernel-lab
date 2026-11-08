@@ -20,6 +20,8 @@
 
 - [x] Measure lookup chain lengths and contended acquisitions with parallel faults. Test a larger hash table and recheck parallel capacity, CPU, and fault latency. [Parallel hash profile](parallel-hash-profile.md)
 
+- [x] Test two independently locked wide-hash shards against one arena lock under parallel faults. Recheck capacity, CPU, lock wait, and p99 latency. [Sharded arena](sharded-arena.md)
+
 ## Next tests
 
 1. Alternate the presence of the RAMMap hold export over repeated fresh-boot pairs while keeping other watchers fixed. Record actual host requests and mark any ownership differences already present before the hold.

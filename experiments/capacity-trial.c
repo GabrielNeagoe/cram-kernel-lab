@@ -211,13 +211,17 @@ int main(int argc, char **argv)
     static const char *const lock_stats[] = {
         "arena_lookups", "arena_visits", "arena_acquires", "arena_contended", "arena_wait_ns", "arena_hold_ns"
     };
-    unsigned long lock_before[6];
+    unsigned long lock_before[6], shard_before[2];
+    static const char *const shard_stores[] = {"arena_shard0_stores", "arena_shard1_stores"};
+    int sharded = getenv("CRAM_TWO_SHARDS") != NULL;
     int hash_trial = getenv("CRAM_HASH_TRIAL") != NULL;
     unsigned workers = getenv("CRAM_WORKERS") && !strcmp(getenv("CRAM_WORKERS"), "2") ? 2 : 1;
     unsigned long before[4], used = 0, entries = 0;
     if (profiling) {
         if (hash_trial)
             for (unsigned i = 0; i < 6; i++) lock_before[i] = arena_stat(lock_stats[i]);
+        if (sharded)
+            for (unsigned i = 0; i < 2; i++) shard_before[i] = arena_stat(shard_stores[i]);
         used = arena_stat("arena_used_bytes");
         entries = arena_stat("arena_entries");
         for (unsigned i = 0; i < 4; i++) before[i] = arena_stat(timers[i]);
@@ -277,6 +281,9 @@ int main(int argc, char **argv)
     }
     if (hash_trial) {
         printf(",\"workers\":%u", workers);
+        if (profiling && sharded)
+            for (unsigned i=0; i<2; i++)
+                printf(",\"%s\":%lu", shard_stores[i], arena_stat(shard_stores[i]) - shard_before[i]);
         if (profiling)
             for (unsigned i=0; i<6; i++)
                 printf(",\"%s\":%lu", lock_stats[i], arena_stat(lock_stats[i]) - lock_before[i]);

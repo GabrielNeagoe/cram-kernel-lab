@@ -17,10 +17,13 @@ for v in $(cat /proc/cmdline); do
         cram.trial=*) mode=${v#*=};;
         cram.volume=*) dataset=${v#*=};;
         cram.run=*) case_id=${v#*=};;
-        cram.series=demand-01|cram.series=profile-01|cram.series=hash-01) series=${v#*=};;
+        cram.series=demand-01|cram.series=profile-01|cram.series=hash-01|cram.series=shard-01) series=${v#*=};;
         cram.smoke=1) smoke=1;;
     esac
 done
+is_hash_trial() {
+    [ "$series" = hash-01 ] || [ "$series" = shard-01 ]
+}
 finish() {
     rc=$?
     trap - EXIT
@@ -35,7 +38,7 @@ finish() {
 }
 trap finish EXIT
 set -eu
-case "$mode" in off|lz4|zstd1|demand|indexed|wide) ;; *) exit 2;; esac
+case "$mode" in off|lz4|zstd1|demand|indexed|wide|sharded) ;; *) exit 2;; esac
 case "$case_id" in ''|*[!a-z0-9]*) exit 2;; esac
 out=
 if [ "$smoke" = 1 ]; then
@@ -87,16 +90,22 @@ else
     if [ "$mode" = zstd1 ]; then test "$(cat "$params/cram_zstd1")" = Y
     else test "$(cat "$params/cram_zstd1")" = N; fi
     if [ "$series" != capacity-trial-01 ]; then
-        if [ "$mode" = demand ] || [ "$mode" = indexed ] || [ "$mode" = wide ]; then test "$(cat "$params/cram_demand")" = Y
+        if [ "$mode" = demand ] || [ "$mode" = indexed ] || [ "$mode" = wide ] || [ "$mode" = sharded ]; then test "$(cat "$params/cram_demand")" = Y
         else test "$(cat "$params/cram_demand")" = N; fi
     fi
-    if [ "$series" = profile-01 ] || [ "$series" = hash-01 ]; then
-        if [ "$mode" = indexed ] || [ "$mode" = wide ]; then test "$(cat "$params/cram_index")" = Y
+    if [ "$series" = profile-01 ] || is_hash_trial; then
+        if [ "$mode" = indexed ] || [ "$mode" = wide ] || [ "$mode" = sharded ]; then test "$(cat "$params/cram_index")" = Y
         else test "$(cat "$params/cram_index")" = N; fi
     fi
-    if [ "$series" = hash-01 ]; then
-        if [ "$mode" = wide ]; then test "$(cat "$params/cram_wide_hash")" = Y
+    if is_hash_trial; then
+        if [ "$mode" = wide ] || [ "$mode" = sharded ]; then test "$(cat "$params/cram_wide_hash")" = Y
         else test "$(cat "$params/cram_wide_hash")" = N; fi
+    fi
+    if [ "$series" = shard-01 ]; then
+        if [ "$mode" = sharded ]; then
+            test "$(cat "$params/cram_two_shards")" = Y
+            export CRAM_TWO_SHARDS=1
+        else test "$(cat "$params/cram_two_shards")" = N; fi
     fi
     swapon "$swap"
     arena=$(cat "$debug/arena_backing_bytes")
@@ -109,7 +118,7 @@ idle=0
 if [ "$series" != capacity-trial-01 ] && [ "$mode" != off ]; then
     extra_arg=--arena-stats
     idle=$(cat "$debug/arena_resident_bytes")
-    if [ "$mode" = demand ] || [ "$mode" = indexed ] || [ "$mode" = wide ]; then test "$idle" -eq "$overhead"
+    if [ "$mode" = demand ] || [ "$mode" = indexed ] || [ "$mode" = wide ] || [ "$mode" = sharded ]; then test "$idle" -eq "$overhead"
     else test "$idle" -eq "$arena"; fi
 fi
 # Each point has a fresh process; all previous entries must have unwound.
@@ -134,11 +143,11 @@ point() {
     sync
     return "$rc"
 }
-if [ "$series" = hash-01 ]; then
+if is_hash_trial; then
     export CRAM_HASH_TRIAL=1 CRAM_WORKERS=2
 fi
 if [ "$smoke" = 1 ]; then
-    if [ "$series" = hash-01 ] && [ "$mode" != off ]; then
+    if is_hash_trial && [ "$mode" != off ]; then
         echo 1 >"$debug/arena_profiling"
         extra_arg=--profile
     fi
@@ -160,7 +169,7 @@ for profile in structured mixed; do
             extra_arg=--arena-stats
         done
     fi
-    if [ "$series" = hash-01 ] && [ "$mode" != off ]; then
+    if is_hash_trial && [ "$mode" != off ]; then
         if [ "$profile" = structured ]; then size=704; else size=480; fi
         for workers in 1 2; do
             export CRAM_WORKERS=$workers
@@ -170,6 +179,10 @@ for profile in structured mixed; do
             point "probe$workers" "$size" || test "$?" -eq 42
             echo 0 >"$debug/arena_profiling"
             extra_arg=--arena-stats
+            if [ "$series" = shard-01 ]; then
+                point "repeatA$workers" "$size" || test "$?" -eq 42
+                point "repeatB$workers" "$size" || test "$?" -eq 42
+            fi
         done
     fi
     lo=128

@@ -32,15 +32,17 @@ def lock_profile(rows):
     }
 
 
-def summarize(directory):
+def summarize(directory, shards=False):
     capacity, matched, totals = {}, {}, []
-    for mode in ("off", "indexed", "wide"):
+    modes = ("off", "wide", "sharded") if shards else ("off", "indexed", "wide")
+    phases = ("plain", "repeatA", "repeatB") if shards else ("plain",)
+    for mode in modes:
         boots = [json.loads((directory / f"{mode}{i}.json").read_text()) for i in (1, 2)]
         for boot in boots:
             validate_boot(boot, mode)
             totals.append(boot["config"]["memtotal_kib"])
             for key, r in boot.items():
-                if r.get("status") == "pass" and "-plain" not in key and "-probe" not in key:
+                if r.get("status") == "pass" and not any(f"-{tag}" in key for tag in (*phases, "probe")):
                     assert r["workers"] == 2
             if mode != "off":
                 backing = boot["backing"]
@@ -55,7 +57,8 @@ def summarize(directory):
             if mode == "off":
                 continue
             for workers in (1, 2):
-                plain = [b[f"{profile}-plain{workers}-{size}"] for b in boots]
+                by_boot = [[b[f"{profile}-{tag}{workers}-{size}"] for tag in phases] for b in boots]
+                plain = [row for group in by_boot for row in group]
                 probe = [b[f"{profile}-probe{workers}-{size}"] for b in boots]
                 assert all(r["status"] == "pass" and r["workers"] == workers and r["mib"] == size for r in plain + probe)
                 assert all(r["sweep_stores"] == r["sweep_loads"] > 0 for r in plain + probe)
@@ -66,6 +69,16 @@ def summarize(directory):
                     "occupied_bytes": [r["used_after_fill_bytes"] for r in probe],
                     "sweep_stores": [r["sweep_stores"] for r in plain + probe],
                 }
+                case = matched[profile][f"{mode}-{workers}"]
+                if shards:
+                    case["uninstrumented_by_boot"] = [performance(group) for group in by_boot]
+                if mode == "sharded":
+                    shares = []
+                    for r in probe:
+                        a, b = r["arena_shard0_stores"], r["arena_shard1_stores"]
+                        assert a > 0 and b > 0 and a + b == r["sweep_stores"]
+                        shares.append(round(100*a/(a+b), 3))
+                    case["shard0_store_percent_by_boot"] = shares
     assert max(totals) - min(totals) < 1024
     for cases in matched.values():
         for key in ("live_entries", "occupied_bytes", "sweep_stores"):
@@ -76,7 +89,9 @@ def summarize(directory):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
-    directory = parser.parse_args().directory
+    parser.add_argument("--shards", action="store_true", help="compare two wide-hash shards with one")
+    args = parser.parse_args()
+    directory = args.directory
     if not __debug__:
         parser.error("Run with assertions enabled")
-    (directory / "comparison.json").write_text(json.dumps(summarize(directory), indent=2) + "\n")
+    (directory / "comparison.json").write_text(json.dumps(summarize(directory, shards=args.shards), indent=2) + "\n")
