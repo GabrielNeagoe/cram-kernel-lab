@@ -1,0 +1,27 @@
+{
+  "driver_sha256_lf_before_optional_pageout_probe": "2d992b5c90234bec0c2cf82e1045643f377fecb01353ccc7d4ebb8342d1bd6ad",
+  "kernel_sha256": "3e1d2d1dd5167ec02c1df05a04cd44ae5e05f319fd21a441ca518ca76e6c4094",
+  "built_memcontrol_sha256": "4736006888f5f86f6d971f742c59613c3a8d0a2a067e16de6b8970eb9b2ac4f1",
+  "base_memcontrol_sha256": "8f1f7f5bdc6dc3d260732f7535538d5afd07e8142b32565bbd7bf871c9c29d84",
+  "arena_include_sha256": "0abe902570748304df27daac9f1ab34e87814ce94d2267c1de275e009542f9c8",
+  "fault_sampler_sha256": "cc60709720a6bf53cdaa1237354ab97898ea7ed558060464f15d1c49d18d3e9a",
+  "source_sha256_lf": {
+    "workload.py": "df139c872993bcdd669e3ca3f9496824ff762e9cc5ee8fc9394e34d82b6127b7",
+    "trial.py": "0fd6f9ced7df4fcef39422d517e10f99c86d3def7bf5576107a5a4c7b67db7bf",
+    "trace_paths.py": "2973d5ddbd4baa17349bcd6de80f138db5de55e7fa28aef5e002a0729d55b54d",
+    "trace_sample.py": "fbdbdff110bbf9e4222959c33e9800a0e16e4929bee0e9e729e23d213a1f7915",
+    "readahead.sh": "50ac723ad2fbb9aaa0ef371e995ccc0493daa92869d620ff129538f2c63d42d4",
+    "trace_pageout.py": "29dbeae80f0942a9ffa02eabe22062f35a14e86b1a225b612d9583d777a3c78a"
+  },
+  "untraced_boot_order": [
+    "off1",
+    "spill1",
+    "net1",
+    "net2",
+    "spill2",
+    "off2",
+    "ra1",
+    "ra2"
+  ],
+  "diagnostic_original_kernel_sha256": "f0498d90f63fe893deb78ccc4d85ccfb2025cace72627eb02c59ca1e8dde8118"
+}

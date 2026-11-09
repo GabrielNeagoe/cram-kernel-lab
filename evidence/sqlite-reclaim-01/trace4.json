@@ -1,0 +1,67 @@
+{
+  "mode": "spill",
+  "memory_high_mib": 280,
+  "reference_sha256": "fbfc7c89da821bb097a8ed0c6bd1e814f9e3634e24953fedc8ccec7788fe954f",
+  "ubuntu": "PRETTY_NAME=\"Ubuntu 26.04.1 LTS\"",
+  "sqlite": "3.46.1",
+  "linux_source_commit": "22cb35457d24fb35765ef124f9c74c08a5f546a9",
+  "manifest_sha256": "efbc127e070d0293143a18ec6a21f2e054e8f6d6c02fc7824d258538bc603d42",
+  "workers": 4,
+  "budget_mib": 320,
+  "arena_limit_mib": 256,
+  "points": {
+    "diagnostic-31": {
+      "status": "budget",
+      "parts": 124,
+      "db_bytes": 553361408,
+      "peak_bytes": 379037952,
+      "cgroup_bytes": 370933760,
+      "reserved_bytes": 254891776,
+      "arena_bytes": 262995968,
+      "swapcached_bytes": 41201664,
+      "trace": [
+        {
+          "batch": 90,
+          "seconds": 1.038,
+          "build_id": "4eaaf06dc6b2c44e5aebb58f6891cc1ff340abb6",
+          "function_offset": 2804,
+          "anonymous_mapping": [
+            {
+              "anon": 1,
+              "hitcount": 168
+            },
+            {
+              "anon": 0,
+              "hitcount": 3427691
+            }
+          ],
+          "shrink": [
+            {
+              "reclaim_flags": 9,
+              "hitcount": 57631,
+              "nr_activate0": 3576161,
+              "nr_scanned": 3576492
+            }
+          ],
+          "probe_misses": 0
+        }
+      ],
+      "net_backoffs": 0,
+      "elapsed_seconds": 28.795,
+      "high_events": 10921,
+      "pages_scanned": 197597429
+    }
+  },
+  "policy": "spill",
+  "mglru": "0x0007",
+  "host_vmx_samples": 6,
+  "host": {
+    "vmx_min": 1,
+    "vmx_max": 1,
+    "available_mib_min": 82565,
+    "cpu_busy_pct_median": 15.15,
+    "cpu_busy_pct_max": 22.9,
+    "other_vm_cpu_cores_median": 0,
+    "other_vm_cpu_cores_max": 0
+  }
+}

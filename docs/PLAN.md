@@ -33,6 +33,7 @@
 - [x] Repeat the SQLite comparison with Ubuntu as the only running VM and compare capacity, CPU and fault p99 against the shared-host measurements. [Isolated SQLite trial](sqlite-isolated.md)
 
 - [x] Test writable in-memory SQLite under kernel-driven reclaim on the isolated Ubuntu VM. [Writable SQLite](sqlite-writable.md)
+- [x] Trace anonymous-page reclaim at the writable SQLite capacity boundary and test net-charge-aware throttling and demand-only swap reads on isolated boots. [Reclaim experiment](sqlite-reclaim.md)
 
 ## Next tests
 

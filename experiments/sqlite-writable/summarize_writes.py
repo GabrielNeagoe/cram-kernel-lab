@@ -18,16 +18,17 @@ def summarize_runs(rows):
     return summary
 
 
-def compare(folder):
-    ref_bytes = (folder / "reference.json").read_bytes().replace(b"\r\n", b"\n")
+def compare(folder, policies=("off", "spill"), reference_folder=None):
+    ref_bytes = ((reference_folder or folder) / "reference.json").read_bytes().replace(b"\r\n", b"\n")
     reference = json.loads(ref_bytes)
     corpus = (folder.parent / "sqlite-01/corpus.json").read_bytes().replace(b"\r\n", b"\n")
     parts = json.loads(corpus)["parts"]
     results = {}
-    for mode in ("off", "spill"):
+    for policy in policies:
+        mode = "off" if policy == "off" else "spill"
         capacities, failures, matched, near, confirmed = [], [], [], [], []
         for n in (1, 2):
-            b = json.loads((folder / f"{mode}{n}.json").read_text())
+            b = json.loads((folder / f"{policy}{n}.json").read_text())
             assert b["mode"] == mode and b["workers"] == 4
             assert b["host_vmx_samples"] > 0 and b["host"]["vmx_min"] == b["host"]["vmx_max"] == 1
             assert b["reference_sha256"] == hashlib.sha256(ref_bytes).hexdigest()
@@ -67,7 +68,7 @@ def compare(folder):
             confirmed.extend(capacity)
             matched.extend(points[f"matched{i}-15"] for i in range(3))
         baseline = capacities if mode == "off" else results["off"]["confirmed_bytes"]
-        results[mode] = dict(confirmed_bytes=capacities, first_failed_bytes=failures,
+        results[policy] = dict(confirmed_bytes=capacities, first_failed_bytes=failures,
                              paired_multiple=[x/y for x,y in zip(capacities,baseline)],
                              matched=summarize_runs(matched),
                              near=summarize_runs(near) if all(r["status"]=="pass" for r in near) else None,

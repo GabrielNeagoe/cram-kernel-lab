@@ -8,6 +8,7 @@ Experimental compressed memory on Ubuntu 26 in VMware Workstation. This reposito
 - [Four-worker SQLite capacity on full Ubuntu boots](docs/sqlite-capacity.md)
 - [SQLite capacity and latency with Ubuntu alone](docs/sqlite-isolated.md)
 - [Writable SQLite under Linux memory pressure](docs/sqlite-writable.md)
+- [Writable SQLite reclaim traces and kernel retry experiment](docs/sqlite-reclaim.md)
 - [Uneven shard load and four-worker capacity](docs/uneven-shards.md)
 - [One versus two arena locks at matched occupancy](docs/sharded-arena.md)
 - [Parallel fault, hash lookup and lock contention measurements](docs/parallel-hash-profile.md)

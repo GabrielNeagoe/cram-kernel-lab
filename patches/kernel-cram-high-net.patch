@@ -1,0 +1,73 @@
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2330,6 +2330,29 @@
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_CRAM_ARENA
++/* Experimental: use net charge progress for direct memory.high retries. */
++static bool cram_high_net;
++module_param(cram_high_net, bool, 0444);
++static atomic_long_t cram_high_backoffs = ATOMIC_LONG_INIT(0);
++
++static int cram_high_get_backoffs(char *buf, const struct kernel_param *kp)
++{
++	return sysfs_emit(buf, "%ld\n", atomic_long_read(&cram_high_backoffs));
++}
++
++static const struct kernel_param_ops cram_high_ops = {
++	.get = cram_high_get_backoffs,
++};
++module_param_cb(cram_high_backoffs, &cram_high_ops, NULL, 0444);
++
++static bool cram_high_active(struct mem_cgroup *memcg)
++{
++	return READ_ONCE(cram_high_net) && READ_ONCE(memcg->cram_reserved) &&
++	       page_counter_read(&memcg->memory) > READ_ONCE(memcg->memory.high);
++}
++#endif
++
+ static unsigned long reclaim_high(struct mem_cgroup *memcg,
+ 				  unsigned int nr_pages,
+ 				  gfp_t gfp_mask)
+@@ -2516,6 +2539,10 @@
+ 	int nr_retries = MAX_RECLAIM_RETRIES;
+ 	struct mem_cgroup *memcg;
+ 	bool in_retry = false;
++#ifdef CONFIG_CRAM_ARENA
++	bool assess_net;
++	unsigned long before;
++#endif
+ 
+ 	memcg = get_mem_cgroup_from_mm(current->mm);
+ 	current->memcg_nr_pages_over_high = 0;
+@@ -2541,6 +2568,10 @@
+ 	 * memory.high is currently batched, whereas memory.max and the page
+ 	 * allocator run every time an allocation is made.
+ 	 */
++#ifdef CONFIG_CRAM_ARENA
++	assess_net = cram_high_active(memcg);
++	before = assess_net ? page_counter_read(&memcg->memory) : 0;
++#endif
+ 	nr_reclaimed = reclaim_high(memcg,
+ 				    in_retry ? SWAP_CLUSTER_MAX : nr_pages,
+ 				    gfp_mask);
+@@ -2576,6 +2607,18 @@
+ 	 * memory.high, we want to encourage that rather than doing allocator
+ 	 * throttling.
+ 	 */
++	/*
++	 * A CRAM store can be offset by a simultaneous refault. Only for
++	 * the allocating cgroup's own soft limit, stop retrying when a
++	 * reclaim pass fails to release one charge batch net. Fall through
++	 * to the normal high-limit delay. Hard-limit reclaim is unchanged.
++	 */
++#ifdef CONFIG_CRAM_ARENA
++	if (assess_net && cram_high_active(memcg) &&
++	    before - min(before, page_counter_read(&memcg->memory)) < SWAP_CLUSTER_MAX)
++		atomic_long_inc(&cram_high_backoffs);
++	else
++#endif
+ 	if (nr_reclaimed || nr_retries--) {
+ 		in_retry = true;
+ 		goto retry_reclaim;

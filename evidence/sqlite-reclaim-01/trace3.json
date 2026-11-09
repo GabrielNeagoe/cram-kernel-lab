@@ -1,0 +1,216 @@
+{
+  "mode": "spill",
+  "memory_high_mib": 280,
+  "reference_sha256": "fbfc7c89da821bb097a8ed0c6bd1e814f9e3634e24953fedc8ccec7788fe954f",
+  "ubuntu": "PRETTY_NAME=\"Ubuntu 26.04.1 LTS\"",
+  "sqlite": "3.46.1",
+  "linux_source_commit": "22cb35457d24fb35765ef124f9c74c08a5f546a9",
+  "manifest_sha256": "efbc127e070d0293143a18ec6a21f2e054e8f6d6c02fc7824d258538bc603d42",
+  "workers": 4,
+  "budget_mib": 320,
+  "arena_limit_mib": 256,
+  "points": {
+    "diagnostic-31": {
+      "status": "stalled",
+      "parts": 124,
+      "db_bytes": 553361408,
+      "completed_batches": 93,
+      "seconds_without_progress": 45.31,
+      "cgroup_bytes": 312709120,
+      "reserved_bytes": 255057408,
+      "arena_bytes": 265060352,
+      "sampled_charge_bytes": 322712064,
+      "trace": [
+        {
+          "batch": 93,
+          "before": {
+            "anon": 49152,
+            "swapcached": 39702528,
+            "anon_thp": 0,
+            "unevictable": 0,
+            "inactive_anon": 34660352,
+            "active_anon": 4587520,
+            "zswap": 255685376,
+            "swapped": 587911168,
+            "swap_charge_failures": 0,
+            "swap_limit_hits": 0
+          },
+          "stack_samples": {
+            "futex_do_wait > __futex_wait > futex_wait > do_futex > __x64_sys_futex > x64_sys_call > do_syscall_64 > entry_SYSCALL_64_after_hwframe": 37,
+            "preempt_schedule_thunk > move_folios_to_lru > evict_folios > try_to_shrink_lruvec > shrink_lruvec > shrink_node > do_try_to_free_pages > try_to_free_mem_cgroup_pages > reclaim_high > __mem_cgroup_handle_over_high > irqentry_exit > exc_page_fault > asm_exc_page_fault": 1,
+            "trace_event_buffer_reserve": 1,
+            "trace_event_buffer_commit": 1
+          },
+          "seconds": 1.095,
+          "folios": {
+            "visits": 3508037,
+            "distinct": 10312,
+            "revisited": 10264,
+            "max_visits": 365
+          },
+          "refs": [
+            {
+              "ret": 1,
+              "hitcount": 1724
+            },
+            {
+              "ret": 0,
+              "hitcount": 3609734
+            }
+          ],
+          "swap_alloc": [
+            {
+              "ret": 0,
+              "hitcount": 108
+            }
+          ],
+          "remove": [
+            {
+              "ret": 0,
+              "hitcount": 54
+            },
+            {
+              "ret": 1,
+              "hitcount": 1787
+            }
+          ],
+          "unmap_dirty": [
+            {
+              "reclaim_flags": 10,
+              "hitcount": 477,
+              "nr_unmap_fail": 0,
+              "nr_dirty": 0
+            },
+            {
+              "reclaim_flags": 9,
+              "hitcount": 60594,
+              "nr_unmap_fail": 0,
+              "nr_dirty": 0
+            }
+          ],
+          "probe_misses": {
+            "folios": 0,
+            "refs": 0,
+            "swap_alloc": 0,
+            "remove": 0
+          },
+          "after": {
+            "anon": 126976,
+            "swapcached": 39776256,
+            "anon_thp": 0,
+            "unevictable": 0,
+            "inactive_anon": 36659200,
+            "active_anon": 2912256,
+            "zswap": 255651328,
+            "swapped": 587902976,
+            "swap_charge_failures": 0,
+            "swap_limit_hits": 0
+          }
+        },
+        {
+          "batch": 93,
+          "before": {
+            "anon": 81920,
+            "swapcached": 40570880,
+            "anon_thp": 0,
+            "unevictable": 0,
+            "inactive_anon": 15302656,
+            "active_anon": 24834048,
+            "zswap": 255257088,
+            "swapped": 587911168,
+            "swap_charge_failures": 0,
+            "swap_limit_hits": 0
+          },
+          "stack_samples": {
+            "trace_event_buffer_commit": 1,
+            "preempt_schedule_notrace_thunk > kprobe_ftrace_handler > folio_referenced > evict_folios > try_to_shrink_lruvec > shrink_lruvec > shrink_node > do_try_to_free_pages > try_to_free_mem_cgroup_pages > reclaim_high > __mem_cgroup_handle_over_high > irqentry_exit > exc_page_fault > asm_exc_page_fault": 3,
+            "futex_do_wait > __futex_wait > futex_wait > do_futex > __x64_sys_futex > x64_sys_call > do_syscall_64 > entry_SYSCALL_64_after_hwframe": 15,
+            "preempt_schedule_thunk > evict_folios > try_to_shrink_lruvec > shrink_lruvec > shrink_node > do_try_to_free_pages > try_to_free_mem_cgroup_pages > reclaim_high > __mem_cgroup_handle_over_high > irqentry_exit > exc_page_fault > asm_exc_page_fault": 1,
+            "trace_event_buffer_commit > kretprobe_trace_func > kretprobe_dispatcher": 2,
+            "preempt_schedule_notrace_thunk > rethook_trampoline_handler > arch_rethook_trampoline_callback > arch_rethook_trampoline > shrink_folio_list > evict_folios > try_to_shrink_lruvec > shrink_lruvec > shrink_node > do_try_to_free_pages > try_to_free_mem_cgroup_pages > reclaim_high > __mem_cgroup_handle_over_high > irqentry_exit > exc_page_fault > asm_exc_page_fault": 6,
+            "raw_irqentry_exit_cond_resched > irqentry_exit > sysvec_apic_timer_interrupt > asm_sysvec_apic_timer_interrupt > arch_rethook_trampoline > evict_folios > try_to_shrink_lruvec > shrink_lruvec > shrink_node > do_try_to_free_pages > try_to_free_mem_cgroup_pages > reclaim_high > __mem_cgroup_handle_over_high > irqentry_exit > exc_page_fault > asm_exc_page_fault": 1,
+            "__mem_cgroup_handle_over_high > irqentry_exit > exc_page_fault > asm_exc_page_fault": 2,
+            "trace_event_buffer_commit > kretprobe_trace_func > __pfx_folio_referenced": 2
+          },
+          "seconds": 1.102,
+          "folios": {
+            "visits": 6621056,
+            "distinct": 10170,
+            "revisited": 10143,
+            "max_visits": 677
+          },
+          "refs": [
+            {
+              "ret": 1,
+              "hitcount": 553
+            },
+            {
+              "ret": 0,
+              "hitcount": 6648826
+            }
+          ],
+          "swap_alloc": [
+            {
+              "ret": 0,
+              "hitcount": 62
+            }
+          ],
+          "remove": [
+            {
+              "ret": 1,
+              "hitcount": 574
+            }
+          ],
+          "unmap_dirty": [
+            {
+              "reclaim_flags": 10,
+              "hitcount": 12,
+              "nr_unmap_fail": 0,
+              "nr_writeback": 0
+            },
+            {
+              "reclaim_flags": 9,
+              "hitcount": 114804,
+              "nr_unmap_fail": 0,
+              "nr_writeback": 0
+            }
+          ],
+          "probe_misses": {
+            "folios": 0,
+            "refs": 0,
+            "swap_alloc": 0,
+            "remove": 0
+          },
+          "after": {
+            "anon": 0,
+            "swapcached": 40521728,
+            "anon_thp": 0,
+            "unevictable": 0,
+            "inactive_anon": 11685888,
+            "active_anon": 28311552,
+            "zswap": 255285248,
+            "swapped": 587915264,
+            "swap_charge_failures": 0,
+            "swap_limit_hits": 0
+          }
+        }
+      ],
+      "net_backoffs": 0,
+      "elapsed_seconds": 55.386,
+      "high_events": 19401,
+      "pages_scanned": 467462995
+    }
+  },
+  "policy": "spill",
+  "mglru": "0x0007",
+  "host_vmx_samples": 11,
+  "host": {
+    "vmx_min": 1,
+    "vmx_max": 1,
+    "available_mib_min": 83905,
+    "cpu_busy_pct_median": 17.5,
+    "cpu_busy_pct_max": 26.6,
+    "other_vm_cpu_cores_median": 0,
+    "other_vm_cpu_cores_max": 0
+  }
+}

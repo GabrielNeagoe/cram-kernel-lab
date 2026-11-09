@@ -1,0 +1,86 @@
+{
+  "mode": "spill",
+  "memory_high_mib": 280,
+  "reference_sha256": "fbfc7c89da821bb097a8ed0c6bd1e814f9e3634e24953fedc8ccec7788fe954f",
+  "ubuntu": "PRETTY_NAME=\"Ubuntu 26.04.1 LTS\"",
+  "sqlite": "3.46.1",
+  "linux_source_commit": "22cb35457d24fb35765ef124f9c74c08a5f546a9",
+  "manifest_sha256": "efbc127e070d0293143a18ec6a21f2e054e8f6d6c02fc7824d258538bc603d42",
+  "workers": 4,
+  "budget_mib": 320,
+  "arena_limit_mib": 256,
+  "points": {
+    "diagnostic-31": {
+      "status": "stalled",
+      "parts": 124,
+      "db_bytes": 553361408,
+      "completed_batches": 85,
+      "seconds_without_progress": 45.09,
+      "cgroup_bytes": 308690944,
+      "reserved_bytes": 254342912,
+      "arena_bytes": 262782976,
+      "sampled_charge_bytes": 317131008,
+      "trace": [
+        {
+          "batch": 84,
+          "seconds": 3.044,
+          "worker_threads": 5,
+          "isolate": [
+            {
+              "lru": 2,
+              "hitcount": 333070,
+              "nr_scanned": 950,
+              "nr_taken": 911
+            },
+            {
+              "lru": 0,
+              "hitcount": 333922,
+              "nr_scanned": 20697491,
+              "nr_taken": 20696831
+            }
+          ],
+          "shrink": [
+            {
+              "reclaim_flags": 10,
+              "hitcount": 129,
+              "nr_scanned": 986,
+              "nr_reclaimed": 734
+            },
+            {
+              "reclaim_flags": 9,
+              "hitcount": 336874,
+              "nr_scanned": 20880559,
+              "nr_reclaimed": 2888
+            }
+          ],
+          "writeout_calls": 2860,
+          "distinct_folios": 824,
+          "repeated_folios": 543,
+          "max_attempts_per_folio": 17,
+          "arena_delta": {
+            "stores": 2860,
+            "loads": 2850,
+            "reject_poor": 0,
+            "reject_full": 1822,
+            "reject_quota": 0,
+            "spill_tries": 1822,
+            "spill_stores": 1822
+          }
+        }
+      ],
+      "elapsed_seconds": 99.386,
+      "high_events": 27585,
+      "pages_scanned": 825281767
+    }
+  },
+  "host_vmx_samples": 19,
+  "host": {
+    "vmx_min": 1,
+    "vmx_max": 1,
+    "available_mib_min": 84587,
+    "cpu_busy_pct_median": 16.2,
+    "cpu_busy_pct_max": 22.8,
+    "other_vm_cpu_cores_median": 0,
+    "other_vm_cpu_cores_max": 0
+  }
+}
