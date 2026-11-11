@@ -36,9 +36,10 @@
 - [x] Trace anonymous-page reclaim at the writable SQLite capacity boundary and test net-charge-aware throttling and demand-only swap reads on isolated boots. [Reclaim experiment](sqlite-reclaim.md)
 - [x] Trace the 544.8 MiB writable SQLite timeout with swap readahead disabled and compare two arena slot sizes at fixed memory limits. The 128-byte slots sustained 2.003× the compression-off capacity on two boots. [Capacity and fault measurements](sqlite-boundary.md)
 
+- [x] Measure disk-backed SQLite writes, synchronous commits and WAL checkpoints under bounded pressure. [WAL trial](sqlite-disk.md)
+
 ## Next tests
 
 1. Alternate the presence of the RAMMap hold export over repeated fresh-boot pairs while keeping other watchers fixed. Record actual host requests and mark any ownership differences already present before the hold.
 2. Repeat the paired run on fresh boots and report the distribution of observation gaps and owner changes. Use the same 4 GiB ceiling, matched control, workload readback and verified rollback.
 3. Quantify net Windows RAM savings independently of individual frame reuse. Compare host-wide accounting across repeated trials and report variability.
-4. Evaluate a disk-backed writable application and storage latency before changing the deployed 4 MiB configuration.
