@@ -1,0 +1,21 @@
+{
+  "standard_kernel": "3e1d2d1dd5167ec02c1df05a04cd44ae5e05f319fd21a441ca518ca76e6c4094",
+  "candidate_kernel": "0baa8088a560808d6cb6fd3334bb0e623a195de743f8459545efd662608b7fe1",
+  "standard_arena": "0abe902570748304df27daac9f1ab34e87814ce94d2267c1de275e009542f9c8",
+  "candidate_arena": "3013e33ede5eb0084f6422bae9881058d792b82882e9331db90e4ac22a8e5c22",
+  "memcontrol": "4736006888f5f86f6d971f742c59613c3a8d0a2a067e16de6b8970eb9b2ac4f1",
+  "off_driver": "0fd6f9ced7df4fcef39422d517e10f99c86d3def7bf5576107a5a4c7b67db7bf",
+  "off_wrapper": "30c5f5a4cc9817de801b04cc2bd5a1e790a7005e3e1456f39e5bbbbe02991abe",
+  "workload": "df139c872993bcdd669e3ca3f9496824ff762e9cc5ee8fc9394e34d82b6127b7",
+  "fault_sampler": "cc60709720a6bf53cdaa1237354ab97898ea7ed558060464f15d1c49d18d3e9a",
+  "driver": "66bbf10384994e663f4429e7259b2a8d6bad80a9aad01ad58d2b7e78016d6255",
+  "wrapper": "a0ef3500b145b980c4c494efa0d86c165411f27de3581b4ea50f6a19650a2350",
+  "measured_boot_order": [
+    "small1",
+    "standard1",
+    "standard2",
+    "small2",
+    "off1",
+    "off2"
+  ]
+}

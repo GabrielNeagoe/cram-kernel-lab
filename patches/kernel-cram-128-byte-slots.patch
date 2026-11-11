@@ -1,0 +1,22 @@
+--- a/mm/cram-arena.inc
++++ b/mm/cram-arena.inc
+@@ -7,7 +7,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/debugfs.h>
+ 
+-#define CA_BLOCK 256U
++#define CA_BLOCK 128U
+ #define CA_MAX_BYTES (256U * 1024U * 1024U)
+ #define CA_BUCKETS 1024U
+ static unsigned int cram_arena_mb;
+@@ -15,8 +15,8 @@
+ /* Opt-in capacity trial. LZ4 remains the default. */
+ static bool cram_zstd1;
+ module_param(cram_zstd1, bool, 0444);
+-/* Demand mode backs each group of slots with an order-2 page allocation. */
+-#define CA_CHUNK_ORDER 2
++/* Demand mode backs each group of slots with an order-1 page allocation. */
++#define CA_CHUNK_ORDER 1
+ #define CA_CHUNK_BYTES (PAGE_SIZE << CA_CHUNK_ORDER)
+ #define CA_SLOTS (CA_CHUNK_BYTES / CA_BLOCK)
+ static bool cram_demand;

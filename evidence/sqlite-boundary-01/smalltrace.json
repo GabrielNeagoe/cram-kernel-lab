@@ -1,0 +1,196 @@
+{
+  "mode": "spill",
+  "memory_high_mib": 280,
+  "reference_sha256": "fbfc7c89da821bb097a8ed0c6bd1e814f9e3634e24953fedc8ccec7788fe954f",
+  "ubuntu": "PRETTY_NAME=\"Ubuntu 26.04.1 LTS\"",
+  "sqlite": "3.46.1",
+  "linux_source_commit": "22cb35457d24fb35765ef124f9c74c08a5f546a9",
+  "manifest_sha256": "efbc127e070d0293143a18ec6a21f2e054e8f6d6c02fc7824d258538bc603d42",
+  "workers": 4,
+  "budget_mib": 320,
+  "arena_limit_mib": 256,
+  "points": {
+    "trace-32": {
+      "status": "pass",
+      "parts": 128,
+      "db_bytes": 571215872,
+      "source_bytes": 543329615,
+      "files": 35239,
+      "workers": 4,
+      "commits": 384,
+      "rollbacks": 128,
+      "rows_modified": 13041,
+      "verified_images": 128,
+      "verified_queries": 384,
+      "cpu_ns": 16301093941,
+      "wall_ns": 4466909602,
+      "peak_bytes": 315279360,
+      "backing_at_fill": 254779392,
+      "entries_at_fill": 136609,
+      "sql_restores": 437153,
+      "charge_at_fill": 308305152,
+      "cgroup_at_fill": 303525888,
+      "reservation_at_fill": 250000128,
+      "physical_backing_at_fill": 254779392,
+      "swapcache_at_fill": 1257472,
+      "disk_swap_io": 0,
+      "fault_samples": 2098,
+      "resident_samples": 85,
+      "fault_p99_ns": 578314,
+      "trace": [
+        {
+          "second": 1.0,
+          "batch": 22,
+          "arena": {
+            "resident_bytes": 109641728,
+            "used_bytes": 106812672,
+            "entries": 57648,
+            "stores": 57800,
+            "loads": 150,
+            "spill_tries": 0,
+            "spill_stores": 0,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 0
+          },
+          "stat": {
+            "anon": 183676928,
+            "swapcached": 2170880,
+            "zswap": 106775936,
+            "pgscan": 101289,
+            "pgsteal": 57748,
+            "pgmajfault": 162
+          },
+          "pressure_us": {
+            "some": 486320,
+            "full": 484485
+          },
+          "high_events": 383,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "try_charge_memcg",
+              "charge_memcg",
+              "__mem_cgroup_charge",
+              "do_anonymous_page",
+              "__handle_mm_fault",
+              "handle_mm_fault",
+              "__get_user_pages",
+              "__gup_longterm_locked",
+              "gup_fast_fallback",
+              "pin_user_pages_fast",
+              "iov_iter_extract_pages",
+              "iov_iter_extract_bvecs",
+              "bio_iov_iter_get_pages",
+              "iomap_dio_bio_iter",
+              "__iomap_dio_rw",
+              "iomap_dio_rw",
+              "ext4_file_read_iter",
+              "do_iter_readv_writev",
+              "vfs_readv",
+              "do_preadv",
+              "__x64_sys_preadv2",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ]
+          ]
+        },
+        {
+          "second": 6.01,
+          "batch": 116,
+          "arena": {
+            "resident_bytes": 264986624,
+            "used_bytes": 253953408,
+            "entries": 138851,
+            "stores": 523577,
+            "loads": 384729,
+            "spill_tries": 166941,
+            "spill_stores": 166942,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 37449728,
+            "swapcached": 34156544,
+            "zswap": 253986560,
+            "pgscan": 675207,
+            "pgsteal": 524386,
+            "pgmajfault": 384724
+          },
+          "pressure_us": {
+            "some": 3592044,
+            "full": 3573709
+          },
+          "high_events": 6208,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        }
+      ],
+      "net_backoffs": 0,
+      "elapsed_seconds": 9.221,
+      "high_events": 8616,
+      "pages_scanned": 984016
+    }
+  },
+  "policy": "small",
+  "mglru": "0x0007",
+  "page_cluster": 0,
+  "geometry_log": [
+    "CRAM arena: backing=134217728 overhead=622592 capacity=133595136 block=128 codec=lz4",
+    "CRAM arena: backing=134217728 overhead=753664 capacity=133464064 block=128 codec=lz4"
+  ],
+  "image_sha256": "0baa8088a560808d6cb6fd3334bb0e623a195de743f8459545efd662608b7fe1",
+  "page_cluster_before": 3,
+  "page_cluster_tested": 0,
+  "page_cluster_restored": 3,
+  "host_vmx_samples": 2,
+  "host": {
+    "vmx_min": 1,
+    "vmx_max": 1,
+    "available_mib_min": 79453,
+    "cpu_busy_pct_median": 19.450000000000003,
+    "cpu_busy_pct_max": 20.1,
+    "other_vm_cpu_cores_median": 0,
+    "other_vm_cpu_cores_max": 0
+  }
+}

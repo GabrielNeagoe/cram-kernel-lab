@@ -34,6 +34,7 @@
 
 - [x] Test writable in-memory SQLite under kernel-driven reclaim on the isolated Ubuntu VM. [Writable SQLite](sqlite-writable.md)
 - [x] Trace anonymous-page reclaim at the writable SQLite capacity boundary and test net-charge-aware throttling and demand-only swap reads on isolated boots. [Reclaim experiment](sqlite-reclaim.md)
+- [x] Trace the 544.8 MiB writable SQLite timeout with swap readahead disabled and compare two arena slot sizes at fixed memory limits. The 128-byte slots sustained 2.003× the compression-off capacity on two boots. [Capacity and fault measurements](sqlite-boundary.md)
 
 ## Next tests
 

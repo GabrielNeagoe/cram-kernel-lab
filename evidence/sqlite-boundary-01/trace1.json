@@ -1,0 +1,3188 @@
+{
+  "mode": "spill",
+  "memory_high_mib": 280,
+  "reference_sha256": "fbfc7c89da821bb097a8ed0c6bd1e814f9e3634e24953fedc8ccec7788fe954f",
+  "ubuntu": "PRETTY_NAME=\"Ubuntu 26.04.1 LTS\"",
+  "sqlite": "3.46.1",
+  "linux_source_commit": "22cb35457d24fb35765ef124f9c74c08a5f546a9",
+  "manifest_sha256": "efbc127e070d0293143a18ec6a21f2e054e8f6d6c02fc7824d258538bc603d42",
+  "workers": 4,
+  "budget_mib": 320,
+  "arena_limit_mib": 256,
+  "points": {
+    "trace-32": {
+      "status": "timeout",
+      "parts": 128,
+      "db_bytes": 571215872,
+      "completed_batches": 69,
+      "seconds_without_progress": 5.01,
+      "cgroup_bytes": 304586752,
+      "reserved_bytes": 262066176,
+      "arena_bytes": 268435456,
+      "sampled_charge_bytes": 310956032,
+      "trace": [
+        {
+          "second": 1.01,
+          "batch": 5,
+          "arena": {
+            "resident_bytes": 884736,
+            "used_bytes": 0,
+            "entries": 0,
+            "stores": 0,
+            "loads": 0,
+            "spill_tries": 0,
+            "spill_stores": 0,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 0
+          },
+          "stat": {
+            "anon": 121065472,
+            "swapcached": 0,
+            "zswap": 0,
+            "pgscan": 0,
+            "pgsteal": 0,
+            "pgmajfault": 2
+          },
+          "pressure_us": {
+            "some": 0,
+            "full": 0
+          },
+          "high_events": 0,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "blk_io_schedule",
+              "__iomap_dio_rw",
+              "iomap_dio_rw",
+              "ext4_file_read_iter",
+              "do_iter_readv_writev",
+              "vfs_readv",
+              "do_preadv",
+              "__x64_sys_preadv2",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "blk_io_schedule",
+              "__iomap_dio_rw",
+              "iomap_dio_rw",
+              "ext4_file_read_iter",
+              "do_iter_readv_writev",
+              "vfs_readv",
+              "do_preadv",
+              "__x64_sys_preadv2",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "blk_io_schedule",
+              "__iomap_dio_rw",
+              "iomap_dio_rw",
+              "ext4_file_read_iter",
+              "do_iter_readv_writev",
+              "vfs_readv",
+              "do_preadv",
+              "__x64_sys_preadv2",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "blk_io_schedule",
+              "__iomap_dio_rw",
+              "iomap_dio_rw",
+              "ext4_file_read_iter",
+              "do_iter_readv_writev",
+              "vfs_readv",
+              "do_preadv",
+              "__x64_sys_preadv2",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ]
+          ]
+        },
+        {
+          "second": 6.02,
+          "batch": 29,
+          "arena": {
+            "resident_bytes": 237338624,
+            "used_bytes": 235038976,
+            "entries": 123905,
+            "stores": 124301,
+            "loads": 396,
+            "spill_tries": 37494,
+            "spill_stores": 37494,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2560
+          },
+          "stat": {
+            "anon": 54943744,
+            "swapcached": 2088960,
+            "zswap": 235038976,
+            "pgscan": 204989,
+            "pgsteal": 124486,
+            "pgmajfault": 421
+          },
+          "pressure_us": {
+            "some": 1258102,
+            "full": 1248818
+          },
+          "high_events": 833,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "blk_io_schedule",
+              "__iomap_dio_rw",
+              "iomap_dio_rw",
+              "ext4_file_read_iter",
+              "do_iter_readv_writev",
+              "vfs_readv",
+              "do_preadv",
+              "__x64_sys_preadv2",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "blk_io_schedule",
+              "__iomap_dio_rw",
+              "iomap_dio_rw",
+              "ext4_file_read_iter",
+              "do_iter_readv_writev",
+              "vfs_readv",
+              "do_preadv",
+              "__x64_sys_preadv2",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "blk_io_schedule",
+              "__iomap_dio_rw",
+              "iomap_dio_rw",
+              "ext4_file_read_iter",
+              "do_iter_readv_writev",
+              "vfs_readv",
+              "do_preadv",
+              "__x64_sys_preadv2",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ]
+          ]
+        },
+        {
+          "second": 11.03,
+          "batch": 33,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 265689600,
+            "entries": 140841,
+            "stores": 151236,
+            "loads": 10388,
+            "spill_tries": 596638,
+            "spill_stores": 52074,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1024
+          },
+          "stat": {
+            "anon": 1433600,
+            "swapcached": 25866240,
+            "zswap": 265689600,
+            "pgscan": 899897,
+            "pgsteal": 152280,
+            "pgmajfault": 10490
+          },
+          "pressure_us": {
+            "some": 5185112,
+            "full": 5164516
+          },
+          "high_events": 1107,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ]
+          ]
+        },
+        {
+          "second": 16.04,
+          "batch": 37,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 264998144,
+            "entries": 140877,
+            "stores": 171106,
+            "loads": 30218,
+            "spill_tries": 1134367,
+            "spill_stores": 52626,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1536
+          },
+          "stat": {
+            "anon": 1421312,
+            "swapcached": 26300416,
+            "zswap": 264998144,
+            "pgscan": 1634504,
+            "pgsteal": 172760,
+            "pgmajfault": 30364
+          },
+          "pressure_us": {
+            "some": 9554261,
+            "full": 9514312
+          },
+          "high_events": 1393,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 21.05,
+          "batch": 38,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 264842752,
+            "entries": 140872,
+            "stores": 175259,
+            "loads": 34376,
+            "spill_tries": 1656674,
+            "spill_stores": 52809,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1792
+          },
+          "stat": {
+            "anon": 1806336,
+            "swapcached": 26525696,
+            "zswap": 264842752,
+            "pgscan": 2367981,
+            "pgsteal": 177492,
+            "pgmajfault": 34564
+          },
+          "pressure_us": {
+            "some": 13910937,
+            "full": 13857849
+          },
+          "high_events": 1479,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 26.06,
+          "batch": 39,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 264537344,
+            "entries": 140847,
+            "stores": 181067,
+            "loads": 40207,
+            "spill_tries": 2163889,
+            "spill_stores": 53054,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 1433600,
+            "swapcached": 26832896,
+            "zswap": 264537344,
+            "pgscan": 3110108,
+            "pgsteal": 183568,
+            "pgmajfault": 40413
+          },
+          "pressure_us": {
+            "some": 18661875,
+            "full": 18583466
+          },
+          "high_events": 1578,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "ca_enter"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 31.08,
+          "batch": 40,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 264494592,
+            "entries": 140883,
+            "stores": 185534,
+            "loads": 44638,
+            "spill_tries": 2682358,
+            "spill_stores": 53196,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2560
+          },
+          "stat": {
+            "anon": 1425408,
+            "swapcached": 26882048,
+            "zswap": 264494592,
+            "pgscan": 3886410,
+            "pgsteal": 188332,
+            "pgmajfault": 44866
+          },
+          "pressure_us": {
+            "some": 23599165,
+            "full": 23508304
+          },
+          "high_events": 1663,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "ca_enter"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 36.09,
+          "batch": 41,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 264304384,
+            "entries": 140808,
+            "stores": 190233,
+            "loads": 49409,
+            "spill_tries": 3170487,
+            "spill_stores": 53370,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 2093056,
+            "swapcached": 27017216,
+            "zswap": 264304384,
+            "pgscan": 4637697,
+            "pgsteal": 193368,
+            "pgmajfault": 49668
+          },
+          "pressure_us": {
+            "some": 28154554,
+            "full": 28052844
+          },
+          "high_events": 1749,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "ca_enter"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 41.11,
+          "batch": 41,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 264259328,
+            "entries": 140899,
+            "stores": 194957,
+            "loads": 54042,
+            "spill_tries": 3666322,
+            "spill_stores": 53479,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 487424,
+            "swapcached": 27549696,
+            "zswap": 264259328,
+            "pgscan": 5410969,
+            "pgsteal": 198898,
+            "pgmajfault": 54356
+          },
+          "pressure_us": {
+            "some": 33090347,
+            "full": 32980458
+          },
+          "high_events": 1845,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "xa_load"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "ca_enter"
+            ]
+          ]
+        },
+        {
+          "second": 46.12,
+          "batch": 42,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 264030720,
+            "entries": 140776,
+            "stores": 200256,
+            "loads": 59463,
+            "spill_tries": 4130770,
+            "spill_stores": 53640,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2816
+          },
+          "stat": {
+            "anon": 1880064,
+            "swapcached": 28028928,
+            "zswap": 264030720,
+            "pgscan": 6162286,
+            "pgsteal": 204816,
+            "pgmajfault": 59817
+          },
+          "pressure_us": {
+            "some": 37009498,
+            "full": 36887741
+          },
+          "high_events": 1943,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 51.13,
+          "batch": 43,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 263938048,
+            "entries": 140754,
+            "stores": 205203,
+            "loads": 64432,
+            "spill_tries": 4580232,
+            "spill_stores": 53778,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2816
+          },
+          "stat": {
+            "anon": 3100672,
+            "swapcached": 27582464,
+            "zswap": 263938048,
+            "pgscan": 6914883,
+            "pgsteal": 209965,
+            "pgmajfault": 64809
+          },
+          "pressure_us": {
+            "some": 41587531,
+            "full": 41445369
+          },
+          "high_events": 2033,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "ca_enter"
+            ]
+          ]
+        },
+        {
+          "second": 56.14,
+          "batch": 43,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 263949056,
+            "entries": 140771,
+            "stores": 207991,
+            "loads": 67202,
+            "spill_tries": 5037338,
+            "spill_stores": 53884,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2560
+          },
+          "stat": {
+            "anon": 1257472,
+            "swapcached": 29196288,
+            "zswap": 263949056,
+            "pgscan": 7686538,
+            "pgsteal": 212907,
+            "pgmajfault": 67601
+          },
+          "pressure_us": {
+            "some": 46531201,
+            "full": 46373426
+          },
+          "high_events": 2092,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ]
+          ]
+        },
+        {
+          "second": 61.16,
+          "batch": 44,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 263858944,
+            "entries": 140735,
+            "stores": 212095,
+            "loads": 71337,
+            "spill_tries": 5480794,
+            "spill_stores": 53973,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2560
+          },
+          "stat": {
+            "anon": 1417216,
+            "swapcached": 28532736,
+            "zswap": 263858944,
+            "pgscan": 8465534,
+            "pgsteal": 217190,
+            "pgmajfault": 71757
+          },
+          "pressure_us": {
+            "some": 51148468,
+            "full": 50971175
+          },
+          "high_events": 2168,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 66.17,
+          "batch": 45,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 263705088,
+            "entries": 140669,
+            "stores": 216146,
+            "loads": 75454,
+            "spill_tries": 5918322,
+            "spill_stores": 54094,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 1433600,
+            "swapcached": 28790784,
+            "zswap": 263705088,
+            "pgscan": 9237895,
+            "pgsteal": 221468,
+            "pgmajfault": 75898
+          },
+          "pressure_us": {
+            "some": 55714736,
+            "full": 55528374
+          },
+          "high_events": 2247,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 71.18,
+          "batch": 46,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 263602432,
+            "entries": 140625,
+            "stores": 220803,
+            "loads": 80140,
+            "spill_tries": 6342382,
+            "spill_stores": 54215,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 3657728,
+            "swapcached": 28463104,
+            "zswap": 263602432,
+            "pgscan": 10013366,
+            "pgsteal": 226398,
+            "pgmajfault": 80622
+          },
+          "pressure_us": {
+            "some": 60015321,
+            "full": 59811732
+          },
+          "high_events": 2330,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 76.2,
+          "batch": 47,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 263529984,
+            "entries": 140647,
+            "stores": 227476,
+            "loads": 86789,
+            "spill_tries": 6766838,
+            "spill_stores": 54392,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 1441792,
+            "swapcached": 29114368,
+            "zswap": 263529984,
+            "pgscan": 10808730,
+            "pgsteal": 233225,
+            "pgmajfault": 87292
+          },
+          "pressure_us": {
+            "some": 64553806,
+            "full": 64326903
+          },
+          "high_events": 2439,
+          "stacks": [
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 81.21,
+          "batch": 47,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 263461376,
+            "entries": 140670,
+            "stores": 231774,
+            "loads": 91064,
+            "spill_tries": 7192443,
+            "spill_stores": 54523,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 0,
+            "swapcached": 29265920,
+            "zswap": 263461376,
+            "pgscan": 11606325,
+            "pgsteal": 237630,
+            "pgmajfault": 91580
+          },
+          "pressure_us": {
+            "some": 69530411,
+            "full": 69289422
+          },
+          "high_events": 2514,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 86.22,
+          "batch": 48,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 263267584,
+            "entries": 140609,
+            "stores": 237145,
+            "loads": 96496,
+            "spill_tries": 7601403,
+            "spill_stores": 54748,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 1789952,
+            "swapcached": 29392896,
+            "zswap": 263267584,
+            "pgscan": 12393992,
+            "pgsteal": 243157,
+            "pgmajfault": 97030
+          },
+          "pressure_us": {
+            "some": 73933431,
+            "full": 73674563
+          },
+          "high_events": 2605,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 91.23,
+          "batch": 49,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 263217920,
+            "entries": 140476,
+            "stores": 242349,
+            "loads": 101832,
+            "spill_tries": 8040745,
+            "spill_stores": 57010,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2304
+          },
+          "stat": {
+            "anon": 1425408,
+            "swapcached": 30011392,
+            "zswap": 263217920,
+            "pgscan": 13155911,
+            "pgsteal": 248524,
+            "pgmajfault": 102386
+          },
+          "pressure_us": {
+            "some": 78365455,
+            "full": 78085750
+          },
+          "high_events": 2693,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "sysvec_apic_timer_interrupt",
+              "asm_sysvec_apic_timer_interrupt"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 96.24,
+          "batch": 50,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 263046656,
+            "entries": 140518,
+            "stores": 248145,
+            "loads": 107586,
+            "spill_tries": 8527760,
+            "spill_stores": 60886,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 1576960,
+            "swapcached": 29863936,
+            "zswap": 263046656,
+            "pgscan": 13900510,
+            "pgsteal": 254582,
+            "pgmajfault": 108171
+          },
+          "pressure_us": {
+            "some": 82975845,
+            "full": 82676011
+          },
+          "high_events": 2790,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 101.25,
+          "batch": 51,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 263082752,
+            "entries": 140532,
+            "stores": 253651,
+            "loads": 113078,
+            "spill_tries": 9031479,
+            "spill_stores": 64617,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1280
+          },
+          "stat": {
+            "anon": 2191360,
+            "swapcached": 29609984,
+            "zswap": 263082752,
+            "pgscan": 14621275,
+            "pgsteal": 260368,
+            "pgmajfault": 113709
+          },
+          "pressure_us": {
+            "some": 87152203,
+            "full": 86837974
+          },
+          "high_events": 2885,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 106.27,
+          "batch": 52,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262987264,
+            "entries": 140569,
+            "stores": 258656,
+            "loads": 118045,
+            "spill_tries": 9550170,
+            "spill_stores": 68213,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 1458176,
+            "swapcached": 29642752,
+            "zswap": 262987264,
+            "pgscan": 15330594,
+            "pgsteal": 265566,
+            "pgmajfault": 118695
+          },
+          "pressure_us": {
+            "some": 91244346,
+            "full": 90922061
+          },
+          "high_events": 2969,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 111.28,
+          "batch": 53,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262968064,
+            "entries": 140495,
+            "stores": 263488,
+            "loads": 122951,
+            "spill_tries": 10070235,
+            "spill_stores": 71773,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 1429504,
+            "swapcached": 29954048,
+            "zswap": 262968064,
+            "pgscan": 16030612,
+            "pgsteal": 270549,
+            "pgmajfault": 123619
+          },
+          "pressure_us": {
+            "some": 95998615,
+            "full": 95656039
+          },
+          "high_events": 3053,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 116.29,
+          "batch": 53,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262895616,
+            "entries": 140352,
+            "stores": 266595,
+            "loads": 126201,
+            "spill_tries": 10617937,
+            "spill_stores": 74045,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1792
+          },
+          "stat": {
+            "anon": 3547136,
+            "swapcached": 30027776,
+            "zswap": 262895616,
+            "pgscan": 16752376,
+            "pgsteal": 273721,
+            "pgmajfault": 126876
+          },
+          "pressure_us": {
+            "some": 100975694,
+            "full": 100613349
+          },
+          "high_events": 3113,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ]
+          ]
+        },
+        {
+          "second": 121.3,
+          "batch": 54,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262822656,
+            "entries": 140524,
+            "stores": 272224,
+            "loads": 131658,
+            "spill_tries": 11163852,
+            "spill_stores": 78198,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1024
+          },
+          "stat": {
+            "anon": 0,
+            "swapcached": 29892608,
+            "zswap": 262822656,
+            "pgscan": 17461982,
+            "pgsteal": 279452,
+            "pgmajfault": 132342
+          },
+          "pressure_us": {
+            "some": 105800680,
+            "full": 105426761
+          },
+          "high_events": 3208,
+          "stacks": [
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "exit_to_user_mode_loop",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 126.32,
+          "batch": 55,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262673152,
+            "entries": 140453,
+            "stores": 275832,
+            "loads": 135337,
+            "spill_tries": 11708197,
+            "spill_stores": 80832,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2304
+          },
+          "stat": {
+            "anon": 2396160,
+            "swapcached": 29913088,
+            "zswap": 262673152,
+            "pgscan": 18165405,
+            "pgsteal": 283291,
+            "pgmajfault": 136049
+          },
+          "pressure_us": {
+            "some": 110511932,
+            "full": 110123319
+          },
+          "high_events": 3281,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "ca_enter"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 131.34,
+          "batch": 56,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262588928,
+            "entries": 140510,
+            "stores": 280930,
+            "loads": 140377,
+            "spill_tries": 12248959,
+            "spill_stores": 84868,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1792
+          },
+          "stat": {
+            "anon": 0,
+            "swapcached": 29949952,
+            "zswap": 262588928,
+            "pgscan": 18859750,
+            "pgsteal": 288539,
+            "pgmajfault": 141105
+          },
+          "pressure_us": {
+            "some": 115069781,
+            "full": 114662895
+          },
+          "high_events": 3367,
+          "stacks": [
+            [
+              "ca_enter"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 136.35,
+          "batch": 56,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262547456,
+            "entries": 140489,
+            "stores": 284575,
+            "loads": 144043,
+            "spill_tries": 12795046,
+            "spill_stores": 87915,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1792
+          },
+          "stat": {
+            "anon": 180224,
+            "swapcached": 29974528,
+            "zswap": 262547456,
+            "pgscan": 19556585,
+            "pgsteal": 292247,
+            "pgmajfault": 144776
+          },
+          "pressure_us": {
+            "some": 119955682,
+            "full": 119526996
+          },
+          "high_events": 3426,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 141.37,
+          "batch": 57,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262502144,
+            "entries": 140417,
+            "stores": 288391,
+            "loads": 147930,
+            "spill_tries": 13337694,
+            "spill_stores": 90937,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 768
+          },
+          "stat": {
+            "anon": 1888256,
+            "swapcached": 30064640,
+            "zswap": 262502144,
+            "pgscan": 20245904,
+            "pgsteal": 296297,
+            "pgmajfault": 148698
+          },
+          "pressure_us": {
+            "some": 124204635,
+            "full": 123759948
+          },
+          "high_events": 3495,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "arch_tlbbatch_flush",
+              "try_to_unmap_flush",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 146.38,
+          "batch": 57,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262509824,
+            "entries": 140447,
+            "stores": 291730,
+            "loads": 151239,
+            "spill_tries": 13879266,
+            "spill_stores": 93602,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2304
+          },
+          "stat": {
+            "anon": 1150976,
+            "swapcached": 30064640,
+            "zswap": 262509824,
+            "pgscan": 20928726,
+            "pgsteal": 299852,
+            "pgmajfault": 152028
+          },
+          "pressure_us": {
+            "some": 129122858,
+            "full": 128662989
+          },
+          "high_events": 3558,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ]
+          ]
+        },
+        {
+          "second": 151.39,
+          "batch": 58,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262440448,
+            "entries": 140450,
+            "stores": 296373,
+            "loads": 155877,
+            "spill_tries": 14417952,
+            "spill_stores": 97335,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2304
+          },
+          "stat": {
+            "anon": 4096,
+            "swapcached": 30228480,
+            "zswap": 262440448,
+            "pgscan": 21607188,
+            "pgsteal": 304548,
+            "pgmajfault": 156673
+          },
+          "pressure_us": {
+            "some": 133836147,
+            "full": 133356561
+          },
+          "high_events": 3642,
+          "stacks": [
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "exit_to_user_mode_loop",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "ca_enter"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "ca_enter"
+            ]
+          ]
+        },
+        {
+          "second": 156.41,
+          "batch": 59,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262380032,
+            "entries": 140276,
+            "stores": 299227,
+            "loads": 158905,
+            "spill_tries": 14948990,
+            "spill_stores": 99607,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2560
+          },
+          "stat": {
+            "anon": 3239936,
+            "swapcached": 30253056,
+            "zswap": 262377728,
+            "pgscan": 22273377,
+            "pgsteal": 307619,
+            "pgmajfault": 159727
+          },
+          "pressure_us": {
+            "some": 138420402,
+            "full": 137921845
+          },
+          "high_events": 3703,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "ca_enter"
+            ]
+          ]
+        },
+        {
+          "second": 161.42,
+          "batch": 59,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262405120,
+            "entries": 140263,
+            "stores": 302096,
+            "loads": 161787,
+            "spill_tries": 15480923,
+            "spill_stores": 101908,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2560
+          },
+          "stat": {
+            "anon": 1429504,
+            "swapcached": 31019008,
+            "zswap": 262405120,
+            "pgscan": 22947073,
+            "pgsteal": 310490,
+            "pgmajfault": 162609
+          },
+          "pressure_us": {
+            "some": 143409212,
+            "full": 142886112
+          },
+          "high_events": 3753,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "ca_enter"
+            ]
+          ]
+        },
+        {
+          "second": 166.43,
+          "batch": 60,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262395392,
+            "entries": 140316,
+            "stores": 306193,
+            "loads": 165831,
+            "spill_tries": 16025523,
+            "spill_stores": 105245,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1792
+          },
+          "stat": {
+            "anon": 1441792,
+            "swapcached": 30904320,
+            "zswap": 262395392,
+            "pgscan": 23630255,
+            "pgsteal": 314843,
+            "pgmajfault": 166682
+          },
+          "pressure_us": {
+            "some": 147733298,
+            "full": 147200199
+          },
+          "high_events": 3830,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "ca_enter"
+            ]
+          ]
+        },
+        {
+          "second": 171.44,
+          "batch": 60,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262368256,
+            "entries": 140392,
+            "stores": 309310,
+            "loads": 168870,
+            "spill_tries": 16574637,
+            "spill_stores": 107818,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 1429504,
+            "swapcached": 30593024,
+            "zswap": 262368256,
+            "pgscan": 24318906,
+            "pgsteal": 317958,
+            "pgmajfault": 169721
+          },
+          "pressure_us": {
+            "some": 152717514,
+            "full": 152167574
+          },
+          "high_events": 3885,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 176.46,
+          "batch": 61,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262290688,
+            "entries": 140389,
+            "stores": 313032,
+            "loads": 172595,
+            "spill_tries": 17118590,
+            "spill_stores": 110838,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1536
+          },
+          "stat": {
+            "anon": 2727936,
+            "swapcached": 30154752,
+            "zswap": 262290688,
+            "pgscan": 25003748,
+            "pgsteal": 321805,
+            "pgmajfault": 173464
+          },
+          "pressure_us": {
+            "some": 157191870,
+            "full": 156625831
+          },
+          "high_events": 3951,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 181.47,
+          "batch": 62,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262207744,
+            "entries": 140325,
+            "stores": 316905,
+            "loads": 176532,
+            "spill_tries": 17656265,
+            "spill_stores": 113782,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1024
+          },
+          "stat": {
+            "anon": 2322432,
+            "swapcached": 30568448,
+            "zswap": 262207744,
+            "pgscan": 25679534,
+            "pgsteal": 325926,
+            "pgmajfault": 177433
+          },
+          "pressure_us": {
+            "some": 161728672,
+            "full": 161148012
+          },
+          "high_events": 4021,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "ca_enter"
+            ],
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ]
+          ]
+        },
+        {
+          "second": 186.48,
+          "batch": 62,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262223616,
+            "entries": 140291,
+            "stores": 321076,
+            "loads": 180737,
+            "spill_tries": 18191977,
+            "spill_stores": 116537,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2304
+          },
+          "stat": {
+            "anon": 0,
+            "swapcached": 31055872,
+            "zswap": 262223616,
+            "pgscan": 26352323,
+            "pgsteal": 330163,
+            "pgmajfault": 181644
+          },
+          "pressure_us": {
+            "some": 166682993,
+            "full": 166081656
+          },
+          "high_events": 4093,
+          "stacks": [
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "exit_to_user_mode_loop",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "ca_enter"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 191.49,
+          "batch": 63,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 262130944,
+            "entries": 140350,
+            "stores": 325679,
+            "loads": 185281,
+            "spill_tries": 18723820,
+            "spill_stores": 117357,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1280
+          },
+          "stat": {
+            "anon": 348160,
+            "swapcached": 30810112,
+            "zswap": 262130944,
+            "pgscan": 27028517,
+            "pgsteal": 334960,
+            "pgmajfault": 186210
+          },
+          "pressure_us": {
+            "some": 171190501,
+            "full": 170574805
+          },
+          "high_events": 4168,
+          "stacks": [
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 196.5,
+          "batch": 64,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 261956096,
+            "entries": 140260,
+            "stores": 330189,
+            "loads": 189881,
+            "spill_tries": 19247377,
+            "spill_stores": 117673,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1280
+          },
+          "stat": {
+            "anon": 3203072,
+            "swapcached": 30703616,
+            "zswap": 261956096,
+            "pgscan": 27700015,
+            "pgsteal": 339814,
+            "pgmajfault": 190846
+          },
+          "pressure_us": {
+            "some": 175660509,
+            "full": 175036262
+          },
+          "high_events": 4249,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "ca_enter"
+            ],
+            [
+              "ca_enter"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 201.52,
+          "batch": 64,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 261920768,
+            "entries": 140314,
+            "stores": 333867,
+            "loads": 193505,
+            "spill_tries": 19766163,
+            "spill_stores": 117917,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2304
+          },
+          "stat": {
+            "anon": 397312,
+            "swapcached": 30941184,
+            "zswap": 261920768,
+            "pgscan": 28387732,
+            "pgsteal": 343576,
+            "pgmajfault": 194482
+          },
+          "pressure_us": {
+            "some": 180643931,
+            "full": 180002864
+          },
+          "high_events": 4314,
+          "stacks": [
+            [
+              "ca_enter"
+            ],
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 206.53,
+          "batch": 65,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 261853440,
+            "entries": 140272,
+            "stores": 338010,
+            "loads": 197690,
+            "spill_tries": 20274693,
+            "spill_stores": 118206,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1280
+          },
+          "stat": {
+            "anon": 2220032,
+            "swapcached": 30949376,
+            "zswap": 261853440,
+            "pgscan": 29075000,
+            "pgsteal": 347874,
+            "pgmajfault": 198681
+          },
+          "pressure_us": {
+            "some": 185337103,
+            "full": 184680379
+          },
+          "high_events": 4386,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "ca_enter"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 211.54,
+          "batch": 66,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 261933312,
+            "entries": 140337,
+            "stores": 342719,
+            "loads": 202334,
+            "spill_tries": 20775059,
+            "spill_stores": 118464,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 1280
+          },
+          "stat": {
+            "anon": 1421312,
+            "swapcached": 30801920,
+            "zswap": 261933312,
+            "pgscan": 29760532,
+            "pgsteal": 352759,
+            "pgmajfault": 203346
+          },
+          "pressure_us": {
+            "some": 189713756,
+            "full": 189044426
+          },
+          "high_events": 4467,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "ca_enter"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 216.55,
+          "batch": 66,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 261882624,
+            "entries": 140355,
+            "stores": 346172,
+            "loads": 205769,
+            "spill_tries": 21279208,
+            "spill_stores": 118677,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2560
+          },
+          "stat": {
+            "anon": 1421312,
+            "swapcached": 30728192,
+            "zswap": 261882624,
+            "pgscan": 30455808,
+            "pgsteal": 356233,
+            "pgmajfault": 206783
+          },
+          "pressure_us": {
+            "some": 194698235,
+            "full": 194011658
+          },
+          "high_events": 4527,
+          "stacks": [
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 221.57,
+          "batch": 67,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 261871616,
+            "entries": 140379,
+            "stores": 349904,
+            "loads": 209477,
+            "spill_tries": 21775272,
+            "spill_stores": 118853,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2560
+          },
+          "stat": {
+            "anon": 507904,
+            "swapcached": 30584832,
+            "zswap": 261871616,
+            "pgscan": 31144215,
+            "pgsteal": 360095,
+            "pgmajfault": 210506
+          },
+          "pressure_us": {
+            "some": 199272039,
+            "full": 198579701
+          },
+          "high_events": 4594,
+          "stacks": [
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "ca_enter",
+              "ca_existing",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 226.58,
+          "batch": 67,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 261926912,
+            "entries": 140411,
+            "stores": 353208,
+            "loads": 212749,
+            "spill_tries": 22268712,
+            "spill_stores": 119047,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2560
+          },
+          "stat": {
+            "anon": 0,
+            "swapcached": 30564352,
+            "zswap": 261926912,
+            "pgscan": 31840607,
+            "pgsteal": 363506,
+            "pgmajfault": 213790
+          },
+          "pressure_us": {
+            "some": 204191279,
+            "full": 203488769
+          },
+          "high_events": 4656,
+          "stacks": [
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "futex_do_wait",
+              "__futex_wait",
+              "futex_wait",
+              "do_futex",
+              "__x64_sys_futex",
+              "x64_sys_call",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "ca_enter"
+            ]
+          ]
+        },
+        {
+          "second": 231.59,
+          "batch": 68,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 261940992,
+            "entries": 140388,
+            "stores": 357327,
+            "loads": 216890,
+            "spill_tries": 22756919,
+            "spill_stores": 119246,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 581632,
+            "swapcached": 30457856,
+            "zswap": 261940992,
+            "pgscan": 32542140,
+            "pgsteal": 367731,
+            "pgmajfault": 217944
+          },
+          "pressure_us": {
+            "some": 209061077,
+            "full": 208340681
+          },
+          "high_events": 4727,
+          "stacks": [
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "exit_to_user_mode_loop",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ]
+          ]
+        },
+        {
+          "second": 236.61,
+          "batch": 69,
+          "arena": {
+            "resident_bytes": 268435456,
+            "used_bytes": 261993984,
+            "entries": 140413,
+            "stores": 361636,
+            "loads": 221174,
+            "spill_tries": 23243531,
+            "spill_stores": 119412,
+            "reject_quota": 0,
+            "reject_poor": 0,
+            "chunk_alloc_failures": 0,
+            "last_request": 2048
+          },
+          "stat": {
+            "anon": 0,
+            "swapcached": 30556160,
+            "zswap": 261993984,
+            "pgscan": 33250969,
+            "pgsteal": 372238,
+            "pgmajfault": 222250
+          },
+          "pressure_us": {
+            "some": 213548415,
+            "full": 212817669
+          },
+          "high_events": 4803,
+          "stacks": [
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "exit_to_user_mode_loop",
+              "do_syscall_64",
+              "entry_SYSCALL_64_after_hwframe"
+            ],
+            [
+              "preempt_schedule_thunk",
+              "zswap_store",
+              "swap_writeout",
+              "shrink_folio_list",
+              "evict_folios",
+              "try_to_shrink_lruvec",
+              "shrink_lruvec",
+              "shrink_node",
+              "do_try_to_free_pages",
+              "try_to_free_mem_cgroup_pages",
+              "reclaim_high",
+              "__mem_cgroup_handle_over_high",
+              "irqentry_exit",
+              "exc_page_fault",
+              "asm_exc_page_fault"
+            ],
+            [
+              "ca_enter"
+            ]
+          ]
+        }
+      ],
+      "net_backoffs": 0,
+      "elapsed_seconds": 240.949,
+      "high_events": 4867,
+      "pages_scanned": 33862050
+    }
+  },
+  "policy": "standard",
+  "mglru": "0x0007",
+  "page_cluster": 0,
+  "image_sha256": "3e1d2d1dd5167ec02c1df05a04cd44ae5e05f319fd21a441ca518ca76e6c4094",
+  "page_cluster_before": 3,
+  "page_cluster_tested": 0,
+  "page_cluster_restored": 3,
+  "host_vmx_samples": 44,
+  "host": {
+    "vmx_min": 1,
+    "vmx_max": 1,
+    "available_mib_min": 82998,
+    "cpu_busy_pct_median": 22.1,
+    "cpu_busy_pct_max": 27.3,
+    "other_vm_cpu_cores_median": 0,
+    "other_vm_cpu_cores_max": 0
+  }
+}

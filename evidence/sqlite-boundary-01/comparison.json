@@ -1,0 +1,285 @@
+{
+  "off": {
+    "confirmed_bytes": [
+      285159424,
+      285159424
+    ],
+    "first_failed_bytes": [
+      302903296,
+      302903296
+    ],
+    "paired_multiple": [
+      1.0,
+      1.0
+    ],
+    "matched": {
+      "runs": 6,
+      "fault_samples": 0,
+      "resident_samples": 6132,
+      "median_run_p99_us": null,
+      "cpu_s_per_gib": 0.8711,
+      "db_mib_per_s": 2739.7324,
+      "scans_restored_pages": 0.0,
+      "database_mib": 254.9219,
+      "peak_charged_mib": 293.0566,
+      "swapcache_at_fill_mib": 0.0,
+      "backing_at_fill_mib": 0.0,
+      "high_events": 17.0,
+      "pages_scanned": 345.5,
+      "rows_modified": 6108.0,
+      "commits": 180.0,
+      "rollbacks": 60.0,
+      "runs_with_sampled_faults": 0
+    },
+    "near": {
+      "runs": 6,
+      "fault_samples": 0,
+      "resident_samples": 6534,
+      "median_run_p99_us": null,
+      "cpu_s_per_gib": 1.0118,
+      "db_mib_per_s": 96.9908,
+      "scans_restored_pages": 0.0,
+      "database_mib": 271.9492,
+      "peak_charged_mib": 310.1719,
+      "swapcache_at_fill_mib": 0.0,
+      "backing_at_fill_mib": 0.0,
+      "high_events": 2246.0,
+      "pages_scanned": 5661.0,
+      "rows_modified": 6510.0,
+      "commits": 192.0,
+      "rollbacks": 64.0,
+      "runs_with_sampled_faults": 0
+    },
+    "at_capacity": {
+      "runs": 4,
+      "fault_samples": 0,
+      "resident_samples": 4356,
+      "median_run_p99_us": null,
+      "cpu_s_per_gib": 1.0226,
+      "db_mib_per_s": 105.3074,
+      "scans_restored_pages": 0.0,
+      "database_mib": 271.9492,
+      "peak_charged_mib": 310.1133,
+      "swapcache_at_fill_mib": 0.0,
+      "backing_at_fill_mib": 0.0,
+      "high_events": 2059.0,
+      "pages_scanned": 5760.5,
+      "rows_modified": 6510.0,
+      "commits": 192.0,
+      "rollbacks": 64.0,
+      "runs_with_sampled_faults": 0
+    }
+  },
+  "standard": {
+    "paired_ratio": [
+      1.9405334750570964,
+      1.9405334750570964
+    ],
+    "at_527": {
+      "runs": 4,
+      "fault_samples": 8132,
+      "resident_samples": 332,
+      "median_run_p99_us": 661.509,
+      "cpu_s_per_gib": 10.0799,
+      "db_mib_per_s": 370.2817,
+      "scans_restored_pages": 423575.0,
+      "database_mib": 527.7266,
+      "peak_charged_mib": 298.3297,
+      "swapcache_at_fill_mib": 1.2266,
+      "backing_at_fill_mib": 241.2266,
+      "high_events": 8106.5,
+      "pages_scanned": 904066.0,
+      "rows_modified": 12624.0,
+      "commits": 372.0,
+      "rollbacks": 124.0,
+      "runs_with_sampled_faults": 4
+    },
+    "capacity": {
+      "runs": 4,
+      "fault_samples": 8132,
+      "resident_samples": 332,
+      "median_run_p99_us": 661.509,
+      "cpu_s_per_gib": 10.0799,
+      "db_mib_per_s": 370.2817,
+      "scans_restored_pages": 423575.0,
+      "database_mib": 527.7266,
+      "peak_charged_mib": 298.3297,
+      "swapcache_at_fill_mib": 1.2266,
+      "backing_at_fill_mib": 241.2266,
+      "high_events": 8106.5,
+      "pages_scanned": 904066.0,
+      "rows_modified": 12624.0,
+      "commits": 372.0,
+      "rollbacks": 124.0,
+      "runs_with_sampled_faults": 4
+    },
+    "first_failures": [
+      {
+        "status": "timeout",
+        "parts": 128,
+        "db_bytes": 571215872,
+        "completed_batches": 70,
+        "seconds_without_progress": 7.02,
+        "cgroup_bytes": 304054272,
+        "reserved_bytes": 262248192,
+        "arena_bytes": 268435456,
+        "sampled_charge_bytes": 310241536,
+        "net_backoffs": 0,
+        "elapsed_seconds": 240.685,
+        "high_events": 4945,
+        "pages_scanned": 34242185
+      },
+      {
+        "status": "timeout",
+        "parts": 128,
+        "db_bytes": 571215872,
+        "completed_batches": 71,
+        "seconds_without_progress": 5.01,
+        "cgroup_bytes": 304668672,
+        "reserved_bytes": 262019584,
+        "arena_bytes": 268435456,
+        "sampled_charge_bytes": 311084544,
+        "net_backoffs": 0,
+        "elapsed_seconds": 241.007,
+        "high_events": 5022,
+        "pages_scanned": 33978540
+      }
+    ],
+    "matched_bytes_per_entry": 1894.20905272763,
+    "matched_entries": 132251.5,
+    "target_outcomes": [
+      "timeout",
+      "timeout"
+    ],
+    "at_544": null
+  },
+  "small": {
+    "paired_ratio": [
+      2.0031456929861102,
+      2.0031456929861102
+    ],
+    "at_527": {
+      "runs": 4,
+      "fault_samples": 7902,
+      "resident_samples": 562,
+      "median_run_p99_us": 702.834,
+      "cpu_s_per_gib": 9.6333,
+      "db_mib_per_s": 381.2767,
+      "scans_restored_pages": 417932.0,
+      "database_mib": 527.7266,
+      "peak_charged_mib": 302.1704,
+      "swapcache_at_fill_mib": 1.0254,
+      "backing_at_fill_mib": 228.7852,
+      "high_events": 7085.0,
+      "pages_scanned": 865728.5,
+      "rows_modified": 12624.0,
+      "commits": 372.0,
+      "rollbacks": 124.0,
+      "runs_with_sampled_faults": 4
+    },
+    "capacity": {
+      "runs": 4,
+      "fault_samples": 8395,
+      "resident_samples": 337,
+      "median_run_p99_us": 748.202,
+      "cpu_s_per_gib": 10.1475,
+      "db_mib_per_s": 366.492,
+      "scans_restored_pages": 437151.5,
+      "database_mib": 544.7539,
+      "peak_charged_mib": 300.8719,
+      "swapcache_at_fill_mib": 1.2695,
+      "backing_at_fill_mib": 243.1523,
+      "high_events": 8605.0,
+      "pages_scanned": 994120.5,
+      "rows_modified": 13041.0,
+      "commits": 384.0,
+      "rollbacks": 128.0,
+      "runs_with_sampled_faults": 4
+    },
+    "first_failures": [
+      {
+        "status": "timeout",
+        "parts": 132,
+        "db_bytes": 588996608,
+        "completed_batches": 66,
+        "seconds_without_progress": 3.01,
+        "cgroup_bytes": 304971776,
+        "reserved_bytes": 260781824,
+        "arena_bytes": 268435456,
+        "sampled_charge_bytes": 312625408,
+        "net_backoffs": 0,
+        "elapsed_seconds": 241.025,
+        "high_events": 4683,
+        "pages_scanned": 33399369
+      },
+      {
+        "status": "timeout",
+        "parts": 132,
+        "db_bytes": 588996608,
+        "completed_batches": 66,
+        "seconds_without_progress": 0.0,
+        "cgroup_bytes": 305750016,
+        "reserved_bytes": 260741248,
+        "arena_bytes": 268435456,
+        "sampled_charge_bytes": 313444224,
+        "net_backoffs": 0,
+        "elapsed_seconds": 240.824,
+        "high_events": 4671,
+        "pages_scanned": 33783048
+      }
+    ],
+    "matched_bytes_per_entry": 1830.4921640773525,
+    "matched_entries": 128548.0,
+    "target_outcomes": [
+      "pass",
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "at_544": {
+      "runs": 4,
+      "fault_samples": 8395,
+      "resident_samples": 337,
+      "median_run_p99_us": 748.202,
+      "cpu_s_per_gib": 10.1475,
+      "db_mib_per_s": 366.492,
+      "scans_restored_pages": 437151.5,
+      "database_mib": 544.7539,
+      "peak_charged_mib": 300.8719,
+      "swapcache_at_fill_mib": 1.2695,
+      "backing_at_fill_mib": 243.1523,
+      "high_events": 8605.0,
+      "pages_scanned": 994120.5,
+      "rows_modified": 13041.0,
+      "commits": 384.0,
+      "rollbacks": 128.0,
+      "runs_with_sampled_faults": 4
+    }
+  },
+  "trace": {
+    "saturated_samples": 46,
+    "total_samples": 48,
+    "first": 11.03,
+    "last": 236.61,
+    "first_batch": 33,
+    "last_batch": 69,
+    "deltas": {
+      "spill_stores": 67338,
+      "spill_tries": 22646893,
+      "stores": 210400,
+      "loads": 210786,
+      "reject_quota": 0,
+      "reject_poor": 0,
+      "chunk_alloc_failures": 0
+    },
+    "scan_delta": 32351072,
+    "charged_mib_at_exit": 296.55078125
+  },
+  "candidate_trace": {
+    "samples": 2,
+    "elapsed": 9.221,
+    "scans": 984016,
+    "highest_sampled_arena_mib": 252.7109375,
+    "at_fill_mib": 242.9765625
+  }
+}
